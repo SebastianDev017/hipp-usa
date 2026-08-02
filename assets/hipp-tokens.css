@@ -1,0 +1,140 @@
+/* ==========================================================================
+   HiPP USA — capa de tokens
+   --------------------------------------------------------------------------
+   REGLA DURA: assets/css-base.css es READ-ONLY.
+   Son 146 KB minificados en 4 lineas sin sourcemap, con las reglas de header,
+   footer, announcement y product-card dispersas en 4+ offsets e intercaladas
+   con las de todas las plantillas. No hay forma segura de editarlo in situ.
+
+   Este archivo se carga DESPUES de css-base.css. Su :root tiene la misma
+   especificidad que el de alla, asi que gana por orden de cascada. Cargarlo
+   antes NO funcionaria.
+
+   Los nombres legacy NO se borran, se REMAPEAN. --dark-blue-color solo tiene
+   82 call sites (mas que --secondary-color con 34): borrarlos reventaria 132
+   var() de golpe en ~20 archivos.
+   ========================================================================== */
+
+:root {
+  /* ---- Paleta HiPP USA (fuente de verdad) ---- */
+  --cream: #f9f7ef;
+  --cream-2: #f1eee1;
+  --sand: #e3dfc9;
+  --ink: #232a1e;
+  --ink-soft: #57604b;
+  --clay: #4f7042;
+  --clay-deep: #3e5834;
+  --moss: #6e7a5a;
+  --accent-light: #cfe0b8;
+
+  /* ---- Forma. El tema base no tenia tokens de forma: 163 border-radius
+         hardcodeados y solo 7 con var(). ---- */
+  --radius-card: 20px;
+  --radius-media: 14px;
+  --radius-sm: 12px;
+  --radius-pill: 100px;
+  --hairline-color: rgba(43, 33, 26, 0.14);
+  --hairline: 1.5px solid var(--hairline-color);
+  --shadow-card: 0 10px 30px -14px rgba(79, 112, 66, 0.4);
+  --shadow-lift: 0 18px 40px -18px rgba(43, 33, 26, 0.25);
+
+  /* ---- Tipografia semantica. El codigo NUEVO usa estos, no los legacy. ---- */
+  --font-display: "HiPP Display", Georgia, "Times New Roman", serif;
+  --font-display-semibold: "HiPP Display Semibold", Georgia, serif;
+  --font-display-bold: "HiPP Display Bold", Georgia, serif;
+  --font-body: "HiPP Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body-medium: "HiPP Sans Medium", -apple-system, sans-serif;
+  --font-body-semibold: "HiPP Sans Semibold", -apple-system, sans-serif;
+  --font-body-bold: "HiPP Sans Bold", -apple-system, sans-serif;
+
+  /* ======================================================================
+     REMAPEO DE TOKENS LEGACY
+     ====================================================================== */
+
+  /* ---- Familias. El peso viene codificado en el NOMBRE de la familia y casi
+         ningun call site declara font-weight; por eso cada alias apunta a una
+         familia sintetica distinta (ver snippets/hipp-fonts.liquid). ---- */
+  --primary-font: var(--font-body);                 /* era "Banana Grotesk Medium" */
+  --primary-font-thin: var(--font-body);            /* 0 usos */
+  --primary-font-extra-light: var(--font-body);     /* 0 usos */
+  --primary-font-light: var(--font-body);
+  --primary-font-semibold: var(--font-body-semibold);
+  --primary-font-bold: var(--font-body-semibold);   /* el diseno usa 600, no 700 */
+  --primary-font-extra-bold: var(--font-body-bold);
+  --secondary-font: var(--font-display);            /* era "Advert Light" */
+  --secondary-font-bold: var(--font-display-semibold);
+
+  /* ---- Color ---- */
+  --primary-color: var(--ink);          /* era #125b4e: texto, titulos, precio, labels */
+  --secondary-color: var(--clay);       /* era #429459 */
+  --tertiary-color: var(--clay);        /* era #f57e59: hover de link, tab activo */
+  --quaternary-color: var(--cream-2);   /* era #ebf3e3 */
+  --quinary-color: var(--sand);         /* era #e0ecd1 */
+  --light-green-color: var(--sand);     /* era #d7e2e7 */
+
+  /* Los 6 azules: 132 call sites. Se aliasan a la familia neutra para que nada
+     quede azul, pero los nombres siguen existiendo. */
+  --light-blue-color: var(--clay);      /* era #31a6d4 */
+  --light-blue-bg: var(--cream-2);      /* era #cbefff */
+  --dark-blue-bg: var(--sand);          /* era #84cbea */
+  --dark-blue-color: var(--ink);        /* era #1f3067 */
+  --blue-button-color: var(--clay-deep);/* era #00729b */
+  --medium-blue-color: var(--sand);     /* era #94deff */
+
+  /* Estados. --price-color, --sale-regular-price-color, --page-title-color,
+     --page-text-color y --form-label-color derivan de --primary-color, asi que
+     ya siguen a --ink solos. */
+  --sale-price-color: #a85238;          /* era #df2138, rojo puro fuera de paleta */
+  --sold-out-color: var(--moss);        /* era #bebebe */
+
+  /* ---- Roles tipograficos. En el diseno aprobado h1/h2/h3 son todos serif;
+         --page-heading-font apuntaba a la sans bold. ---- */
+  --page-heading-font: var(--font-display);
+  --faqs-question-font: var(--font-display);
+}
+
+/* ==========================================================================
+   Primitivas de marca
+   ========================================================================== */
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fraunces trae eje opsz (9..144): que el navegador lo use segun el tamano. */
+h1, h2, h3, .page-title, .secondary-font, .secondary-font-bold {
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+/* El pill es la senal de marca mas visible del diseno aprobado. Hoy el tema lo
+   resuelve con un parche local (border-radius:999px en image-with-form.liquid). */
+.button,
+.btn,
+button.button,
+a.button {
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body-semibold);
+  letter-spacing: 0;
+}
+
+/* Foco visible: el tema base no define ninguno consistente. */
+:where(a, button, [role="button"], input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

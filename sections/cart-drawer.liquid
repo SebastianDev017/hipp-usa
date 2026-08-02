@@ -1,0 +1,231 @@
+{%- comment -%}
+  HiPP USA — cart drawer.
+
+  Es una SECCION, no un snippet, a proposito: asi /cart/add.js y /cart/change.js pueden
+  devolverla ya renderizada por el servidor en la misma respuesta (parametro `sections`),
+  y no hace falta un fetch extra ni reconstruir el HTML del carrito en JS.
+
+  El tema base NO tenia drawer: el add-to-cart era un {% form 'product' %} nativo que
+  recargaba la pagina entera. Con bundles de 4/8/16 cajas eso es un agujero de conversion.
+
+  Depende de trapFocus / removeTrapFocus de assets/theme.js (es global.js de Dawn, el
+  unico JS del tema que no es un build de webpack con eval).
+{%- endcomment -%}
+
+<div
+  id="HippCartDrawer"
+  class="hipp-drawer"
+  data-hipp-cart-drawer
+  data-item-count="{{ cart.item_count }}"
+  aria-hidden="true"
+>
+  <div class="hipp-drawer__overlay" data-hipp-cart-overlay tabindex="-1"></div>
+
+  <div
+    class="hipp-drawer__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="HippCartDrawerTitle"
+  >
+    <header class="hipp-drawer__head">
+      <h2 class="hipp-drawer__title" id="HippCartDrawerTitle">
+        {{ 'sections.cart.title' | t }}
+      </h2>
+      <button
+        type="button"
+        class="hipp-drawer__close"
+        data-hipp-cart-close
+        aria-label="{{ 'accessibility.close' | t }}"
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+          <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="hipp-drawer__body" data-hipp-cart-body>
+      {%- if cart.item_count == 0 -%}
+        <div class="hipp-drawer__empty">
+          <p class="hipp-drawer__empty-title">{{ 'sections.cart.empty' | t }}</p>
+          {%- if settings.continue_shopping_button_link != blank and settings.continue_shopping_button_label != blank -%}
+            <a class="hipp-btn hipp-btn--solid" href="{{ settings.continue_shopping_button_link }}">
+              {{ settings.continue_shopping_button_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        <ul class="hipp-drawer__items" role="list">
+          {%- for item in cart.items -%}
+            <li class="hipp-line" data-hipp-line="{{ forloop.index }}" data-key="{{ item.key }}">
+              <a class="hipp-line__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                {%- if item.image -%}
+                  <img
+                    src="{{ item.image | image_url: width: 200 }}"
+                    srcset="{{ item.image | image_url: width: 200 }} 200w, {{ item.image | image_url: width: 400 }} 400w"
+                    sizes="88px"
+                    alt=""
+                    width="200"
+                    height="200"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+              </a>
+
+              <div class="hipp-line__info">
+                <a class="hipp-line__title" href="{{ item.url }}">{{ item.product.title }}</a>
+
+                {%- unless item.variant.title contains 'Default' -%}
+                  <p class="hipp-line__meta">{{ item.variant.title }}</p>
+                {%- endunless -%}
+
+                {%- if item.selling_plan_allocation -%}
+                  <p class="hipp-line__plan">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                {%- endif -%}
+
+                {%- assign has_props = false -%}
+                {%- for prop in item.properties -%}
+                  {%- unless prop.first contains '_' or prop.last == blank -%}
+                    {%- assign has_props = true -%}
+                  {%- endunless -%}
+                {%- endfor -%}
+                {%- if has_props -%}
+                  <ul class="hipp-line__props" role="list">
+                    {%- for prop in item.properties -%}
+                      {%- unless prop.first contains '_' or prop.last == blank -%}
+                        <li>{{ prop.first }}: {{ prop.last }}</li>
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+
+                {%- if item.line_level_discount_allocations.size > 0 -%}
+                  <ul class="hipp-line__discounts" role="list">
+                    {%- for allocation in item.line_level_discount_allocations -%}
+                      <li>{{ allocation.discount_application.title }} (&minus;{{ allocation.amount | money }})</li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+
+                <div class="hipp-line__controls">
+                  <div class="hipp-qty" data-hipp-qty>
+                    <button
+                      type="button"
+                      class="hipp-qty__btn"
+                      data-hipp-qty-down
+                      aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
+                    >&minus;</button>
+                    <input
+                      class="hipp-qty__input"
+                      type="number"
+                      inputmode="numeric"
+                      min="0"
+                      step="1"
+                      value="{{ item.quantity }}"
+                      data-hipp-qty-input
+                      aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
+                    >
+                    <button
+                      type="button"
+                      class="hipp-qty__btn"
+                      data-hipp-qty-up
+                      aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
+                    >+</button>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="hipp-line__remove"
+                    data-hipp-remove
+                    aria-label="{{ 'sections.cart.remove_title' | t: title: item.title }}"
+                  >{{ 'sections.cart.remove' | t }}</button>
+                </div>
+              </div>
+
+              <div class="hipp-line__price">
+                {%- if item.original_line_price > item.final_line_price -%}
+                  <s class="hipp-line__price-was">{{ item.original_line_price | money }}</s>
+                {%- endif -%}
+                <span class="hipp-line__price-now">{{ item.final_line_price | money }}</span>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {%- if cart.item_count > 0 -%}
+      <footer class="hipp-drawer__foot">
+        {%- if section.settings.show_shipping_line -%}
+          <div class="hipp-drawer__row">
+            <span>{{ section.settings.shipping_label }}</span>
+            <span class="hipp-drawer__free">{{ section.settings.shipping_value }}</span>
+          </div>
+        {%- endif -%}
+
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <div class="hipp-drawer__row">
+              <span>{{ discount.title }}</span>
+              <span class="hipp-drawer__free">&minus;{{ discount.total_allocated_amount | money }}</span>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+
+        <div class="hipp-drawer__row hipp-drawer__row--total">
+          <span>{{ 'sections.cart.subtotal' | t }}</span>
+          <span>{{ cart.total_price | money_with_currency }}</span>
+        </div>
+
+        <form action="{{ routes.cart_url }}" method="post" novalidate>
+          <button type="submit" name="checkout" class="hipp-btn hipp-btn--solid hipp-btn--block">
+            {{ section.settings.checkout_label | default: 'Checkout' }}
+          </button>
+        </form>
+
+        {%- if section.settings.footer_note != blank -%}
+          <p class="hipp-drawer__note">{{ section.settings.footer_note }}</p>
+        {%- endif -%}
+      </footer>
+    {%- endif -%}
+
+    <p class="visually-hidden" aria-live="polite" data-hipp-cart-status></p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_shipping_line",
+      "label": "Show shipping line",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "shipping_label",
+      "label": "Shipping label",
+      "default": "2 day shipping"
+    },
+    {
+      "type": "text",
+      "id": "shipping_value",
+      "label": "Shipping value",
+      "default": "Free"
+    },
+    {
+      "type": "text",
+      "id": "checkout_label",
+      "label": "Checkout button",
+      "default": "Checkout, at your door in 2 days"
+    },
+    {
+      "type": "text",
+      "id": "footer_note",
+      "label": "Note under the button",
+      "default": "Free 2 day shipping on every order, always."
+    }
+  ]
+}
+{% endschema %}

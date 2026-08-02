@@ -15,9 +15,13 @@ EXTERNAL URLS / APPS
 FUENTES
 ---------------------------------------------------------------------
 {% endcomment %}
-<link rel="preload" href="{{- 'AdvertLight.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{- 'AdvertBold.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{- 'BananaGrotesk-Medium.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
+{%- comment -%}
+  Solo el subset latin: es el que cubre el storefront en ingles. latin-ext se descarga
+  bajo demanda por unicode-range. Estas URLs salen del mismo asset_url que los @font-face
+  de snippets/hipp-fonts.liquid, asi que coinciden exacto y no hay doble descarga.
+{%- endcomment -%}
+<link rel="preload" href="{{- 'inter-latin.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{- 'fraunces-latin.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
 
 {% comment %}
 ---------------------------------------------------------------------

@@ -23,6 +23,12 @@
 <script src="{{ 'js-commons.js' | asset_url }}" defer></script>
 <script src="{{ 'js-base.js' | asset_url }}" defer></script>
 
+{%- comment -%}
+  Despues de theme.js a proposito: hipp-cart.js usa su trapFocus/removeTrapFocus.
+  Los dos son defer, asi que se ejecutan en orden de documento.
+{%- endcomment -%}
+<script src="{{ 'hipp-cart.js' | asset_url }}" defer></script>
+
 {%- if template.name == 'collection' -%}
   <script src="{{ 'js-main-collection.js' | asset_url }}" defer></script>
 {%- endif -%}

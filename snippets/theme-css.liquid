@@ -1,9 +1,17 @@
-{%- liquid 
+{%- liquid
   echo 'theme.css' | asset_url | stylesheet_tag
   echo 'css-base.css' | asset_url | stylesheet_tag
-  
+
   if template contains "customer" or request_handle contains "customer"
     echo 'theme-customer.css' | asset_url | stylesheet_tag
     echo 'css-accounts.css' | asset_url | stylesheet_tag
   endif
 -%}
+
+{%- comment -%}
+  HiPP USA. El orden importa: hipp-tokens.css tiene que ir DESPUES de css-base.css.
+  Los dos declaran :root con la misma especificidad, asi que gana el ultimo.
+{%- endcomment -%}
+{%- render 'hipp-fonts' -%}
+{{ 'hipp-tokens.css' | asset_url | stylesheet_tag }}
+{{ 'hipp-cart.css' | asset_url | stylesheet_tag }}

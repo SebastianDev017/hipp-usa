@@ -36,6 +36,12 @@
       {% section 'footer' %}
     </div>
 
+    {%- comment -%}
+      Va fuera de .main-wrapper: es position:fixed y no debe heredar ningun
+      containing block (backdrop-filter/transform en un ancestro lo romperia).
+    {%- endcomment -%}
+    {% section 'cart-drawer' %}
+
     <ul hidden>
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
     </ul>
