@@ -31,13 +31,24 @@
   {% endfor %}
 {% endcapture %}
 
-<!--<div class="collection-cover{% if image == blank %} no-image{%- endif -%}">
+{%- comment -%}
+  Este banner estaba COMENTADO por completo, y con el se iba el unico <h1> de la pagina:
+  /collections/* quedaba sin encabezado de nivel 1 (el titulo visible lo ponia otra seccion
+  como <h2>). Restaurado. La imagen de coleccion sigue siendo opcional.
+{%- endcomment -%}
+<div class="collection-cover{% if image == blank %} no-image{%- endif -%}">
   {%- unless image == blank -%}
     <div class="collection-image-wrapper">
       <picture>
         <source media="(max-width: 450px)" srcset="{{- image | image_url: width: 600 -}}">
         <source media="(max-width: 834px)" srcset="{{- image | image_url: width: 800 -}}">
-        <img class="collection-image no-touch" alt="{{- image.alt -}}" fetchpriority="high" src="{{- image | image_url: width: 1000 -}}">
+        <img
+          class="collection-image no-touch"
+          alt="{{ image.alt | default: collection.title | escape }}"
+          width="1000"
+          height="1000"
+          fetchpriority="high"
+          src="{{- image | image_url: width: 1000 -}}">
       </picture>
     </div>
   {%- endunless -%}
@@ -54,7 +65,6 @@
     </div>
   </div>
 </div>
--->
 {%- paginate collection.products by 36 -%}
 
   <section class="collection {{ collection_empty_class }}" data-section-id="{{- section.id -}}" data-section-type="main-collection">
@@ -85,7 +95,6 @@
       </div>
 
     </div>
-   <h5 style="text-align:center;padding:20px 10px;font-family:Advert Bold;">Todos los precios mostrados son en moneda local MXN.00 <h6>
 
   </section>
 
@@ -98,7 +107,7 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Inicio",
+      "name": "Home",
       "item": "{{ shop.url }}"
     },
     {
@@ -131,7 +140,7 @@
 </script>
 {%- schema -%}
   {
-    "name": "Colección",
-    "class": "collection-section content-hidden"
+    "name": "Collection",
+    "class": "collection-section"
   }
 {% endschema %}

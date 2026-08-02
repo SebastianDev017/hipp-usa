@@ -79,16 +79,21 @@
       "name": "HiPP",
       "sameAs": "https://www.hipp.de"
     },
-    "areaServed": "MX",
-    {% if section.settings.logo %}
-      {% assign image_size = section.settings.logo.width %}
-      "logo": {{ section.settings.logo | image_url: image_size | prepend: "https:" | json }},
-    {% endif %}
-    "sameAs": [
-      "https://web.facebook.com/hipp.mx/",
-      "https://www.instagram.com/hipp.mx/",
-      "https://www.youtube.com/channel/UC0x0hJeGR2AcRjCfRCKW6eA"
-    ]
+    "areaServed": "US",
+    {%- comment -%}
+      Antes habia un {% if section.settings.logo %} pero ese setting NO existe en el schema
+      de esta seccion (solo hay menu, secondary_menu, icon_image, icon_link): la clave "logo"
+      nunca se emitia. Ahora sale del icon_image real.
+    {%- endcomment -%}
+    {%- if section.settings.icon_image != blank -%}
+      "logo": {{ section.settings.icon_image | image_url: width: 512 | prepend: "https:" | json }},
+    {%- endif -%}
+    {%- comment -%} sameAs se arma desde los settings globales, no hardcodeado a las cuentas MX. {%- endcomment -%}
+    {%- assign social_links = '' -%}
+    {%- if settings.social_facebook_link != blank -%}{%- assign social_links = social_links | append: settings.social_facebook_link | append: '|' -%}{%- endif -%}
+    {%- if settings.social_instagram_link != blank -%}{%- assign social_links = social_links | append: settings.social_instagram_link | append: '|' -%}{%- endif -%}
+    {%- if settings.social_youtube_link != blank -%}{%- assign social_links = social_links | append: settings.social_youtube_link | append: '|' -%}{%- endif -%}
+    "sameAs": {{ social_links | split: '|' | json }}
   }
 </script>
 

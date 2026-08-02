@@ -43,12 +43,12 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": {{ article.author | json }},
-    "url": "https://hipp.mx/pages/profesionales-de-la-salud"
+    "url": {{ shop.url | json }}
   }
   </script>
   <div itemprop="author" itemscope itemtype="https://schema.org/Person">
   <meta itemprop="name" content="{{ article.author }}">
-  <meta itemprop="url" content="https://hipp.mx/pages/profesionales-de-la-salud">
+  <meta itemprop="url" content="{{ shop.url }}">
 </div>
 {%- endif -%}
   {%- if article_image != blank -%}

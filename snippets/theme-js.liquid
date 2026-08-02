@@ -31,9 +31,11 @@
   <script src="{{ 'js-main-product.js' | asset_url }}" defer></script>
 {%- endif -%}
 
-{%- if template == "cart" -%}
-  <script src="{{ 'js-cart.js' | asset_url }}" defer></script>
-{%- endif -%}
+{%- comment -%}
+  El carrito NO carga su JS aqui: sections/main-cart.liquid ya carga js-main-cart.js.
+  Antes habia un <script src="js-cart.js"> que no existe en assets/ -> 404 en cada visita a /cart.
+  No renombrarlo a js-main-cart.js: duplicaria la ejecucion del entry chunk de webpack.
+{%- endcomment -%}
 
 {%- if request.page_type == 'captcha' -%}
   <script src="{{ 'theme-recaptcha.js' | asset_url }}" defer></script>
