@@ -1,0 +1,26 @@
+{%- liquid 
+  assign product_title = product.title
+  assign selected_variant = product.selected_or_first_available_variant
+  assign metafields = product.metafields.custom
+  assign etapa = metafields.etapa.value | handleize
+-%}
+
+
+<h1 class="main-product-title color-green">{{- product_title -}}</h1>
+<div class="main-product-badge-reviews">
+  {%- unless etapa == blank -%}
+    <div class="main-product-badge product-card-badge {{ etapa -}}">
+      {%- render "icon", icon: etapa -%}
+    </div>
+  {%- endunless -%}
+  <div class="main-product-reviews">
+    <div class="main-product-reviews-inner">
+      {%- render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: false, product: product -%}
+    </div>
+  </div>
+</div>
+{% unless product.template_suffix == "regalo" %}
+  <div class="main-product-price" id="price-{{ section.id }}">
+    {%- render "price", target: selected_variant -%}
+  </div>
+{% endunless %}

@@ -1,0 +1,99 @@
+{% comment %}
+===========================
+SECCIÓN: Logos con enlaces dinámicos
+===========================
+{% endcomment %}
+
+<div style="max-width:1160px;margin:auto;">
+  <div class="responsive-three-column-grid">
+    {% for block in section.blocks %}
+      <div>
+        <a href="{{ block.settings.link }}" target="_blank">
+          {% if block.settings.image != blank %}
+            <img 
+              src="{{ block.settings.image | image_url: width: 480 }}" 
+              alt="{{ block.settings.alt_text | escape }}"
+              loading="lazy"
+            >
+          {% else %}
+            <p style="color:#999;">Falta logo</p>
+          {% endif %}
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .responsive-three-column-grid,
+  .responsive-two-column-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .responsive-three-column-grid > *,
+  .responsive-two-column-grid > * {
+    text-align: center;
+    padding: 1rem;
+    flex: 1 1 30%;
+    max-width: 33.33%;
+    justify-content: center;
+    display: flex;
+  }
+  .responsive-three-column-grid img {
+    box-shadow: 3px 3px 3px gray;
+    border-radius: 20px;
+    width: 100%;
+    height: auto;
+    max-width: 200px;
+  }
+  @media (max-width: 768px) {
+    .responsive-three-column-grid > *,
+    .responsive-two-column-grid > * {
+      flex: 1 1 45%;
+      max-width: 48%;
+    }
+    .responsive-three-column-grid img {
+      max-width: 100px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Logos con enlaces",
+  "max_blocks": 10,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen del logo"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Texto alternativo",
+          "default": "Logo"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace del logo"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sucursales - Logos",
+      "category": "Secciones personalizadas"
+    }
+  ]
+}
+{% endschema %}

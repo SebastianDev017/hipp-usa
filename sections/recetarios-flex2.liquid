@@ -1,0 +1,137 @@
+{{- "css-page-hallazgos-tabs.css" | asset_url | stylesheet_tag -}}
+{{- 'css-image-with-form.css' | asset_url | stylesheet_tag -}}
+
+<div class="iwf section" data-section-id="{{- section.id -}}" data-section-type="iwf">
+  {%- if section.settings.form_title_text != blank or section.settings.text_form != blank -%}
+    <div class="iwf-content-wrapper">
+      <div class="iwf-content section-content text-center">
+        {%- unless section.settings.form_title_text == blank -%}
+          <header class="iwf-title-wrapper" data-aos="fade-up">
+            <h2 class="iwf-title section-title-richtext color-green">{{ section.settings.form_title_text }}</h2>
+          </header>
+        {%- endunless -%}
+        {%- unless section.settings.text_form == blank -%}
+          <p class="iwf-text section-title-richtext color-green" data-aos="fade-up" style="color:#1f3067 !important;">{{ section.settings.text_form }}</p>
+        {%- endunless -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="iwf-grid">
+    {% for block in section.blocks %}
+      <div class="iwf-image-wrapper iwf-image-wrapper-form {{ block.settings.custom_class }}">
+        <div class="iwf-form-wrapper iwf-form-wrapper-form">
+          <div class="iwf-form" style="z-index:1;">
+            {%- unless block.settings.form_title == blank -%}
+              {% if block.settings.form_title_url != blank %}
+                <a href="{{ block.settings.form_title_url }}" target="_blank">
+                  <p class="iwf-form-title color-green secondary-font-bold">
+                    <strong style="color:#00729B !important;">{{ block.settings.form_title }}</strong>
+                  </p>
+                </a>
+              {% else %}
+                <p class="iwf-form-title color-green secondary-font-bold">{{ block.settings.form_title }}</p>
+              {% endif %}
+            {%- endunless -%}
+            {%- comment %} Aquí puedes añadir una integración de formulario como Klaviyo si se necesita. {% endcomment -%}
+          </div>
+        </div>
+
+        {%- if block.settings.image != blank -%}
+          <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.image.alt | escape }}" class="iwf-image iwf-image-form">
+        {%- endif -%}
+
+        {%- if block.settings.button_url != blank and block.settings.button_text != blank -%}
+          <a class="logos-carousel-blue-button button"
+            href="{{ block.settings.button_url }}"
+            title="{{ block.settings.button_text }}"
+            {% if block.settings.button_style == 'outline' %}
+              style="border:1px solid #00729B; color:#00729B; background:white;"
+            {% endif %}
+          >
+            {{ block.settings.button_text }}
+          </a>
+        {%- endif -%}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Recetario - dos columnas",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Recetario - dos columnas"
+    },
+    {
+      "type": "text",
+      "id": "form_title_text",
+      "label": "Título del formulario"
+    },
+    {
+      "type": "textarea",
+      "id": "text_form",
+      "label": "Descripción del formulario"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Columna",
+      "settings": [
+        {
+          "type": "text",
+          "id": "form_title",
+          "label": "Título dentro del bloque"
+        },
+        {
+          "type": "url",
+          "id": "form_title_url",
+          "label": "Enlace del título"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen del bloque"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Texto del botón"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Enlace del botón"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Estilo del botón",
+          "options": [
+            { "value": "solid", "label": "Sólido" },
+            { "value": "outline", "label": "Contorno" }
+          ],
+          "default": "solid"
+        },
+        {
+          "type": "text",
+          "id": "custom_class",
+          "label": "Clase personalizada (opcional)"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Recetario - dos columnas",
+      "blocks": [
+        { "type": "column" },
+        { "type": "column" }
+      ]
+    }
+  ]
+}
+{% endschema %}

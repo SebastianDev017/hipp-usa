@@ -1,0 +1,102 @@
+{%- if blog.comments_enabled? -%}
+{{ 'css-main-blogpost-form.css' | asset_url | stylesheet_tag }}
+
+  <div class="article-form-row-inner">
+
+    <header class="article-form-header">
+      <h2 class="article-form-title section-title-richtext color-green">Escribe un <strong>comentario</strong></h2>
+    </header>
+
+    {% form 'new_comment', 
+      article,
+      class: 'article-form-form',
+      id: 'CommentForm'
+    %}
+      {%- liquid
+        assign post_message = 'blogs.article.success'
+        if blog.moderated? and comment.status == 'unapproved'
+          assign post_message = 'blogs.article.success_moderated'
+        endif
+      -%}
+
+      {%- if form.posted_successfully? -%}
+        <div class="form-status page-text form-status-list form__message success-message" tabindex="-1" autofocus>{% render 'icon', icon: 'success' %} {{ post_message | t }}</div>
+      {%- endif -%}
+
+      <div class="article-form-fields">
+        
+        <div class="form-field">
+          <input
+            type="text"
+            name="comment[author]"
+            id="CommentForm-author"
+            class="form-input"
+            autocomplete="name"
+            value="{{ form.author }}"
+            aria-required="true"
+            {% if form.errors contains 'author' %}
+              aria-invalid="true"
+              aria-describedby="CommentForm-author-error"
+            {% endif %}
+            placeholder="{{ 'blogs.article.name' | t }}"
+          >
+        </div>
+
+        <div class="form-field">
+          <input
+            type="email"
+            name="comment[email]"
+            id="CommentForm-email"
+            autocomplete="email"
+            class="form-input"
+            value="{{ form.email }}"
+            autocorrect="off"
+            autocapitalize="off"
+            aria-required="true"
+            {% if form.errors contains 'email' %}
+              aria-invalid="true"
+              aria-describedby="CommentForm-email-error"
+            {% endif %}
+            placeholder="{{ 'blogs.article.email' | t }}"
+          >
+          {%- if form.errors contains 'email' -%}
+            <small class="contact__field-error page-text" id="ContactForm-email-error">
+              <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+              <span class="form__message">{% render 'icon', icon: 'error' %}{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</span>
+            </small>
+          {%- endif -%}
+        </div>
+
+        <div class="form-field">
+          <textarea
+            rows="5"
+            name="comment[body]"
+            id="CommentForm-body"
+            class="text-area form-input"
+            aria-required="true"
+            {% if form.errors contains 'body' %}
+              aria-invalid="true"
+              aria-describedby="CommentForm-body-error"
+            {% endif %}
+            placeholder="{{ 'blogs.article.message' | t }}"
+          >{{ form.body }}</textarea>
+        </div>
+
+      </div>
+
+      <button class="button" >{{ 'blogs.article.post' | t }}</button>
+    {% endform %}
+
+  </div>
+
+{%- endif -%}
+
+
+
+{% schema %}
+{
+  "name": "Formulario de comentarios",
+  "class": "article-form-row",
+  "tag": "section"
+}
+{% endschema %}

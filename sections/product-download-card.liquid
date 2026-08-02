@@ -1,0 +1,571 @@
+{% comment %}
+  Sección de Producto con Descarga PDF
+  Archivo: sections/product-download-card.liquid
+{% endcomment %}
+
+<div class="product-download-section" style="
+  padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0;
+  background-color: {{ section.settings.background_color }};
+">
+  <div class="container">
+    
+    <div class="product-cards-grid">
+      {% for block in section.blocks %}
+        <div class="product-card" {{ block.shopify_attributes }}>
+          
+          {%- comment -%} Encabezado con underline {%- endcomment -%}
+          {%- if block.settings.heading != blank -%}
+            <h2 class="product-heading" style="
+              color: {{ block.settings.heading_color }};
+              border-bottom: {{ block.settings.underline_thickness }}px solid {{ block.settings.underline_color }};
+            ">
+              {{ block.settings.heading }}
+            </h2>
+          {%- endif -%}
+
+          {%- comment -%} Subtítulo {%- endcomment -%}
+          {%- if block.settings.subtitle != blank -%}
+            <p class="product-subtitle" style="color: {{ block.settings.subtitle_color }};">
+              {{ block.settings.subtitle }}
+            </p>
+          {%- endif -%}
+
+          {%- comment -%} Imagen del producto {%- endcomment -%}
+          {%- if block.settings.product_image != blank -%}
+            <div class="product-image-wrapper">
+              <img 
+                src="{{ block.settings.product_image | img_url: '600x' }}" 
+                alt="{{ block.settings.product_image.alt | escape }}"
+                loading="lazy"
+                class="product-image">
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Botón de descarga {%- endcomment -%}
+          {%- if block.settings.button_text != blank -%}
+            <div class="button-wrapper">
+              <a 
+                href="{{ block.settings.download_link }}" 
+                target="_blank"
+                class="download-button"
+                style="
+                  background-color: {{ block.settings.button_bg_color }};
+                  color: {{ block.settings.button_text_color }};
+                ">
+                {{ block.settings.button_text }}
+              </a>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Lista de características {%- endcomment -%}
+          {%- if block.settings.list_items != blank -%}
+            <ul class="features-list" style="color: {{ block.settings.list_text_color }};">
+              {% assign items = block.settings.list_items | split: '||' %}
+              {% for item in items %}
+                {%- if item != blank -%}
+                  <li style="color: {{ block.settings.checkmark_color }};">
+                    <span class="checkmark">✓</span>
+                    <span class="list-text">{{ item | strip }}</span>
+                  </li>
+                {%- endif -%}
+              {% endfor %}
+            </ul>
+          {%- endif -%}
+
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .product-download-section .container {
+    max-width: {{ section.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .product-cards-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: {{ section.settings.card_spacing }}px;
+  }
+
+  .product-card {
+    background: {{ section.settings.card_background }};
+    padding: {{ section.settings.card_padding }}px;
+    border-radius: {{ section.settings.card_border_radius }}px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-heading {
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    margin: 0 0 10px 0;
+    padding-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .product-subtitle {
+    font-size: {{ section.settings.subtitle_size }}px;
+    font-weight: {{ section.settings.subtitle_weight }};
+    margin: 0 0 25px 0;
+    line-height: 1.4;
+  }
+
+  .product-image-wrapper {
+    margin: 0 0 25px 0;
+  }
+
+  .product-image {
+    width: 100%;
+    height: auto;
+    max-width: {{ section.settings.image_max_width }}px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .button-wrapper {
+    margin: 0 0 30px 0;
+  }
+
+  .download-button {
+    display: inline-block;
+    padding: {{ section.settings.button_padding_v }}px {{ section.settings.button_padding_h }}px;
+    font-size: {{ section.settings.button_font_size }}px;
+    font-weight: {{ section.settings.button_font_weight }};
+    text-decoration: none;
+    border-radius: {{ section.settings.button_border_radius }}px;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+
+  .download-button:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+
+  .features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+  }
+
+  .features-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    font-size: {{ section.settings.list_font_size }}px;
+    line-height: 1.5;
+  }
+
+  .features-list .checkmark {
+    font-size: {{ section.settings.checkmark_size }}px;
+    font-weight: bold;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .features-list .list-text {
+    flex: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .product-cards-grid {
+      grid-template-columns: repeat({{ section.settings.columns_tablet }}, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .product-cards-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .product-heading {
+      font-size: calc({{ section.settings.heading_size }}px * 0.8);
+    }
+
+    .product-subtitle {
+      font-size: calc({{ section.settings.subtitle_size }}px * 0.9);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Tarjetas de Producto",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración General"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo de la sección",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Color de fondo de las tarjetas",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Ancho del contenedor",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaciado superior",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Layout de Grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas en escritorio",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columnas en tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "label": "Espaciado entre tarjetas",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Padding interno de tarjetas",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Redondeo de tarjetas",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Estilos de Texto"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del encabezado",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Peso del encabezado",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Tamaño del subtítulo",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "subtitle_weight",
+      "label": "Peso del subtítulo",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "list_font_size",
+      "label": "Tamaño de texto de lista",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "checkmark_size",
+      "label": "Tamaño del checkmark",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Imagen"
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "label": "Ancho máximo de imagen",
+      "min": 200,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_v",
+      "label": "Padding vertical del botón",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_h",
+      "label": "Padding horizontal del botón",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Tamaño de fuente del botón",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Peso de fuente del botón",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Redondeo del botón",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_card",
+      "name": "Tarjeta de Producto",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Encabezado"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título principal",
+          "default": "Fórmula Orgánica"
+        },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": "Color del título",
+          "default": "#c2185b"
+        },
+        {
+          "type": "color",
+          "id": "underline_color",
+          "label": "Color del subrayado",
+          "default": "#c2185b"
+        },
+        {
+          "type": "range",
+          "id": "underline_thickness",
+          "label": "Grosor del subrayado",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "unit": "px",
+          "default": 3
+        },
+        {
+          "type": "header",
+          "content": "Subtítulo"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle",
+          "label": "Texto del subtítulo",
+          "default": "Fórmula de continuación de 1 a 3 años"
+        },
+        {
+          "type": "color",
+          "id": "subtitle_color",
+          "label": "Color del subtítulo",
+          "default": "#c2185b"
+        },
+        {
+          "type": "header",
+          "content": "Imagen"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Imagen del producto"
+        },
+        {
+          "type": "header",
+          "content": "Botón de Descarga"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Texto del botón",
+          "default": "Descarga aquí"
+        },
+        {
+          "type": "url",
+          "id": "download_link",
+          "label": "Enlace de descarga (PDF)"
+        },
+        {
+          "type": "color",
+          "id": "button_bg_color",
+          "label": "Color de fondo del botón",
+          "default": "#c2185b"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "Color de texto del botón",
+          "default": "#ffffff"
+        },
+        {
+          "type": "header",
+          "content": "Lista de Características"
+        },
+        {
+          "type": "textarea",
+          "id": "list_items",
+          "label": "Items de la lista (separar con ||)",
+          "default": "Probiótico: GOS es un prebiótico orgánico||Sin azúcares añadidos: Solo contiene 100% lactosa",
+          "info": "Separa cada item con || (doble barra vertical)"
+        },
+        {
+          "type": "color",
+          "id": "checkmark_color",
+          "label": "Color del checkmark",
+          "default": "#c2185b"
+        },
+        {
+          "type": "color",
+          "id": "list_text_color",
+          "label": "Color del texto de lista",
+          "default": "#333333"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tarjetas de Producto",
+      "blocks": [
+        {
+          "type": "product_card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

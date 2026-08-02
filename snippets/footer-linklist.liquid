@@ -1,0 +1,19 @@
+<ul class="footer-menu list-menu">
+
+	{%- for link in linklists[linklist].links -%}
+
+		{%- capture target -%}
+			{%- if link.url contains "tel:" or link.url contains 'http' or link.url contains 'maps/' or link.url contains "mailto:" -%}
+				target="_blank"
+			{%- endif -%}
+		{%- endcapture -%}
+
+		<li class="footer-menu-item">
+			<a class="footer-menu-link{% if link.current %} active{% endif %}" href="{{- link.url -}}" title="{{- link.title | strip -}}" {{ target }} {% if link.current %} aria-current="page"{% endif %}>
+				{{- link.title | strip -}}
+			</a>
+		</li>
+
+	{%- endfor -%}
+
+</ul>

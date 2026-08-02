@@ -1,0 +1,30 @@
+{% liquid
+  assign button_link = settings.continue_shopping_button_link
+  assign button_label = settings.continue_shopping_button_label
+%}
+
+<section class="page">
+  <article class="page-content">
+    <header class="page-header">
+      <h1 class="page-title">{{ 'templates.404.title' | t }}</h1>
+    </header>
+    
+    <div class="page-text page-text-fit text-center">
+      <p>{{ 'templates.404.subtext' | t }}</p>
+    </div>
+  
+    {%- if button_link != blank and button_label != blank -%}
+      <div class="button-container center page-button-wrapper">
+        <a class="button" href="{{- button_link -}}">
+          {{- button_label -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </article>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main-404.name"
+}
+{% endschema %}

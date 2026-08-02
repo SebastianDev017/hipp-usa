@@ -1,0 +1,13 @@
+{%- liquid 
+  assign metafields = product.metafields.custom
+  assign url_etiqueta = metafields.etiqueta.value
+-%}
+
+{%- if url_etiqueta != blank -%}
+  <div class="main-product-external-button-wrapper product-card-external-button-wrapper {{ custom_class -}}">
+    <a class="main-product-external-button product-card-external-button" href="{{- url_etiqueta -}}" target="_blank">
+      {%- render "icon", icon: "download" -%}
+      <span class="product-card-external-button-label">Descargar etiqueta</span>
+    </a>
+  </div>
+{%- endif -%}

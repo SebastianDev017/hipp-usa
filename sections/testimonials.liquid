@@ -1,0 +1,123 @@
+{{- 'css-testimonials.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'js-testimonials.js' | asset_url -}}" defer></script>
+
+{%- liquid 
+	assign title = section.settings.title
+	assign button_label = section.settings.button_label
+	assign button_link = section.settings.button_link
+	assign blocks = section.blocks
+	assign blocks_size = blocks | size
+	assign has_button = false
+	
+	if button_label != blank and button_link != blank
+		assign has_button = true
+	endif
+-%}
+
+<div class="testimonials section{% if has_button == false %} without-button{% endif %}" data-slides="{{- blocks_size -}}" data-section-id="{{- section.id -}}" data-section-type="testimonials">
+	<div class="testimonials-content" data-aos="fade-up">
+
+		{% unless title == blank %}
+			<header class="testimonials-header section-content text-center">
+				<h2 class="testimonials-title section-title-richtext color-green">{{- title -}}</h2>
+			</header>
+		{% endunless %}
+
+		{%- if blocks_size > 0 -%}
+			<div class="testimonials-swiper-container">
+				<div class="testimonials-swiper-wrapper">
+					<div class="testimonials-swiper swiper text-center">
+						<div class="swiper-wrapper">
+							{%- render 'testimonials-item' for blocks as block -%}
+						</div>
+					</div>
+					<div class="testimonials-swiper-button swiper-button prev">
+						{%- render 'icon', icon: 'arrow-prev-rounded' -%}
+					</div>
+					<div class="testimonials-swiper-button swiper-button next">
+						{%- render 'icon', icon: 'arrow-next-rounded' -%}
+					</div>
+				</div>
+			</div>
+		{%- endif -%}
+
+		{%- if has_button -%}
+			{%- capture target -%}{%- if button_link contains 'http' or button_link contains 'tel:' or button_link contains 'maps/' or button_link contains 'mailto:' -%}target="_blank"{%- endif -%}{%- endcapture -%}
+			<div class="testimonials-button-wrapper button-wrapper center">
+				<a class="button" href="{{- button_link -}}" {{ target -}}>{{- button_label -}}</a>
+			</div>
+		{%- endif -%}
+
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Testimoniales",
+	"tag": "section",
+	"class": "testimonials-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Contenido"
+		},
+		{
+			"type": "richtext",
+			"id": "title",
+			"label": "Título"
+		},
+		{
+			"type": "header",
+			"content": "Botón"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"label": "Texto"
+		},
+		{
+			"type": "url",
+			"id": "button_link",
+			"label": "Enlace"
+		}
+	],
+	"max_blocks": 10,
+	"blocks": [
+		{
+			"name": "Testimonial",
+			"type": "testimonial",
+			"settings": [
+				{
+					"type": "header",
+					"content": "Imagen"
+				},
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Imagen"
+				},
+				{
+					"type": "header",
+					"content": "Contenido"
+				},
+				{
+					"type": "text",
+					"id": "text",
+					"label": "Texto"
+				},
+				{
+					"type": "text",
+					"id": "author",
+					"label": "Autor"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"category": "Homepage",
+			"name": "Testimoniales"
+		}
+	]
+}
+{% endschema %}

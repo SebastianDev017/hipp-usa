@@ -1,0 +1,174 @@
+{%- liquid 
+  assign has_only_default_variant = product.has_only_default_variant
+  assign metafields = product.metafields.custom
+  assign selected_variant_is_available = selected_variant.available
+  assign selected_variant_metafields = selected_variant.metafields.custom
+
+  comment 
+  --- Regalo ---
+  endcomment
+  assign gift_label = section.settings.gift_label
+  assign gift_1 = metafields.regalo_1
+  assign gift_2 = metafields.regalo_2
+  assign selected_variant_gift = selected_variant_metafields.regalo.value | handleize
+  assign product_has_gift = false
+  assign selected_variant_has_gift = false
+
+  if gift_1 != blank or gift_2 != blank
+    unless product.has_only_default_variant
+      assign product_has_gift = true
+    endunless
+  endif
+  
+  if selected_variant_gift == "si"
+    assign selected_variant_has_gift = true
+  endif
+
+  comment 
+  --- Suscripción ---
+  endcomment
+  assign subscription_text = metafields.texto_de_suscripcion
+-%}
+
+<noscript>
+  <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+    <label class="form__label" for="Variants-{{ section.id }}">{{ "products.product.product_variants" | t }}</label>
+    <div class="select">
+      <select class="select__select" data-productid="{{ product.id }}" form="product-form" id="Variants-{{ section.id }}" name="id">
+        {%- for variant in product.variants -%}
+          <option {%- if variant == selected_variant -%}selected="selected"{%- endif -%} {%- if variant.available == false -%}disabled{% endif %} value="{{ variant.id }}">
+            {{ variant.title }}
+            {%- if variant.available == false -%}
+              - {{ "products.product.sold_out" | t }}{%- endif -%}
+            - {{ variant.price | money | strip_html }}
+          </option>
+        {%- endfor -%}
+      </select>
+    </div>
+  </div>
+</noscript>
+
+<product-form>
+  {%- form "product", product, data-productid: product.id, id: product_form_id, class: "main-product-form form", novalidate: "novalidate", data-type: "add-to-cart-form" -%}
+    <input data-productid="{{ product.id }}" name="id" type="hidden" value="{{ selected_variant.id }}">
+    <input autocomplete="off" id="quantity" min="1" name="quantity" pattern="[0-9]*" type="hidden" value="1">
+
+    <div class="product-form-recharge product-form-box rc-widget-injection-parent no-limitsify{% unless product.has_only_default_variant %} with-variants{% else %} without-variants{% endunless %}" id="recharge-widget"></div>
+    <div class="product-form-steps">
+      <div class="product-form-step step-1" data-step="select-variant">
+        <div class="product-form-variants product-form-box{% if product.has_only_default_variant %} hidden{% endif %}">
+          <variant-radios class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}">
+            {%- for option in product.options_with_values -%}
+              {%- assign option_name = option.name | handleize -%}
+
+              <fieldset class="js product-form-fieldset">
+                <p class="product-form-legend">{{- option.name -}}</p>
+                <div class="product-variants-grid {{ option_name }} color-green">
+                  {%- for value in option.values -%}
+                    <input class="product-form-radio" type="radio" id="{{- section.id -}}-{{- option.name -}}-{{- forloop.index0 -}}" name="{{ option.name }}" data-product-option value="{{- value | escape -}}" form="product-form-{{ section.id }}" {%- if option.selected_value == value -%}checked{% endif -%}>
+                    <label class="product-variant {{ option_name -}}" data-title="{{- value -}}" for="{{ section.id }}-{{ option.name }}-{{ forloop.index0 }}">
+                      {{- value -}}
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endfor -%}
+            <script type="application/json">
+              [
+              {%- for variant in product.variants -%}
+                {
+                "id": {{- variant.id -}},
+                "title": {{- variant.title | json -}},
+                "option1": {{- variant.option1 | json -}},
+                "option2": {{- variant.option2 | json -}},
+                "option3": {{- variant.option3 | json -}},
+                "sku": {{- variant.sku | json -}},
+                "requires_shipping": {{- variant.requires_shipping -}},
+                "taxable": {{- variant.taxable -}},
+                "featured_image": {{- variant.featured_image | json -}},
+                "available": {{- variant.available -}},
+                "name": {{- variant.name | json -}},
+                "options": {{- variant.options | json -}},
+                "price": {{- variant.price -}},
+                "compare_at_price": {{- variant.compare_at_price | json -}},
+                "inventory_management": "{{- variant.inventory_management -}}",
+                "featured_media": {{- variant.featured_media | json -}},
+                "inventory_policy": {{- variant.inventory_policy | json -}},
+                "inventory_quantity": {{- variant.inventory_quantity -}},
+                "regalo": "{{- variant.metafields.custom.regalo.value | handleize -}}",
+                "suscripcion": "{{- variant.metafields.custom.suscripcion.value | handleize }}"
+                }
+                {%- unless forloop.last -%}
+                  ,
+                {%- endunless -%}
+              {%- endfor -%}
+              ]
+            </script>
+          </variant-radios>
+        </div>
+        {%- if product_has_gift -%}
+          <div class="product-form-gifts product-form-box{% if selected_variant_has_gift == false or selected_variant_is_available == false %} hidden{% endif %}">
+            {%- unless gift_label == blank -%}
+              <p class="product-form-legend">{{- gift_label -}}</p>
+            {%- endunless -%}
+            <div class="product-form-gifts-grid">
+              {%- if gift_1 != blank -%}
+                {%- render "main-product-form-gift", gift: gift_1.value -%}
+              {%- endif -%}
+              {%- if gift_2 != blank -%}
+                {%- render "main-product-form-gift", gift: gift_2.value -%}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="product-form-step step-2 color-green hidden" data-step="select-recurrency">
+        <div class="product-form-subscription-options product-form-box">
+          {%- if subscription_text != blank -%}
+            <p class="product-form-legend">{{- subscription_text -}}</p>
+          {%- endif -%}
+          <div class="product-form-subscription-options-grid"></div>
+        </div>
+      </div>
+      <div class="product-form-step step-3 hidden" data-step="klaviyo-form">
+        <div class="product-form-klaviyo product-form-box">
+          <div class="product-form-klaviyo-form" id="klaviyo-birthday-form">
+            <div class="klaviyo-form-VnkEML"></div>
+          </div>
+        </div>
+      </div>
+      <div class="product-form-step step-4 hidden" data-step="rebuy-widget">
+        <div class="product-form-rebuy product-form-box">
+          <p class="product-form-legend step-4-form-legend">Agregar algún otro producto</p>
+          <div class="product-form-rebuy-widget">
+            {%- render "rebuy-widget-cross-sell" -%}
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- unless template.suffix == "regalo" -%}
+      <div class="product-form-button">
+        <button class="product-form-next-step-button product-form-button button secondary-button hidden{% if has_only_default_variant == false %} without-border-top-radius{% endif %}" data-next-step="select-recurrency" id="next-step-button" type="button">
+          {{- "Siguiente" -}}
+        </button>
+        <button class="product-form__submit product-form-button button secondary-button{% if has_only_default_variant == false %} without-border-top-radius{% endif %}" type="submit" name="add" id="add-to-cart-button" {%- if selected_variant.available == false -%} disabled {%- endif -%}>
+          {%- if selected_variant.available -%}
+            {{ "products.product.add_to_cart" | t }}
+          {%- else -%}
+            {{ "products.product.sold_out" | t }}
+          {%- endif -%}
+        </button>
+      </div>
+    {%- endunless -%}
+  {%- endform -%}
+</product-form>
+
+{%- comment -%} Garantías + métodos de pago debajo del formulario {%- endcomment -%}
+{%- render 'product-trust-badges', section: section -%}
+
+{% style %}
+  label.product-variant.numero-de-cajas[data-title="4 Suscripción"] {
+  display: none;
+}
+
+{% endstyle %}

@@ -1,0 +1,13 @@
+<div data-rebuy-id="72912" data-rebuy-shopify-product-ids="{{ product.id }}"></div>
+
+<script id="rebuy-widget-72912" type="text/template">
+  <div class="rebuy-widget" v-bind:class="['widget-type-' + config.type.replace('_','-'), 'widget-display-' + config.display_type, products.length > 0 ? 'is-visible' : 'is-hidden', 'widget-layout-' + currentLayout()]" v-bind:id="'rebuy-widget-' + id" v-cloak v-on:click="stopPropagation($event)">
+
+    <div class="rebuy-products-grid products-grid js-product-cards-grid" v-bind:class="layoutClasses">
+
+      <div class="rebuy-product-card hidden" v-for="(product, product_index) in products" v-bind:data-product-url="learnMoreURL(product)"></div>
+
+    </div>
+
+  </div>
+</script>

@@ -1,0 +1,123 @@
+{{- "css-page-ingredientes-tabs.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-page-ingredientes-tabs.js' | asset_url -}}"></script>
+
+{%- liquid 
+  assign blocks_size = section.blocks | size
+-%}
+
+{%- if blocks_size > 0 -%}
+  <div class="ings" data-section-id="{{- section.id -}}" data-section-type="page-ingredientes-tabs">
+    <div class="ings-tabs">
+      <div class="ings-tabs-carousel-wrapper">
+        <div class="ings-tabs-carousel swiper" data-slides="{{- blocks_size -}}">
+          <div class="swiper-wrapper">
+            {%- for block in section.blocks -%}
+              {%- assign title = block.settings.title -%}
+              {%- assign block_id = title | handleize | append: "-" | append: block.id -%}
+
+              <div class="ings-tab swiper-slide">
+                <button class="ings-tab-button" data-block="{{- block_id -}}" role="tab" type="button">
+                  <div class="ings-tab-button-content">
+                    <span class="ings-tab-title">{{- title -}}</span>
+                  </div>
+                </button>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+        <button class="ings-tabs-swiper-button swiper-button prev">
+          {%- render "icon", icon: "arrow-prev-rounded" -%}
+        </button>
+        <button class="ings-tabs-swiper-button swiper-button next">
+          {%- render "icon", icon: "arrow-next-rounded" -%}
+        </button>
+      </div>
+    </div>
+
+    <div class="ings-blocks">
+      {%- for block in section.blocks -%}
+        {%- liquid 
+          assign sections_quantity = block.settings.sections_quantity
+          assign title = block.settings.title
+          assign section_title = block.settings.section_title
+          assign block_id = title | handleize | append: "-" | append: block.id
+        -%}
+
+        {%- capture block_title -%}
+          {% assign splitted_title = section_title | split: " " %}
+          {% for word in splitted_title %}
+            {% if forloop.first %}
+              <span class="secondary-font-bold">{{ word }}</span>
+            {% else %}
+              {{ word }}
+            {% endif %}
+          {% endfor %}
+        {%- endcapture -%}
+
+        <div class="ings-block" data-block="{{- block_id -}}" data-sections-quantity="{{ sections_quantity }}">
+          {% comment %} <div class="ings-block-content section-content">
+            {%- if block_title != blank -%}
+              <header class="ings-block-header text-center">
+                <h2 class="ings-block-title color-green">{{- block_title -}}</h2>
+              </header>
+            {%- endif -%}
+
+            {%- if desktop_image != blank -%}
+              <div class="ings-block-images">
+                <picture>
+                  {%- if mobile_image != blank -%}
+                    <source media="(max-width: 420px)" srcset="{{- mobile_image | image_url: width: 500 -}}">
+                    <source media="(max-width: 680px)" srcset="{{- mobile_image | image_url: width: 800 -}}">
+                  {%- else -%}
+                    <source media="(max-width: 420px)" srcset="{{- desktop_image | image_url: width: 500 -}}">
+                    <source media="(max-width: 680px)" srcset="{{- desktop_image | image_url: width: 800 -}}">
+                  {%- endif -%}
+                  <source media="(max-width: 1024px)" srcset="{{- desktop_image | image_url: width: 1100 -}}">
+                  <img alt="{{- desktop_image.alt -}}" src="{{- desktop_image | image_url: width: 1500 -}}">
+                </picture>
+              </div>
+            {%- endif -%}
+          </div> {% endcomment %}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{%- schema -%}
+  {
+    "name": "Ingredientes - Pestañas",
+    "tag": "section",
+    "class": "ings-section",
+    "max_blocks": 4,
+    "blocks": [
+      {
+        "type": "text",
+        "name": "Pestaña",
+        "settings": [
+          {
+            "type": "range",
+            "id": "sections_quantity",
+            "min": 0,
+            "max": 10,
+            "step": 1,
+            "unit": "#",
+            "label": "Número de secciones",
+            "default": 1
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Título de la pestaña"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Ingredientes - Pestañas",
+        "category": "Page Ingredientes"
+      }
+    ]
+  }
+{% endschema %}

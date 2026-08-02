@@ -1,0 +1,128 @@
+{{- "css-featured-collection-white.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-featured-collection-white.js' | asset_url -}}"></script>
+
+{%- liquid 
+  assign collection = section.settings.collection
+  assign products = collection.products
+  assign collection_size = products | size
+  assign title_1 = section.settings.title_1
+  assign title_2 = section.settings.title_2
+  assign text = section.settings.text
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+  assign has_button = false
+  
+  if button_label != blank and button_link != blank
+    assign has_button = true
+  endif
+-%}
+
+<div class="featured-collection-white section" data-section-id="{{- section.id -}}" data-section-type="featured-collection-white">
+  <div class="featured-collection-white-content section-content">
+
+    <div class="featured-collection-white-info" data-aos="fade-up">
+      <div class="featured-collection-white-info-inner">
+        
+        {%- unless title_1 == blank -%}
+          <p class="featured-collection-white-title-1 primary-font-bold color-dark-blue">{{- title_1 -}}</p>
+        {%- endunless -%}
+  
+        {%- unless title_2 == blank -%}
+          <header class="featured-collection-white-title-2-wrapper">
+            <h2 class="featured-collection-white-title-2 section-title-richtext color-dark-blue">{{- title_2 -}}</h2>
+          </header>
+        {%- endunless -%}
+  
+        {%- unless text == blank -%}
+          <div class="featured-collection-white-text-wrapper">
+            <p class="featured-collection-white-text color-dark-blue">{{- text -}}</p>
+          </div>
+        {%- endunless -%}
+  
+        {%- if has_button -%}
+          {%- capture target -%}
+            {%- if button_link contains "http" or button_link contains "tel:" or button_link contains "maps/" or button_link contains "mailto:" -%}target="_blank"{%- endif -%}
+          {%- endcapture -%}
+          <div class="featured-collection-white-button-wrapper">
+            <a class="featured-collection-white-button button" href="{{- button_link -}}" title="{{- button_label -}}" {{ target }}>{{- button_label -}}</a>
+          </div>
+        {%- endif -%}
+
+      </div>
+    </div>
+
+    <div class="featured-collection-white-swiper-wrapper js-product-cards-grid" data-products="{{- collection_size -}}" data-aos="fade-up" data-aos-delay="300">
+      {%- if collection != blank and collection_size > 0 -%}
+        <div class="featured-collection-white-swiper swiper">
+          <div class="swiper-wrapper">
+            {% for product in products %}
+              <div class="featured-collection-white-slide swiper-slide">
+                {%- render "product-card", product: product -%}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <button class="featured-collection-white-swiper-button swiper-button prev" type="button" role="button" aria-label="Previous">
+          {%- render "icon", icon: "arrow-prev-rounded" -%}
+        </button>
+        <button class="featured-collection-white-swiper-button swiper-button next" type="button" role="button" aria-label="Next">
+          {%- render "icon", icon: "arrow-next-rounded" -%}
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{%- schema -%}
+  {
+    "name": "Colección destacada - (B)",
+    "tag": "section",
+    "class": "featured-collection-white-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Colección"
+      },
+      {
+        "type": "text",
+        "id": "title_1",
+        "label": "Título 1"
+      },
+      {
+        "type": "richtext",
+        "id": "title_2",
+        "label": "Título 2"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      },
+      {
+        "type": "header",
+        "content": "Botón"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Texto"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Enlace"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Homepage",
+        "name": "Colección destacada - (Blanco)"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,123 @@
+<div data-rebuy-id="72905" data-rebuy-shopify-product-ids="{{ product.id }}" id="product-fbt-widget"></div>
+
+{%- capture widget_template -%}
+	<script id="rebuy-widget-72905" type="text/template">
+		<div class="rebuy-widget" v-bind:class="['widget-type-' + config.type.replace('_','-'), products.length > 0 ? 'is-visible' : 'is-hidden']" v-bind:id="'rebuy-widget-' + id" v-cloak v-on:click="stopPropagation($event)">
+
+			<div class="rebuy-widget-container">
+				<div class="rebuy-widget-content">
+
+					<h4 class="super-title" v-html="config.language.super_title" v-if="config.language.super_title != ''"></h4>
+
+					<h3 class="primary-title" v-html="config.language.title" v-if="config.language.title != ''"></h3>
+
+					<div class="description" v-html="config.language.description" v-if="config.language.description != ''"></div>
+
+					<div class="rebuy-bundle">
+
+						<div class="rebuy-bundle__images">
+
+							<div class="rebuy-bundle__image" v-bind:class="[product.handle, 'product-id-' + product.id, cartHasProduct(product) ? 'cart-has-item' : '', productTagClasses(product)]" v-for="(product, index) in products" v-if="product.selected">
+								<a class="rebuy-bundle__image-item" v-bind:class="[hasLearnMore() && !isInputProduct(product) ? 'clickable' : '' ]" v-bind:href="learnMoreURL(product)" v-bind:style="imageStyles" v-on:click="learnMore(product);">
+									<img v-bind:alt="product.title" v-bind:src="itemImage(product, product.selected_variant, '400x400')">
+								</a>
+								<div class="rebuy-bundle__image-divider">
+									<i class="far fa-plus"></i>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="rebuy-bundle__items">
+
+
+							<div class="rebuy-product-block" v-bind:class="[product.handle, 'product-id-' + product.id, cartHasProduct(product) ? 'cart-has-item' : '', productTagClasses(product), isInputProduct(product) ? 'is-input-product' : '' ,product.selected ? 'is-selected': '']" v-for="(product, product_index) in products">
+
+								<div class="rebuy-product-info">
+									<div class="rebuy-product-checkbox">
+										<label class="rebuy-checkbox-label">
+											<input class="checkbox-input rebuy-checkbox" type="checkbox" v-model="product.selected" />
+										</label>
+									</div>
+									<div class="rebuy-product-main-info">
+										<strong class="rebuy-product-label" v-html="'This item:'" v-if="isInputProduct(product)"></strong>
+										<a class="rebuy-product-title" v-bind:alt="'View ' + product.title" v-bind:class="[hasLearnMore() && !isInputProduct(product) ? 'clickable' : '']" v-bind:href="learnMoreURL(product)" v-html="product.title" v-on:click="learnMore(product);"></a>
+										<div class="rebuy-variant-title" v-html="product.selected_variant.title" v-if="showVariantTitle(product)"></div>
+										<div class="rebuy-product-review" v-if="hasProductReviews(product)">
+											<span class="rebuy-star-rating">
+												<span class="rebuy-star-rating-background"></span>
+												<span class="rebuy-star-rating-foreground" v-bind:style="{ width: productReviewRatingPercentage(product) }"></span>
+											</span>
+											<span class="rebuy-review-count" v-html="productReviewCount(product)"></span>
+										</div>
+
+										<div class="rebuy-product-description" v-html="text(product.body_html)" v-if="showProductDescription(product)"></div>
+
+										<div class="rebuy-product-options" v-if="showVariantSelect(product)">
+											<select class="rebuy-select" :class="{ hide : settings.view_options.variant_selector == 'buttons' }" :id="id + '-' + 'select' + '-' + product_index" v-model="product.selected_variant_id" v-on:change="selectVariant(product)">
+												<option v-bind:value="variant.id" v-for="variant in product.variants">[[ variant.title ]]</option>
+											</select>
+
+											<div class="rebuy-color-swatches" v-for="(option, option_index) in product.options" v-if="option.name == 'Color' && displayColorSwatches()">
+												<div class="rebuy-color-swatch" v-for="(value, value_index) in option.values">
+													<input class="rebuy-color-input hide" :checked="value_index == 0" :id="id + '-color-' + option_index + '-' + value + '-' + value_index" :name="id + '-color-' + product_index" :value="value" type="radio" v-on:change="selectVariantByColor(product, value, product_index)">
+													<label class="rebuy-color-label" :for="id + '-color-' + option_index + '-' + value + '-' + value_index" :style="{ backgroundColor: value }" :title="value"></label>
+												</div>
+											</div>
+
+											<div class="mt-10 rebuy-size-swatches" v-for="(option, option_index) in product.options" v-if="option.name == 'Size' && settings.view_options.variant_selector == 'buttons'">
+												<div class="rebuy-size-swatch" v-for="(value, value_index) in option.values">
+													<input class="rebuy-size-input hide" :checked="value_index == 0" :id="id + '-size-' + product_index + '-' + value" :name="id + '-size-' + product_index" :value="value" type="radio" v-on:change="selectVariantBySize(product, value, product_index)">
+													<label class="rebuy-size-label" :for="id + '-size-' + product_index + '-' + value">{{ value }}</label>
+												</div>
+											</div>
+										</div>
+
+										<div class="rebuy-product-price">
+											<div v-if="variantOnSale(product, product.selected_variant)">
+												<span class="rebuy-money compare-at" v-html="formatMoney(variantCompareAtPrice(product, product.selected_variant))"></span>
+												<span class="rebuy-money sale" v-html="formatMoney(variantPrice(product, product.selected_variant))"></span>
+											</div>
+											<div v-if="!(variantOnSale(product, product.selected_variant))">
+												<span class="rebuy-money" v-html="formatMoney(variantPrice(product, product.selected_variant))"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+						</div>
+
+						<div class="rebuy-bundle__actions" v-if="subtotal() > 0">
+
+							<div class="rebuy-bundle__actions-price">
+								<strong class="rebuy-bundle__actions-price-label">Precio total:</strong>
+
+								<div class="rebuy-bundle__actions-price-value" v-if="bundleOnSale()">
+									<span class="rebuy-money compare-at" v-html="formatMoney(compareAtSubtotal())"></span>
+									<span class="rebuy-money sale" v-html="formatMoney(subtotal())"></span>
+								</div>
+								<div class="rebuy-bundle__actions-price-value" v-if="!(bundleOnSale())">
+									<span class="rebuy-money" v-html="formatMoney(subtotal())"></span>
+								</div>
+							</div>
+
+							<div class="rebuy-bundle__actions-buttons">
+								<button class="rebuy-button" type="button" v-on:click="addSelectedProductsToCart()">
+									<span v-html="buttonWidgetLabel()"></span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</script>
+{%- endcapture -%}
+
+{%- liquid
+	assign open = "{{"
+	assign end = "}}"
+	echo widget_template | replace: "[[", open | replace: "]]", end
+-%}

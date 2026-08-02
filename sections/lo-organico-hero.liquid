@@ -1,0 +1,124 @@
+{%- liquid
+  assign uid = section.id | replace: '-', '' | downcase
+  assign s = section.settings
+-%}
+
+<section class="lorg lorg-{{ uid }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="lo-organico-hero"
+         style="
+           --lorg-bg: {{ s.bg_color }};
+           --lorg-title-font: &quot;{{ s.title_font_family }}&quot;;
+           --lorg-title-color: {{ s.title_color }};
+           --lorg-title-size-d: {{ s.title_size_desktop }}px;
+           --lorg-title-size-m: {{ s.title_size_mobile }}px;
+           --lorg-title-lh: {{ s.title_line_height }};
+           --lorg-img-max: {{ s.image_max_width }}px;
+           --lorg-gap-d: {{ s.gap_desktop }}px;
+           --lorg-gap-m: {{ s.gap_mobile }}px;
+           --lorg-max-width: {{ s.content_max_width }}px;
+           --lorg-pad-top-d: {{ s.padding_top_desktop }}px;
+           --lorg-pad-bottom-d: {{ s.padding_bottom_desktop }}px;
+           --lorg-pad-top-m: {{ s.padding_top_mobile }}px;
+           --lorg-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+         ">
+
+  <div class="lorg-inner">
+
+    {%- if s.title != blank -%}
+      <h1 class="lorg-title">{{ s.title }}</h1>
+    {%- endif -%}
+
+    {%- if s.svg_asset != blank -%}
+      <div class="lorg-media">
+        <img class="lorg-media-img" src="{{ s.svg_asset | asset_url }}" alt="{{ s.image_alt | escape }}" loading="lazy">
+      </div>
+    {%- elsif s.image != blank -%}
+      <div class="lorg-media">
+        <img class="lorg-media-img" src="{{ s.image | image_url: width: 1600 }}" alt="{{ s.image.alt | default: s.image_alt | escape }}" loading="lazy">
+      </div>
+    {%- endif -%}
+
+  </div>
+
+</section>
+
+{% style %}
+.lorg-{{ uid }} {
+  background-color: var(--lorg-bg, #e8efe2);
+  padding: var(--lorg-pad-top-m, 40px) 20px var(--lorg-pad-bottom-m, 40px);
+}
+
+.lorg-{{ uid }} .lorg-inner {
+  max-width: var(--lorg-max-width, 720px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lorg-gap-m, 24px);
+  text-align: center;
+}
+
+.lorg-{{ uid }} .lorg-title {
+  font-family: var(--lorg-title-font, "Advert Bold"), var(--secondary-font-bold, Georgia, serif);
+  font-weight: 700;
+  font-size: var(--lorg-title-size-m, 40px);
+  line-height: var(--lorg-title-lh, 1.1);
+  color: var(--lorg-title-color, #1f5a2c);
+  margin: 0;
+}
+
+.lorg-{{ uid }} .lorg-media { width: 100%; }
+.lorg-{{ uid }} .lorg-media-img {
+  display: block;
+  width: 100%;
+  max-width: var(--lorg-img-max, 560px);
+  height: auto;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .lorg-{{ uid }} { padding: var(--lorg-pad-top-d, 72px) 40px var(--lorg-pad-bottom-d, 72px); }
+  .lorg-{{ uid }} .lorg-inner { gap: var(--lorg-gap-d, 36px); }
+  .lorg-{{ uid }} .lorg-title { font-size: var(--lorg-title-size-d, 56px); }
+}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Lo orgánico sí importa",
+  "tag": "section",
+  "class": "lorg-section",
+  "settings": [
+    { "type": "header", "content": "📝 Título (H1)" },
+    { "type": "inline_richtext", "id": "title", "label": "Título", "default": "Lo orgánico, SÍ importa" },
+    { "type": "text", "id": "title_font_family", "label": "Fuente del título", "info": "Nombre exacto de la familia tipográfica. Debe estar cargada en el tema.", "default": "Advert Bold" },
+    { "type": "range", "id": "title_size_desktop", "label": "Tamaño del título — Escritorio", "min": 32, "max": 80, "step": 2, "unit": "px", "default": 56 },
+    { "type": "range", "id": "title_size_mobile", "label": "Tamaño del título — Móvil", "min": 24, "max": 56, "step": 1, "unit": "px", "default": 40 },
+    { "type": "range", "id": "title_line_height", "label": "Interlineado del título", "min": 1, "max": 1.6, "step": 0.1, "default": 1.1 },
+    { "type": "color", "id": "title_color", "label": "Color del título", "default": "#1f5a2c" },
+
+    { "type": "header", "content": "🖼 Ilustración (SVG)" },
+    { "type": "paragraph", "content": "Recomendado: sube el SVG a los archivos del TEMA (assets) y escribe su nombre aquí (ej. lo-organico.svg). Así se ve vectorial y nítido en cualquier tamaño." },
+    { "type": "text", "id": "svg_asset", "label": "Nombre del SVG en assets", "info": "Ej.: lo-organico.svg" },
+    { "type": "image_picker", "id": "image", "label": "…o una imagen (PNG/JPG)", "info": "Alternativa si no usas SVG en assets." },
+    { "type": "text", "id": "image_alt", "label": "Texto alternativo de la imagen" },
+    { "type": "range", "id": "image_max_width", "label": "Ancho máximo de la ilustración", "min": 200, "max": 900, "step": 20, "unit": "px", "default": 560 },
+
+    { "type": "header", "content": "🎨 Fondo" },
+    { "type": "color", "id": "bg_color", "label": "Color de fondo", "default": "#e8efe2" },
+
+    { "type": "header", "content": "📐 Espaciado" },
+    { "type": "range", "id": "content_max_width", "label": "Ancho máximo del contenido", "min": 400, "max": 1000, "step": 20, "unit": "px", "default": 720 },
+    { "type": "range", "id": "gap_desktop", "label": "Espacio título ↔ imagen — Escritorio", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 36 },
+    { "type": "range", "id": "gap_mobile", "label": "Espacio título ↔ imagen — Móvil", "min": 0, "max": 64, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding_top_desktop", "label": "Espaciado superior — Escritorio", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Espaciado inferior — Escritorio", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Espaciado superior — Móvil", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Espaciado inferior — Móvil", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "presets": [
+    { "name": "Lo orgánico sí importa", "category": "Nuestra Familia" }
+  ]
+}
+{% endschema %}

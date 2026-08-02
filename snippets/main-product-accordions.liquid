@@ -1,0 +1,78 @@
+{%- comment -%}theme-check-disable UnknownFilter{%- endcomment -%}
+{%- liquid
+  assign metafields = product.metafields.custom
+  assign tab_1_title = metafields.pestana_1_titulo
+  assign tab_1_text = metafields.pestana_1_texto
+  assign tab_2_title = metafields.pestana_2_titulo
+  assign tab_2_text = metafields.pestana_2_texto
+  assign tab_3_title = metafields.pestana_3_titulo
+  assign tab_3_text = metafields.pestana_3_texto
+
+  assign has_tab_1 = false
+  assign has_tab_2 = false
+  assign has_tab_3 = false
+
+  if tab_1_title != blank and tab_1_text != blank
+    assign has_tab_1 = true
+  endif
+  if tab_2_title != blank and tab_2_text != blank
+    assign has_tab_2 = true
+  endif
+  if tab_3_title != blank and tab_3_text != blank
+    assign has_tab_3 = true
+  endif
+-%}
+
+{%- if has_tab_1 or has_tab_2 or has_tab_3 -%}
+  <div class="product-accordions">
+
+    {%- if has_tab_1 -%}
+      <div class="product-accordion open faq-item">
+        <button class="product-accordion-header color-green" role="tab" type="button">
+          <p class="product-accordion-title faq-item-title" data-title="{{- tab_1_title -}}">{{- tab_1_title -}}</p>
+          <span class="product-accordion-icon">
+            {%- render 'icon', icon: 'minus' -%}
+          </span>
+        </button>
+        <div class="product-accordion-content-wrapper">
+          <div class="product-accordion-content page-text tabpanel-1">
+            {{- tab_1_text | prepend: "<li class='tabpanel-bullet'><span class='tabpanel-bullet-icon'></span><p class='tabpanel-bullet-text'>" | newline_to_br | replace: "<br />", "</p></li><li class='tabpanel-bullet'><span class='tabpanel-bullet-icon'></span><p class='tabpanel-bullet-text'>" -}}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if has_tab_2 -%}
+      <div class="product-accordion faq-item">
+        <button class="product-accordion-header color-green" role="tab" type="button">
+          <p class="product-accordion-title faq-item-title" data-title="{{- tab_2_title -}}">{{- tab_2_title -}}</p>
+          <span class="product-accordion-icon">
+            {%- render 'icon', icon: 'minus' -%}
+          </span>
+        </button>
+        <div class="product-accordion-content-wrapper">
+          <div class="product-accordion-content page-text">
+            {{- tab_2_text | metafield_tag -}}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if has_tab_3 -%}
+      <div class="product-accordion faq-item">
+        <button class="product-accordion-header color-green" role="tab" type="button">
+          <p class="product-accordion-title faq-item-title" data-title="{{- tab_3_title -}}">{{- tab_3_title -}}</p>
+          <span class="product-accordion-icon">
+            {%- render 'icon', icon: 'minus' -%}
+          </span>
+        </button>
+        <div class="product-accordion-content-wrapper">
+          <div class="product-accordion-content page-text">
+            {{- tab_3_text | metafield_tag -}}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+{%- endif -%}

@@ -1,0 +1,206 @@
+{{- 'css-cover.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'js-cover.js' | asset_url -}}" defer></script>
+
+{%- liquid 
+	assign float_asset = section.settings.float_asset
+	assign block = section.blocks[0]
+	assign block_type = block.type
+	assign title = block.settings.title
+	assign subtitle = block.settings.subtitle
+	assign button_label = block.settings.button_label
+	assign button_link = block.settings.button_link
+	assign button_exists = false
+
+	if button_label != blank and button_link != blank
+		assign button_exists = true
+	endif
+-%}
+
+{%- capture open_tag -%}
+	{%- if button_label == blank and button_link != blank -%}
+		<a class="cover-content" href="{{ button_link }}">
+	{%- elsif button_label != blank and button_link != blank -%}
+		<div class="cover-content">  
+	{%- else -%}
+		<div class="cover-content">  
+	{%- endif -%}
+{%- endcapture -%}
+
+{%- capture close_tag -%}
+	{%- if button_label == blank and button_link != blank -%}
+		</a>
+	{%- elsif button_label != blank and button_link != blank -%}
+		</div>  
+	{%- else -%}
+		</div>  
+	{%- endif -%}
+{%- endcapture -%}
+
+<div class="cover block-type-{{- block_type -}}" data-section-id="{{- section.id -}}" data-section-type="cover">
+	{{- open_tag -}}
+
+		{%- unless float_asset == blank -%}
+			<div class="cover-asset no-touch">
+				<div class="cover-asset-image-wrapper">
+					<img class="cover-asset-image" src="{{- float_asset | image_url -}}" alt="{{- float_asset.alt -}}" fetchpriority="high" data-aos="fade-up" data-aos-delay="300">
+				</div>
+			</div>
+		{%- endunless -%}
+			
+		{%- if block_type == 'image' -%}
+			{%- render 'cover-image', section: block.settings -%}
+		{%- else -%}
+			{%- render 'cover-video', section: block.settings -%}
+		{%- endif -%}
+
+		<article class="cover-info" data-aos="fade-up">
+			<div class="cover-info-inner color-white">
+
+				{%- unless subtitle == blank -%}
+					<p class="cover-subtitle primary-font-bold">{{- subtitle -}}</p>
+				{%- endunless -%}
+		
+				{%- unless title == blank -%}
+					<header class="cover-title-container">
+						<h2 class="cover-title section-title-richtext">{{- title -}}</h2>
+					</header>
+				{%- endunless -%}
+		
+				{%- if button_exists -%}
+					<div class="cover-button-container">
+						{%- capture target -%}{%- if button_link contains 'http' or button_link contains 'tel:' or button_link contains 'maps/' or button_link contains 'mailto:' -%}target="_blank"{%- endif -%}{%- endcapture -%}
+						<a class="cover-button button primary-button" href="{{- button_link -}}" {{ target -}}>{{- button_label -}}</a>
+					</div>
+				{%- endif -%}
+				
+			</div>
+		</article>
+
+		<div class="klaviyo-form-U556XM"></div>
+
+	{{- close_tag -}}
+</div>
+
+{% schema %}
+{
+	"name": "Portada - Duplicado",
+	"tag": "section",
+	"class": "cover-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Imagen"
+		},
+		{
+			"type": "image_picker",
+			"id": "float_asset",
+			"label": "Imagen flotante"
+		}
+	],
+	"max_blocks": 1,
+	"blocks": [
+		{
+			"name": "Imagen",
+			"type": "image",
+			"settings": [
+				{
+					"type": "header",
+					"content": "Imágenes"
+				},
+				{
+					"type": "image_picker",
+					"id": "desktop_image",
+					"label": "Imagen tamaño escritorio"
+				},
+				{
+					"type": "image_picker",
+					"id": "mobile_image",
+					"label": "Imagen tamaño móvil"
+				},
+				{
+					"type": "header",
+					"content": "Contenido"
+				},
+				{
+					"type": "text",
+					"id": "subtitle",
+					"label": "Subtítulo"
+				},
+				{
+					"type": "richtext",
+					"id": "title",
+					"label": "Título"
+				},
+				{
+					"type": "header",
+					"content": "Botón"
+				},
+				{
+					"type": "text",
+					"id": "button_label",
+					"label": "Texto"
+				},
+				{
+					"type": "url",
+					"id": "button_link",
+					"label": "Enlace"
+				}
+			]
+		},
+		{
+			"name": "Video",
+			"type": "video",
+			"settings": [
+				{
+					"type": "header",
+					"content": "Video"
+				},
+				{
+					"type": "video",
+					"id": "video_desktop",
+					"label": "Video tamaño escritorio"
+				},
+				{
+					"type": "video",
+					"id": "video_mobile",
+					"label": "Video tamaño móvil"
+				},
+				{
+					"type": "header",
+					"content": "Contenido"
+				},
+				{
+					"type": "text",
+					"id": "subtitle",
+					"label": "Subtítulo"
+				},
+				{
+					"type": "richtext",
+					"id": "title",
+					"label": "Título"
+				},
+				{
+					"type": "header",
+					"content": "Botón"
+				},
+				{
+					"type": "text",
+					"id": "button_label",
+					"label": "Texto"
+				},
+				{
+					"type": "url",
+					"id": "button_link",
+					"label": "Enlace"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"category": "Homepage",
+			"name": "Portada - Duplicado"
+		}
+	]
+}
+{% endschema %}

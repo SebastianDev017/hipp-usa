@@ -1,0 +1,54 @@
+{% comment %}
+---------------------------------------------------------------------
+EXTERNAL URLS / APPS
+---------------------------------------------------------------------
+{% endcomment %}
+
+<link rel="preconnect" href="//cdn.shopify.com" crossorigin>
+<!-- <link rel="preconnect" href="//static.klaviyo.com" crossorigin> -->
+<!-- <link rel="preconnect" href="//fast.a.klaviyo.com" crossorigin> -->
+<link rel="preconnect" href="//cdn.judge.me" crossorigin>
+<!-- <link rel="preconnect" href="https://services.mybcapps.com" crossorigin> -->
+
+{% comment %}
+---------------------------------------------------------------------
+FUENTES
+---------------------------------------------------------------------
+{% endcomment %}
+<link rel="preload" href="{{- 'AdvertLight.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{- 'AdvertBold.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{- 'BananaGrotesk-Medium.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
+
+{% comment %}
+---------------------------------------------------------------------
+CSS
+---------------------------------------------------------------------
+{% endcomment %}
+
+<link rel="preload" href="{{ 'theme.css' | asset_url }}" as="style">
+<link rel="preload" href="{{ 'css-base.css' | asset_url }}" as="style">
+<link rel="preload" href="{{ 'theme.js' | asset_url }}" as="script">
+<link rel="preload" href="{{ 'js-commons.js' | asset_url }}" as="script">
+<link rel="preload" href="{{ 'js-base.js' | asset_url }}" as="script">
+
+
+{% if template.name == "collection" %}
+  <link rel="preload" href="{{ 'css-main-collection.css' | asset_url }}" as="style">
+  <link rel="preload" href="{{ 'js-main-collection.js' | asset_url }}" as="script">
+{% endif %}
+
+{% if template.name == "product" %}
+  <link rel="preload" href="{{ 'css-main-product.css' | asset_url }}" as="style">
+  <link rel="preload" href="{{ 'js-main-product.js' | asset_url }}" as="script">
+{% endif %}
+
+{% if template.name == "cart" %}
+  <link rel="preload" href="{{ 'theme-cart.css' | asset_url }}" as="style">
+  <link rel="preload" href="{{ 'css-main-cart.css' | asset_url }}" as="style">
+  <link rel="preload" href="{{ 'js-main-cart.js' | asset_url }}" as="script">
+{% endif %}
+
+{% if template.directory == 'customers' %}
+  <link rel="preload" href="{{ 'theme-customer.css' | asset_url }}" as="style">
+  <link rel="preload" href="{{ 'css-accounts.css' | asset_url }}" as="style">
+{% endif %}

@@ -1,0 +1,161 @@
+<header-drawer data-breakpoint="tablet">
+  <div class="menu-drawer-container header-details" id="details">
+    <div class="header-icon header__icon header__icon--menu header__icon--summary header-buttons-container header-summary" aria-label="{{ 'sections.header.menu' | t }}" id="summary">
+      <span class="header-buttons">
+        {%- render "icon", icon: "hamburger" -%}
+      </span>
+    </div>
+
+    {%- comment -%}
+      **
+      Menú mobile
+      **
+    {%- endcomment -%}
+    <div class="menu-drawer motion-reduce mobile-nav-drawer" id="menu-drawer" tabindex="-1">
+      <div class="menu-drawer__inner-container">
+        <div class="menu-drawer__navigation-container">
+          <div class="hamburger-close-button-wrapper">
+            <button class="hamburger-close-button">
+              {%- render "icon", icon: "close" -%}
+            </button>
+          </div>
+          <nav class="mobile-nav-navigation" aria-label="Primary mobile nav">
+            <ul class="mobile-nav-menu mobile-nav-main-menu hamburger-menu-list list-menu" id="mobile-nav-menu" role="list">
+              {%- for link in main_menu.links -%}
+                <li class="mobile-nav-menu-item mobile-nav-main-item">
+
+                  {%- if link.links != blank -%}
+                    <details class="header-details">
+                      <summary class="mobile-nav-link mobile-nav-main-link header-summary submenu-toggle{% if link.current or link.child_active %} active{% endif %}" data-level="1">
+                        <div class="submenu-toggle-content hamburger-main-link{% if link.active or link.child_active %} active{% endif %}">
+                          {%- render "header-hamburger-main-link-title", link: link -%}
+                        </div>
+                      </summary>
+                      <div class="menu-drawer__submenu motion-reduce" id="link-{{ link.title | escape }}" tabindex="-1">
+                        <div class="menu-drawer__inner-submenu">
+                          <div class="hamburger-close-button-wrapper">
+                            <button class="hamburger-close-button">
+                              {%- render "icon", icon: "close" -%}
+                            </button>
+                          </div>
+                          <div class="mobile-nav-navigation mobile-nav-submenu">
+                            <div class="mobile-nav-menu-item">
+                              <button class="mobile-nav-submenu-link mobile-nav-link mobile-nav-return color-green" aria-expanded="true">
+                                <div class="mobile-nav-return-icon-wrapper">
+                                  {%- render "icon", icon: "close-submenu" -%}
+                                </div>
+                                <p class="mobile-nav-return-text hamburger-main-link">
+                                  {%- render "header-hamburger-main-link-title", link: link -%}
+                                </p>
+                              </button>
+                            </div>
+                            <ul class="mobile-nav-menu mobile-nav-submenu-list hamburger-secondary-menu hamburger-menu-list list-menu" role="list" tabindex="-1">
+  
+                              {%- for childlink in link.links -%}
+  
+                                {%- liquid 
+                                  assign childlink_title = childlink.title | strip
+                                -%}
+  
+                                <li class="mobile-nav-menu-item mobile-nav-menu-subitem hamburger-submenu-item">
+                                  <a class="mobile-nav-submenu-link mobile-nav-link hamburger-submenu-link{% if childlink.current %} active{% endif %}" href="{{ childlink.url }}" {%- if childlink.current -%} aria-current="page" {%- endif -%}>
+                                    <span class="mobile-nav-submenu-label">
+                                      {{ childlink_title }}
+                                    </span>
+                                  </a>
+                                </li>
+  
+                              {%- endfor -%}
+  
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </details>
+
+                  {%- else -%}
+                    <a class="mobile-nav-link hamburger-main-link mobile-nav-main-link {% if link.current %}active{% endif %}" href="{{ link.url }}" {%- if link.current -%} aria-current="page" {%- endif -%}>
+                      {%- render "header-hamburger-main-link-title", link: link -%}
+                    </a>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+          <nav class="mobile-nav-secondary-nav hamburger-secondary-nav hamburger-sidebar-nav" aria-label="Secondary mobile nav">
+            <ul class="hamburger-secondary-menu hamburger-menu-list list-menu">
+              {%- for link in secondary_menu.links -%}
+                <li class="hamburger-secondary-item">
+                  <a class="hamburger-secondary-link{% if link.active %} active{% endif %}" href="{{- link.url -}}">{{- link.title -}}</a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%}
+      **
+      Menú desktop (Hamburger)
+      **
+    {%- endcomment -%}
+    <div class="hamburger mobile-nav-drawer" id="hamburger">
+      <div class="hamburger-sidebar">
+        <div class="hamburger-sidebar-inner">
+          <div class="hamburger-close-button-wrapper">
+            <button class="hamburger-close-button">
+              {%- render "icon", icon: "close" -%}
+            </button>
+          </div>
+          <nav class="hamburger-main-nav hamburger-sidebar-nav" aria-label="Primary">
+            <ul class="hamburger-main-menu hamburger-menu-list list-menu">
+              {%- for link in main_menu.links -%}
+                <li class="hamburger-main-item">
+                  <a class="hamburger-main-link{% if link.active or link.child_active %} active{% endif %}" href="{{- link.url -}}" {%- if link.levels > 0 -%} data-submenu-target="{{- link.title | handleize -}}" {%- endif -%}>
+                    {%- render "header-hamburger-main-link-title", link: link -%}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+          <nav class="hamburger-secondary-nav hamburger-sidebar-nav" aria-label="Secondary">
+            <ul class="hamburger-secondary-menu hamburger-menu-list list-menu">
+              {%- for link in secondary_menu.links -%}
+                <li class="hamburger-secondary-item">
+                  <a class="hamburger-secondary-link{% if link.active %} active{% endif %}" href="{{- link.url -}}">{{- link.title -}}</a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="hamburger-submenus">
+        {%- for link in main_menu.links -%}
+          {%- liquid 
+            if link.levels == 0 
+              continue 
+            endif 
+
+            assign link_title = link.title 
+            assign link_title_handlelized = link_title | handleize 
+          -%}
+
+          <div class="hamburger-submenu-wrapper" data-parent-link="{{- link_title_handlelized -}}">
+            <div class="hamburger-submenu-container">
+              <nav class="hamburger-submenu-nav" aria-label="Submenu - {{ link_title -}}">
+                <ul class="hamburger-submenu hamburger-menu-list list-menu">
+                  {%- for childlink in link.links -%}
+                    <li class="hamburger-submenu-item">
+                      <a class="hamburger-submenu-link{% if childlink.active %} active{% endif %}" href="{{- childlink.url -}}">{{- childlink.title -}}</a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </nav>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</header-drawer>

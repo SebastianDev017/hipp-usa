@@ -1,0 +1,44 @@
+<script>
+  window.routes = {
+    cart_add_url: '{{ routes.cart_add_url }}',
+    cart_change_url: '{{ routes.cart_change_url }}',
+    cart_update_url: '{{ routes.cart_update_url }}'
+  };
+
+  window.cartStrings = {
+    error: `{{ 'sections.cart.cart_error' | t }}`,
+    quantityError: `{{ 'sections.cart.cart_quantity_error_html' | t }}`
+  }
+
+  window.variantStrings = {
+    addToCart: `{{ 'products.product.add_to_cart' | t }}`,
+    soldOut: `{{ 'products.product.sold_out' | t }}`,
+    unavailable: `{{ 'products.product.unavailable' | t }}`,
+  }
+
+  window.moneyFormat = {{ shop.money_format | json }};
+</script>
+
+<script src="{{ 'theme.js' | asset_url }}" defer></script>
+<script src="{{ 'js-commons.js' | asset_url }}" defer></script>
+<script src="{{ 'js-base.js' | asset_url }}" defer></script>
+
+{%- if template.name == 'collection' -%}
+  <script src="{{ 'js-main-collection.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- if template.name == 'product' -%}
+  <script src="{{ 'js-main-product.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- if template == "cart" -%}
+  <script src="{{ 'js-cart.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- if request.page_type == 'captcha' -%}
+  <script src="{{ 'theme-recaptcha.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- if template == 'page.store-locator' -%}
+  {% render 'store-locator-custom' %}
+{%- endif -%}

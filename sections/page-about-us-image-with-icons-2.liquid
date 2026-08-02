@@ -1,0 +1,118 @@
+{%- liquid 
+  assign title = section.settings.title
+  assign text_1 = section.settings.text_1
+  assign text_2 = section.settings.text_2
+  assign text_3 = section.settings.text_3
+  assign blocks_size = section.blocks | size
+-%}
+
+{{- 'css-page-about-us-image-with-icons-2.css' | asset_url | stylesheet_tag -}}
+
+<div class="imi2">
+  <div class="imi2-content section-content color-green">
+    {%- unless title == blank -%}
+      <header class="imi2-header">
+        <h2 class="imi2-title section-title-richtext color-green">{{ title }}</h2>
+      </header>
+    {%- endunless -%}
+    {%- unless text_1 == blank -%}
+      <div class="imi2-text-1-wrapper">
+        <p class="imi2-text-1 section-title-richtext color-green">{{- text_1 -}}</p>
+      </div>
+    {%- endunless -%}
+    {%- if blocks_size > 0 -%}
+      <div class="imi2-blocks {%- if blocks_size == 1 %} center{% endif %}">
+        {%- for block in section.blocks -%}
+          {%- liquid 
+            assign icon = block.settings.icon
+            assign title = block.settings.title
+            assign text = block.settings.text
+          -%}
+
+          <article class="imi2-block">
+            <div class="imi2-icon-wrapper">
+              {% unless icon == blank %}
+                <img src="{{ icon | image_url: width: 300 }}" alt="" class="imi2-icon">
+              {% endunless %}
+            </div>
+            {%- unless title == blank -%}
+              <p class="imi2-block-title secondary-font-bold">{{- title -}}</p>
+            {%- endunless -%}
+            {%- unless text == blank -%}
+              <p class="imi2-block-text">{{- text -}}</p>
+            {%- endunless -%}
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    {%- unless text_2 == blank -%}
+      <div class="imi2-text-2-wrapper">
+        <p class="imi2-text-2">{{- text_2 -}}</p>
+      </div>
+    {%- endunless -%}
+    {%- unless text_3 == blank -%}
+      <div class="imi2-text-3-wrapper">
+        <p class="imi2-text-3">{{- text_3 -}}</p>
+      </div>
+    {%- endunless -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Imagen con íconos - 2",
+  "tag": "section",
+  "class": "imi2-section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Título"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text_1",
+      "label": "Texto 1"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text_2",
+      "label": "Texto 2"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text_3",
+      "label": "Texto 3"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Ícono con texto",
+      "type": "image",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Ícono"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Imagen con íconos - 2"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,143 @@
+{{- "css-text-image-icons-white.css" | asset_url | stylesheet_tag -}}
+
+{%- liquid 
+	assign image = section.settings.image
+	assign title = section.settings.title
+	assign text = section.settings.text
+	assign button_label = section.settings.button_label
+	assign button_link = section.settings.button_link
+	assign has_button = false
+	
+	if button_label != blank and button_link != blank
+		assign has_button = true
+	endif
+-%}
+
+<div class="tiiw section" data-section-id="{{- section.id -}}" data-section-type="text-image-icons">
+  <div class="tiiw-content section-content">
+
+    <div class="tiiw-left">
+      <div class="tiiw-image-container">
+				<div data-aos="fade-up">
+					<div class="tiiw-image-wrapper square-image">
+						{%- unless image == blank -%}
+							<img class="tiiw-image" alt="{{- image.alt -}}" src="{{- image | image_url: width: '900' -}}">
+						{%- endunless -%}
+					</div>
+				</div>
+
+				<div class="tiiw-icons">
+					{%- for block in section.blocks -%}
+						{%- liquid 
+							assign icon = block.settings.icon
+							assign block_text = block.settings.text
+						-%}
+	
+						<div class="tiiw-icon tiiw-icon-{{- forloop.index -}}" data-aos="fade-up">
+							<div class="tiiw-icon-image-wrapper square-image">
+								{%- unless image == blank -%}
+									<img class="tiiw-icon-image" alt="{{- icon.alt -}}" src="{{- icon | image_url -}}">
+								{%- endunless -%}
+							</div>
+							{%- unless block_text == blank -%}
+								<p class="tiiw-icon-text">{{- block_text -}}</p>
+							{%- endunless -%}
+						</div>
+					{%- endfor -%}
+				</div>
+
+
+      </div>
+    </div>
+
+    <div class="tiiw-right" data-aos="fade-up">
+      <div class="tiiw-info">
+        {%- unless title == blank -%}
+          <div class="tiiw-title section-title-richtext color-dark-blue">{{- title -}}</div>
+        {%- endunless -%}
+        {%- unless text == blank -%}
+          <p class="tiiw-text color-dark-blue">{{- text -}}</p>
+        {%- endunless -%}
+        {%- if has_button -%}
+          <div class="tiiw-button-wrapper">
+            {%- capture target -%}{%- if button_link contains 'http' or button_link contains 'tel:' or button_link contains 'maps/' or button_link contains 'mailto:' -%}target="_blank"{%- endif -%}{%- endcapture -%}
+            <a class="tiiw-button button" href="{{- button_link -}}" title="{{- button_label -}}" {{ target -}}>{{- button_label -}}</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{%- schema -%}
+  {
+    "name": "Texto imagen íconos - (B)",
+    "tag": "section",
+    "class": "tiiw-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Imagen"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Imagen"
+      },
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      },
+      {
+        "type": "header",
+        "content": "Botón"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Texto"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Enlace"
+      }
+    ],
+    "max_blocks": 6,
+    "blocks": [
+      {
+        "name": "Ícono",
+        "type": "icon",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Ícono"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Texto"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Homepage",
+        "name": "Texto imagen íconos - (Blanco)"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,257 @@
+{%- liquid
+  assign uid = section.id | replace: '-', '' | downcase
+  assign s = section.settings
+
+  if s.text_font == 'secondary'
+    assign text_font_var = 'var(--secondary-font, Helvetica, Arial, sans-serif)'
+  else
+    assign text_font_var = 'var(--primary-font, Helvetica, Arial, sans-serif)'
+  endif
+
+  assign has_bg_image = false
+  if s.background_image != blank
+    assign has_bg_image = true
+  endif
+-%}
+
+<section class="fvl-quote fvl-quote-{{ uid }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="formula-vs-leche-quote"
+         style="
+           --fq-bg: {{ s.background_color }};
+           {% if has_bg_image %}--fq-bg-image: url('{{ s.background_image | image_url: width: 2000 }}');{% endif %}
+           --fq-text-color: {{ s.text_color }};
+           --fq-highlight-color: {{ s.highlight_color }};
+           --fq-text-font: {{ text_font_var }};
+           --fq-text-size-d: {{ s.text_size_desktop }}px;
+           --fq-text-size-m: {{ s.text_size_mobile }}px;
+           --fq-line-height: {{ s.line_height }};
+           --fq-pad-top-d: {{ s.padding_top_desktop }}px;
+           --fq-pad-bottom-d: {{ s.padding_bottom_desktop }}px;
+           --fq-pad-top-m: {{ s.padding_top_mobile }}px;
+           --fq-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+           --fq-max-width: {{ s.content_max_width }}px;
+           --fq-text-align: {{ s.text_align }};
+         ">
+
+  <div class="fvl-quote-inner">
+    {%- if s.quote != blank -%}
+      <div class="fvl-quote-text">{{ s.quote }}</div>
+    {%- endif -%}
+  </div>
+
+</section>
+
+{% style %}
+.fvl-quote-{{ uid }} {
+  position: relative;
+  background-color: var(--fq-bg, #e8efe2);
+  {% if has_bg_image %}
+  background-image: var(--fq-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  {% endif %}
+  padding: var(--fq-pad-top-m, 40px) 24px var(--fq-pad-bottom-m, 40px);
+  text-align: var(--fq-text-align, center);
+}
+
+.fvl-quote-{{ uid }} .fvl-quote-inner {
+  max-width: var(--fq-max-width, 620px);
+  margin: 0 auto;
+}
+
+.fvl-quote-{{ uid }} .fvl-quote-text {
+  font-family: var(--fq-text-font);
+  font-size: var(--fq-text-size-m, 18px);
+  line-height: var(--fq-line-height, 1.4);
+  color: var(--fq-text-color, #2d7a3e);
+  font-weight: 400;
+}
+
+.fvl-quote-{{ uid }} .fvl-quote-text strong,
+.fvl-quote-{{ uid }} .fvl-quote-text b {
+  color: var(--fq-highlight-color, #1f5a2c);
+  font-weight: 700;
+}
+
+.fvl-quote-{{ uid }} .fvl-quote-text p { margin: 0; }
+.fvl-quote-{{ uid }} .fvl-quote-text p + p { margin-top: 10px; }
+
+@media (min-width: 768px) {
+  .fvl-quote-{{ uid }} {
+    padding: var(--fq-pad-top-d, 56px) 40px var(--fq-pad-bottom-d, 56px);
+  }
+
+  .fvl-quote-{{ uid }} .fvl-quote-text {
+    font-size: var(--fq-text-size-d, 26px);
+  }
+}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "FvL · Quote",
+  "tag": "section",
+  "class": "fvl-quote-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📝 Texto del quote"
+    },
+    {
+      "type": "richtext",
+      "id": "quote",
+      "label": "Texto",
+      "info": "Usa negrita para resaltar las frases importantes con el color de acento.",
+      "default": "<p>Los primeros 1,000 días de vida representan un periodo de mayor riesgo para presentar <strong>deficiencia de hierro y las consecuencias neurológicas a largo plazo</strong></p>"
+    },
+    {
+      "type": "header",
+      "content": "🖼 Fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Imagen de fondo (opcional)",
+      "info": "Si la subes, reemplaza el color de fondo."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#e8efe2"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colores de texto"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto normal",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Color del texto resaltado (negritas)",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "header",
+      "content": "🔤 Tipografía"
+    },
+    {
+      "type": "select",
+      "id": "text_font",
+      "label": "Fuente del texto",
+      "options": [
+        { "value": "primary", "label": "Primaria del tema (sans)" },
+        { "value": "secondary", "label": "Secundaria del tema (serif)" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Tamaño del texto — Escritorio",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Tamaño del texto — Móvil",
+      "min": 13,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Interlineado",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.4
+    },
+    {
+      "type": "header",
+      "content": "📐 Diseño y espaciado"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 360,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 620
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Espaciado superior — Escritorio",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Espaciado inferior — Escritorio",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Espaciado superior — Móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Espaciado inferior — Móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "FvL · Quote",
+      "category": "Formula vs Leche de Vaca"
+    }
+  ]
+}
+{% endschema %}

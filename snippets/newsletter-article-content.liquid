@@ -1,0 +1,42 @@
+{%- liquid 
+  assign image = article_image
+  assign text = article_text
+  assign link = article_link
+
+  assign first_char = link.url | slice: 0, 1 
+  assign is_external_link = 'target="_blank"'
+  if link.url contains shop.domain or first_char == "/"
+    assign is_external_link = ''
+  endif
+  if link.url contains ".pdf"
+    assign is_external_link = 'target="_blank"'
+  endif
+-%}
+
+<article class="newsletter-posts-article">
+  {%- if link != blank -%}
+    <a href="{{ link.url }}" class="newsletter-posts-article-image-wrap" target="_blank">
+  {%- else -%}
+    <div class="newsletter-posts-article-image-wrap">
+  {%- endif -%}
+
+    {%- if image != blank -%}
+      <img class="newsletter-posts-article-image" src="{{ image | image_url }}" alt="{{ image.alt }}" loading="lazy">
+    {%- endif -%}
+
+  {%- if link != blank -%}
+    </a>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+
+  <p class="newsletter-posts-article-text">
+    {%- if link != blank -%}
+      <a href="{{ link.url }}" target="_blank">
+    {%- endif -%}
+      {{ text }}
+    {%- if link != blank -%}
+      </a>
+    {%- endif -%}
+  </p>
+</article>

@@ -1,0 +1,113 @@
+{%- comment -%}
+  Encuentra el precio más barato de un producto
+  basándose en el precio de todas las variantes
+  y dándola prioridad a las variantes con oferta
+
+  Uso:
+  {% render 'price-from', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign target = product.variants | where: "available" | sort: "price" | first
+  assign has_sale = false
+
+  comment 
+  -- Si no existen variantes disponibles, busca entre todas para obtener la más barata
+  endcomment
+  if target == null
+    assign target =  product.variants | sort: "price" | first
+  endif
+
+  comment 
+  -- Si alguna variante tiene oferta
+  endcomment
+  if product.compare_at_price_min > 0 and product.has_only_default_variant == false
+    assign has_sale = true
+  endif
+  
+  comment 
+  -- Si varias o alguna variante tiene oferta, obtenemos la más barata con la mejor oferta -- 
+  endcomment
+  if product.compare_at_price_varies or has_sale == true
+    assign sorted_variants_by_compare_at_price = product.variants | where: "available" | sort: "compare_at_price" | reverse
+
+    comment 
+    -- Si no hay variantes disponibles, busca entre todas para obtener la que tenga el compare at price más alto
+    endcomment
+    if sorted_variants_by_compare_at_price.size == 0
+      assign sorted_variants_by_compare_at_price = product.variants | sort: "compare_at_price" | reverse
+    endif
+
+    for variant in sorted_variants_by_compare_at_price
+      if variant.price == product.price_min and variant.compare_at_price > 0
+        assign target = variant
+        break
+      endif
+    endfor
+  endif
+
+  assign available = target.available
+  assign price = target.price
+  assign compare_at_price = target.compare_at_price
+  assign money_price = price | money | replace: " ", ""
+-%}
+
+<dl class="price{%- if compare_at_price > price %} price--on-sale{%- endif -%} {%- unless available %} price--sold-out{%- endunless -%}" data-price>
+  <div class="price__regular">
+    <dt>
+      <span class="visually-hidden visually-hidden--inline">{{- "products.product.price.regular_price" | t -}}</span>
+    </dt>
+    <dd>
+      <span class="price-item price-item-regular price" data-regular-price>
+
+        {%- comment -%} Si las variantes tienen precios diferentes {%- endcomment -%}
+        {%- if product.price_varies -%}
+
+          <span class="price-from color-green">
+            {{- "products.product.price.from_price_html" | t }}&nbsp;
+          </span>
+
+          {%- if compare_at_price > price -%}
+            <s>{{- compare_at_price | money | replace: " ", "" -}}</s>
+          {%- else -%}
+            {%- if available -%}
+              {{- money_price -}}
+            {%- else -%}
+              <del>{{- money_price -}}</del>
+            {%- endif -%}
+          {%- endif -%}
+
+        {%- else -%}
+
+          {%- if compare_at_price > price -%}
+            <del class="price-item-compare compare-price">
+              {{- compare_at_price | money | replace: " ", "" -}}
+            </del>
+          {%- else -%}
+            {%- if available -%}
+              {{- money_price -}}
+            {%- else -%}
+              <del>{{- money_price -}}</del>
+            {%- endif -%}
+          {%- endif -%}
+
+        {%- endif -%}
+
+      </span>
+    </dd>
+  </div>
+  <div class="price__sale">
+    <dt>
+      <span class="visually-hidden visually-hidden--inline">{{- "products.product.price.sale_price" | t -}}</span>
+    </dt>
+    <dd>
+      <span class="price-item price-item-sale price" data-sale-price>
+        {%- if available -%}
+          {{- money_price -}}
+        {%- else -%}
+          <del>{{- money_price -}}</del>
+        {%- endif -%}
+      </span>
+    </dd>
+  </div>
+</dl>

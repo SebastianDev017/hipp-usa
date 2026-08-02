@@ -1,0 +1,27 @@
+{%- comment -%} theme-check-disable ConvertIncludeToRender {%- endcomment -%}
+
+<section class="page-customer" data-section-type="customer-tabs">
+  <div class="page">
+    <header class="page-header">
+      <h1 class="page-title">{{ 'customer.account.title' | t }}</h1>
+    </header>
+  </div>
+
+  <div class="tabs-container">
+    {% render 'template-customer-tabs', active: 'addresses' %}
+
+    <div class="page">
+      <section id="historial" class="customer-tab-content customer-tab-orders page-content">
+        {% include 'template-customer-order-history' %}
+      </section>
+  
+      <section id="detalles" class="customer-tab-content customer-tab-details page-content">
+        {% include 'template-customer-details' %}
+      </section>
+  
+      <section id="direcciones" class="customer-tab-content customer-tab-addresses page-content is-active">
+        {% include 'template-customer-addresses' %}
+      </section>
+    </div>
+  </div>
+</section>

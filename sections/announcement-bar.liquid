@@ -1,0 +1,147 @@
+{% liquid
+  assign announcement_show = section.settings.announcement_show
+  assign announcement_only_index = section.settings.announcement_only_index
+  assign announcement_autoplay = section.settings.announcement_autoplay
+  assign announcement_speed = section.settings.announcement_speed | times: 1000
+%}
+
+<style>
+  .announcement-bar{
+    --background-color: {{ section.settings.announcement_background_color }};
+    --text-color: {{ section.settings.announcement_text_color }};
+    --total-items: {{ section.blocks.size }};
+  }
+</style>
+
+{% if announcement_show %}
+  {% if announcement_only_index == false or template.name == 'index' %}
+    <div class="announcement-bar swiper" data-section-id="{{ section.id }}" data-section-type="announcement-bar" data-only-index="{{ announcement_only_index }}" data-autoplay="{{ announcement_autoplay }}" data-items="{{ section.blocks.size }}">
+      <div class="announcement-bar-items swiper-wrapper">
+        {% for block in section.blocks %}
+          {% liquid 
+            assign icon = block.settings.icon
+            assign text = block.settings.text
+            assign link = block.settings.link
+          %}
+
+          {%- capture target -%}{%- if link contains 'http' or link contains 'tel:' or link contains 'maps/' or link contains 'mailto:' -%}target="_blank"{%- endif -%}{%- endcapture -%}
+
+          <div class="announcement-bar-item swiper-slide" data-swiper-autoplay="{{ announcement_speed }}" {{ block.shopify_attributes }}>
+            {% if icon != blank %}
+              <div class="announcement-bar-icon-wrapper">
+                {%- unless link == blank -%}
+                  <a href="{{- link -}}" title="{{- text -}}" {{ target }}>
+                {%- endunless -%}
+                  <img class="announcement-bar-icon" src="{{ icon | image_url: width: 1440 }}" alt="Icono - {{ text | strip_html -}}" fetchpriority="high">
+                {%- unless link == blank -%}
+                  </a>
+                {%- endunless -%}
+              </div>
+            {% endif %}
+
+            {% if text != blank %}
+              <p class="announcement-bar-text">
+                {%- unless link == blank -%}
+                  <a href="{{- link -}}" title="{{- text -}}" {{ target }}>
+                {%- endunless -%}
+                  {{ text }}
+                {%- unless link == blank -%}
+                  </a>
+                {%- endunless -%}
+              </p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Barra de anuncios",
+    "class": "announcement-bar-section",
+    "max_blocks": 3,
+    "tag": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Visibilidad"
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_show",
+        "label": "Visible",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_only_index",
+        "label": "Solo en Página de inicio",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Personalización"
+      },
+      {
+        "type": "color",
+        "id": "announcement_background_color",
+        "label": "Color de fondo",
+        "default": "#429459"
+      },
+      {
+        "type": "color",
+        "id": "announcement_text_color",
+        "label": "Color de texto",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "header",
+        "content": "Ajustes"
+      },
+      {
+        "type": "checkbox",
+        "id": "announcement_autoplay",
+        "label": "Rotación automática"
+      },
+      {
+        "type": "range",
+        "id": "announcement_speed",
+        "label": "Rotar diapositivas cada",
+        "unit": "s",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 5
+      }
+    ],
+    "blocks": [
+      {
+        "type": "slide",
+        "name": "Bloque",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Ícono"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Texto"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Enlace"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

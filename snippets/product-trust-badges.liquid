@@ -1,0 +1,160 @@
+{%- comment -%}
+  Garantías + métodos de pago — se renderiza debajo del formulario de producto.
+  Recibe `section` desde main-product-form para leer los settings configurados
+  en la sección "Producto" (íconos, textos, logos de pago).
+{%- endcomment -%}
+
+{%- liquid
+  unless section.settings.show_trust == false
+    assign show = true
+  endunless
+
+  assign green = '#2d7a3e'
+  assign icon_size = section.settings.badge_icon_size | default: 56
+  assign payment_size = section.settings.payment_size | default: 44
+  assign footnote = section.settings.badges_footnote
+
+  assign has_payments = false
+  for i in (1..6)
+    assign key = 'payment_' | append: i
+    if section.settings[key] != blank
+      assign has_payments = true
+      break
+    endif
+  endfor
+
+  assign has_badges = false
+  for i in (1..5)
+    assign ikey = 'badge_' | append: i | append: '_icon'
+    assign tkey = 'badge_' | append: i | append: '_text'
+    if section.settings[ikey] != blank or section.settings[tkey] != blank
+      assign has_badges = true
+      break
+    endif
+  endfor
+-%}
+
+{%- if show and has_payments or show and has_badges -%}
+<div class="ptb" style="--ptb-icon-size: {{ icon_size }}px; --ptb-payment-size: {{ payment_size }}px;">
+
+  {%- comment -%} ===== Métodos de pago ===== {%- endcomment -%}
+  {%- if has_payments -%}
+    <div class="ptb-payments">
+      {%- for i in (1..6) -%}
+        {%- assign key = 'payment_' | append: i -%}
+        {%- assign logo = section.settings[key] -%}
+        {%- if logo != blank -%}
+          <img class="ptb-payment-icon"
+               src="{{ logo | image_url: width: 160 }}"
+               alt="{{ logo.alt | default: 'Método de pago' | escape }}"
+               loading="lazy">
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ===== Garantías ===== {%- endcomment -%}
+  {%- if has_badges -%}
+    <div class="ptb-badges">
+      {%- for i in (1..5) -%}
+        {%- assign ikey = 'badge_' | append: i | append: '_icon' -%}
+        {%- assign tkey = 'badge_' | append: i | append: '_text' -%}
+        {%- assign icon = section.settings[ikey] -%}
+        {%- assign txt = section.settings[tkey] -%}
+        {%- if icon != blank or txt != blank -%}
+          <div class="ptb-badge">
+            {%- if icon != blank -%}
+              <span class="ptb-icon">
+                <img src="{{ icon | image_url: width: 200 }}" alt="{{ icon.alt | default: txt | escape }}" loading="lazy">
+              </span>
+            {%- endif -%}
+            {%- if txt != blank -%}
+              <span class="ptb-label">{{ txt }}</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- if footnote != blank -%}
+    <p class="ptb-footnote">{{ footnote }}</p>
+  {%- endif -%}
+
+</div>
+{%- endif -%}
+
+{% style %}
+.ptb {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(45, 122, 62, 0.15);
+}
+
+/* Métodos de pago */
+.ptb-payments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.ptb-payments .ptb-payment-icon {
+  width: var(--ptb-payment-size, 44px);
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* Garantías */
+.ptb-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+.ptb-badge {
+  flex: 1 1 0;
+  min-width: 70px;
+  max-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+.ptb-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--ptb-icon-size, 56px);
+}
+.ptb-icon img {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.ptb-label {
+  font-size: 12px;
+  line-height: 1.3;
+  color: {{ green }};
+}
+.ptb-footnote {
+  margin: 18px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: {{ green }};
+  text-align: center;
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  .ptb-badges { gap: 2px; }
+  .ptb-badge { min-width: 58px; }
+  .ptb-label { font-size: 10.5px; }
+}
+{% endstyle %}

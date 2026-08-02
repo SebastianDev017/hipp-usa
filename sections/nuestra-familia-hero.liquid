@@ -1,0 +1,576 @@
+{%- liquid
+  assign uid = section.id | replace: '-', '' | downcase
+  assign s = section.settings
+
+  if s.title_font == 'primary'
+    assign title_font_var = 'var(--primary-font-bold, Georgia, serif)'
+  else
+    assign title_font_var = 'var(--secondary-font-bold, Georgia, serif)'
+  endif
+
+  if s.body_font == 'secondary'
+    assign body_font_var = 'var(--secondary-font, Helvetica, Arial, sans-serif)'
+  else
+    assign body_font_var = 'var(--primary-font, Helvetica, Arial, sans-serif)'
+  endif
+
+  assign has_video = false
+  if s.video != blank
+    assign has_video = true
+  endif
+-%}
+
+<section class="nf-hero nf-hero-{{ uid }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="nuestra-familia-hero"
+         style="
+           {% if s.use_bg_color %}--nf-bg: {{ s.background_color }};{% else %}--nf-bg: transparent;{% endif %}
+           --nf-circle-color: {{ s.circle_color }};
+           --nf-media-size-d: {{ s.media_size_desktop }}px;
+           --nf-media-size-m: {{ s.media_size_mobile }}px;
+           --nf-play-color: {{ s.play_color }};
+           --nf-play-bg: {{ s.play_bg_color }};
+           --nf-title-color: {{ s.title_color }};
+           --nf-highlight-color: {{ s.highlight_color }};
+           --nf-text-color: {{ s.text_color }};
+           --nf-title-font: {{ title_font_var }};
+           --nf-body-font: {{ body_font_var }};
+           --nf-title-size-d: {{ s.title_size_desktop }}px;
+           --nf-title-size-m: {{ s.title_size_mobile }}px;
+           --nf-text-size-d: {{ s.text_size_desktop }}px;
+           --nf-text-size-m: {{ s.text_size_mobile }}px;
+           --nf-pad-top-d: {{ s.padding_top_desktop }}px;
+           --nf-pad-bottom-d: {{ s.padding_bottom_desktop }}px;
+           --nf-pad-top-m: {{ s.padding_top_mobile }}px;
+           --nf-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+           --nf-max-width: {{ s.content_max_width }}px;
+         ">
+
+  {%- if s.wave_image_top != blank -%}
+    <div class="nf-hero-wave nf-hero-wave-top" aria-hidden="true">
+      <img src="{{ s.wave_image_top | image_url: width: 2400 }}" alt="" loading="lazy">
+    </div>
+  {%- endif -%}
+
+  <div class="nf-hero-inner">
+
+    {%- comment -%} ===== MEDIA (video circular + play) ===== {%- endcomment -%}
+    <div class="nf-hero-media-wrap">
+
+      <div class="nf-hero-media">
+        {%- if has_video -%}
+          <video class="nf-hero-video"
+                 autoplay
+                 muted
+                 playsinline
+                 webkit-playsinline
+                 preload="auto"
+                 data-nf-video
+                 {% if s.poster != blank %}poster="{{ s.poster | image_url: width: 1000 }}"{% endif %}>
+            {%- for source in s.video.sources -%}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {%- endfor -%}
+          </video>
+        {%- elsif s.poster != blank -%}
+          <img class="nf-hero-poster" src="{{ s.poster | image_url: width: 1000 }}" alt="{{ s.poster.alt | escape }}" loading="eager">
+        {%- else -%}
+          <div class="nf-hero-media-placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+        {%- endif -%}
+      </div>
+
+      {%- if s.show_play and has_video -%}
+        <button class="nf-hero-play" type="button" data-nf-play aria-label="Reproducir o pausar video">
+          <span class="nf-hero-play-icon nf-icon-play" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 7l9 5-9 5z" fill="currentColor"/></svg>
+          </span>
+          <span class="nf-hero-play-icon nf-icon-pause" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="8" y="7" width="3" height="10" rx="1" fill="currentColor"/><rect x="13" y="7" width="3" height="10" rx="1" fill="currentColor"/></svg>
+          </span>
+        </button>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ===== TEXTO ===== {%- endcomment -%}
+    {%- if s.title != blank -%}
+      <h1 class="nf-hero-title">{{ s.title }}</h1>
+    {%- endif -%}
+
+    {%- if s.text != blank -%}
+      <div class="nf-hero-text">{{ s.text }}</div>
+    {%- endif -%}
+
+  </div>
+
+  {%- if s.wave_image_bottom != blank -%}
+    <div class="nf-hero-wave nf-hero-wave-bottom" aria-hidden="true">
+      <img src="{{ s.wave_image_bottom | image_url: width: 2400 }}" alt="" loading="lazy">
+    </div>
+  {%- endif -%}
+
+</section>
+
+{% style %}
+.nf-hero-{{ uid }} {
+  position: relative;
+  background-color: var(--nf-bg, transparent);
+  padding: var(--nf-pad-top-m, 40px) 20px var(--nf-pad-bottom-m, 48px);
+  overflow: hidden;
+}
+
+.nf-hero-{{ uid }} .nf-hero-wave {
+  position: absolute; left: 0; width: 100%; line-height: 0; pointer-events: none; z-index: 1;
+}
+.nf-hero-{{ uid }} .nf-hero-wave img { width: 100%; height: auto; display: block; }
+.nf-hero-{{ uid }} .nf-hero-wave-top { top: 0; }
+.nf-hero-{{ uid }} .nf-hero-wave-bottom { bottom: 0; }
+
+.nf-hero-{{ uid }} .nf-hero-inner {
+  position: relative; z-index: 2;
+  max-width: var(--nf-max-width, 720px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ===== Media circular ===== */
+.nf-hero-{{ uid }} .nf-hero-media-wrap {
+  position: relative;
+  width: var(--nf-media-size-m, 280px);
+  margin: 0 auto 28px;
+}
+
+.nf-hero-{{ uid }} .nf-hero-circle {
+  position: absolute;
+  top: -10%;
+  left: -14%;
+  width: 128%;
+  height: 128%;
+  border-radius: 50%;
+  background: var(--nf-circle-color, #cfe0bf);
+  z-index: 0;
+}
+
+.nf-hero-{{ uid }} .nf-hero-media {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 0%;
+  overflow: hidden;
+}
+
+.nf-hero-{{ uid }} .nf-hero-video,
+.nf-hero-{{ uid }} .nf-hero-poster,
+.nf-hero-{{ uid }} .nf-hero-media-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.nf-hero-{{ uid }} .nf-hero-media-placeholder { opacity: .4; display: flex; align-items: center; justify-content: center; }
+
+/* Botón play */
+.nf-hero-{{ uid }} .nf-hero-play {
+  position: absolute;
+  top: -6%;
+  left: -10%;
+  z-index: 2;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--nf-play-color, #2d7a3e);
+  background: var(--nf-play-bg, transparent);
+  color: var(--nf-play-color, #2d7a3e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: transform .2s ease;
+}
+.nf-hero-{{ uid }} .nf-hero-play:hover { transform: scale(1.06); }
+.nf-hero-{{ uid }} .nf-hero-play svg { width: 26px; height: 26px; }
+.nf-hero-{{ uid }} .nf-hero-play-icon { display: none; align-items: center; justify-content: center; }
+.nf-hero-{{ uid }} .nf-hero-play .nf-icon-play { display: flex; }
+.nf-hero-{{ uid }} .nf-hero-play.is-playing .nf-icon-play { display: none; }
+.nf-hero-{{ uid }} .nf-hero-play.is-playing .nf-icon-pause { display: flex; }
+
+/* ===== Texto ===== */
+.nf-hero-{{ uid }} .nf-hero-title {
+  font-family: var(--nf-title-font);
+  font-size: var(--nf-title-size-m, 30px);
+  line-height: 1.15;
+  font-weight: 400;
+  color: var(--nf-title-color, #2d7a3e);
+  margin: 0 0 18px;
+}
+.nf-hero-{{ uid }} .nf-hero-title strong,
+.nf-hero-{{ uid }} .nf-hero-title b {
+  font-weight: 700;
+  color: var(--nf-highlight-color, #1f5a2c);
+}
+.nf-hero-{{ uid }} .nf-hero-title p { margin: 0; }
+
+.nf-hero-{{ uid }} .nf-hero-text {
+  font-family: var(--nf-body-font);
+  font-size: var(--nf-text-size-m, 15px);
+  line-height: 1.6;
+  color: var(--nf-text-color, #2d7a3e);
+}
+.nf-hero-{{ uid }} .nf-hero-text p { margin: 0 0 10px; }
+.nf-hero-{{ uid }} .nf-hero-text p:last-child { margin-bottom: 0; }
+
+@media (min-width: 768px) {
+  .nf-hero-{{ uid }} {
+    padding: var(--nf-pad-top-d, 64px) 40px var(--nf-pad-bottom-d, 72px);
+  }
+  .nf-hero-{{ uid }} .nf-hero-media-wrap {
+    width: var(--nf-media-size-d, 360px);
+    margin-bottom: 36px;
+  }
+  .nf-hero-{{ uid }} .nf-hero-play {
+    width: 76px;
+    height: 76px;
+  }
+  .nf-hero-{{ uid }} .nf-hero-play svg { width: 30px; height: 30px; }
+  .nf-hero-{{ uid }} .nf-hero-title { font-size: var(--nf-title-size-d, 40px); }
+  .nf-hero-{{ uid }} .nf-hero-text { font-size: var(--nf-text-size-d, 17px); }
+}
+{% endstyle %}
+
+<script>
+(function () {
+  var root = document.querySelector('.nf-hero-{{ uid }}');
+  if (!root) return;
+
+  var video = root.querySelector('[data-nf-video]');
+  var playBtn = root.querySelector('[data-nf-play]');
+  if (!video) return;
+
+  // iOS/Android: el autoplay solo se permite en silencio + inline
+  video.muted = true;
+  video.defaultMuted = true;
+  video.setAttribute('muted', '');
+  video.playsInline = true;
+
+  var gestureArmed = false;
+  function armUserGesture() {
+    if (gestureArmed) return;
+    gestureArmed = true;
+    var start = function () {
+      tryPlay();
+      document.removeEventListener('touchstart', start);
+      document.removeEventListener('click', start);
+    };
+    document.addEventListener('touchstart', start, { once: true, passive: true });
+    document.addEventListener('click', start, { once: true });
+  }
+
+  function tryPlay() {
+    var p = video.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(function () { armUserGesture(); });
+    }
+  }
+
+  // Intenta apenas haya datos suficientes
+  if (video.readyState >= 2) tryPlay();
+  video.addEventListener('loadeddata', tryPlay, { once: true });
+  video.addEventListener('canplay', tryPlay, { once: true });
+
+  // Chrome Android no arranca videos fuera de viewport: reproduce al entrar en pantalla
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && video.paused && !video.ended) tryPlay();
+      });
+    }, { threshold: 0.25 });
+    io.observe(video);
+  }
+
+  function syncBtn() {
+    if (!playBtn) return;
+    playBtn.classList.toggle('is-playing', !video.paused && !video.ended);
+  }
+  video.addEventListener('play', syncBtn);
+  video.addEventListener('pause', syncBtn);
+  video.addEventListener('ended', syncBtn);
+
+  // Botón: si terminó, reinicia; si corre, pausa; si está pausado, reanuda
+  if (playBtn) {
+    playBtn.addEventListener('click', function () {
+      if (video.ended) {
+        video.currentTime = 0;
+        tryPlay();
+      } else if (video.paused) {
+        tryPlay();
+      } else {
+        video.pause();
+      }
+    });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "NF · Hero Familia",
+  "tag": "section",
+  "class": "nf-hero-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🎬 Video circular"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video (MP4)",
+      "info": "Arranca solo al abrir la página, sin sonido, una vez, y se detiene al final."
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "Imagen de portada (poster)",
+      "info": "Se muestra mientras el video carga, o si no hay video."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_play",
+      "label": "Mostrar botón de play",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "📝 Textos"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Título",
+      "info": "Usa negrita para resaltar (ej. 'promesa HiPP').",
+      "default": "<p>Bueno desde el origen. Esta es la <strong>promesa HiPP</strong></p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Párrafo",
+      "default": "<p>Lo mejor que podemos ofrecerle a nuestros hijos son alimentos naturales, orgánicos, sustentables y con la mejor calidad en el mundo.</p>"
+    },
+    {
+      "type": "header",
+      "content": "🖼 Fondo"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_bg_color",
+      "label": "Usar color de fondo sólido",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#e8efe2"
+    },
+    {
+      "type": "header",
+      "content": "🌊 Ondas de leche"
+    },
+    {
+      "type": "image_picker",
+      "id": "wave_image_top",
+      "label": "Onda superior (SVG/PNG)"
+    },
+    {
+      "type": "image_picker",
+      "id": "wave_image_bottom",
+      "label": "Onda inferior (SVG/PNG)"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colores"
+    },
+    {
+      "type": "color",
+      "id": "circle_color",
+      "label": "Color del círculo decorativo",
+      "default": "#cfe0bf"
+    },
+    {
+      "type": "color",
+      "id": "play_color",
+      "label": "Color del botón play (borde e ícono)",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "play_bg_color",
+      "label": "Fondo del botón play",
+      "default": "#ffffff",
+      "alpha": true
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Color de texto resaltado",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del párrafo",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "header",
+      "content": "🔤 Tipografía"
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Fuente del título",
+      "options": [
+        { "value": "secondary", "label": "Secundaria del tema (serif)" },
+        { "value": "primary", "label": "Primaria del tema (sans)" }
+      ],
+      "default": "secondary"
+    },
+    {
+      "type": "select",
+      "id": "body_font",
+      "label": "Fuente del párrafo",
+      "options": [
+        { "value": "primary", "label": "Primaria del tema (sans)" },
+        { "value": "secondary", "label": "Secundaria del tema (serif)" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Tamaño título — Escritorio",
+      "min": 24,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño título — Móvil",
+      "min": 18,
+      "max": 44,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Tamaño párrafo — Escritorio",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Tamaño párrafo — Móvil",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "📐 Tamaños y espaciado"
+    },
+    {
+      "type": "range",
+      "id": "media_size_desktop",
+      "label": "Tamaño del video — Escritorio",
+      "min": 200,
+      "max": 560,
+      "step": 10,
+      "unit": "px",
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "media_size_mobile",
+      "label": "Tamaño del video — Móvil",
+      "min": 160,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 400,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Espaciado superior — Escritorio",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Espaciado inferior — Escritorio",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Espaciado superior — Móvil",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Espaciado inferior — Móvil",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "NF · Hero Familia",
+      "category": "Nuestra Familia"
+    }
+  ]
+}
+{% endschema %}

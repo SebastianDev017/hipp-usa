@@ -1,0 +1,111 @@
+{%- liquid 
+  assign title = section.settings.title
+  assign text_1 = section.settings.text_1
+  assign text_2 = section.settings.text_2
+  assign icons_title = section.settings.icons_title
+  assign blocks_size = section.blocks | size
+-%}
+
+{{- 'css-page-about-us-text-with-icons.css' | asset_url | stylesheet_tag -}}
+
+<div class="tswi">
+  <div class="tswi-content section-content">
+    {%- unless title == blank -%}
+      <header class="tswi-header">
+        <h2 class="tswi-title color-green">{{- title -}}</h2>
+      </header>
+    {%- endunless -%}
+    {%- unless text_1 == blank -%}
+      <div class="tswi-text-1-wrapper">
+        <p class="tswi-text-1">{{- text_1 -}}</p>
+      </div>
+    {%- endunless -%}
+    {%- unless text_2 == blank -%}
+      <div class="tswi-text-2-wrapper">
+        <div class="tswi-text-2">{{- text_2 -}}</div>
+      </div>
+    {%- endunless -%}
+  </div>
+  {% if blocks_size > 0 or icons_title != blank %}
+    <div class="tswi-items-wrapper">
+      {%- unless icons_title == blank -%}
+        <h3 class="tswi-items-title">{{- icons_title -}}</h3>
+      {%- endunless -%}
+      <div class="tswi-items">
+        {%- for block in section.blocks -%}
+          {%- liquid 
+            assign icon = block.settings.icon
+            assign text = block.settings.title
+
+            if icon == blank and text == blank
+              continue
+            endif
+          -%}
+  
+          <div class="tswi-item">
+            <div class="tswi-icon-wrapper">
+              {%- unless icon == blank -%}
+                <img class="tswi-icon" src="{{ icon | image_url: width: 300 }}" alt="{{ icon.alt }}">
+              {%- endunless -%}
+            </div>
+            {%- unless text == blank -%}
+              <p class="tswi-item-text">{{- text -}}</p>
+            {%- endunless -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{%- schema %}
+{
+  "name": "Textos c/ íconos",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "Texto 1"
+    },
+    {
+      "type": "richtext",
+      "id": "text_2",
+      "label": "Texto 2"
+    },
+    {
+      "type": "text",
+      "id": "icons_title",
+      "label": "Título íconos"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "limit": 7,
+      "name": "Ícono con texto",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Ícono"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Texto"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Nosotros - Textos c/ íconos"
+    }
+  ]
+}
+{% endschema -%}

@@ -1,0 +1,74 @@
+{%- liquid 
+  assign image = section.settings.image
+  assign title = section.settings.title
+  assign text_1 = section.settings.text_1
+  assign text_2 = section.settings.text_2
+-%}
+
+{{- 'css-page-about-us-image-with-bullets.css' | asset_url | stylesheet_tag -}}
+
+<div class="iwv">
+  <div class="iwv-content section-content">
+    <div class="iwv-top">
+      <div class="iwv-left">
+        <div class="iwv-image-wrapper">
+          {%- unless image == blank -%}
+            <img class="iwv-image" src="{{- image | image_url: width: 500 -}}" alt="{{- image.alt -}}">
+          {%- endunless -%}
+        </div>
+      </div>
+      <div class="iwv-right">
+        {%- unless title == blank -%}
+          <header class="iwv-header">
+            <h2 class="iwv-title section-title-richtext color-green">{{- title -}}</h2>
+          </header>
+        {%- endunless -%}
+        <div class="iwv-text-wrapper">
+          {%- unless text_1 == blank -%}
+            <div class="iwv-text">{{- text_1 -}}</div>
+          {%- endunless -%}
+        </div>
+      </div>
+    </div>
+    {%- unless text_2 == blank -%}
+      <div class="iwv-bottom">
+        <p class="iwv-bottom-text">{{- text_2 -}}</p>
+      </div>
+    {%- endunless -%}
+  </div>
+</div>
+
+{%- schema %}
+{
+  "name": "Imagen con viñetas",
+  "tag": "section",
+  "class": "iwv-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Título"
+    },
+    {
+      "type": "richtext",
+      "id": "text_1",
+      "label": "Texto 1"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "Texto 2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Imagen con viñetas"
+    }
+  ]
+}
+{% endschema -%}

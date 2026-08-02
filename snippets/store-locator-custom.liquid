@@ -1,0 +1,361 @@
+<div id="messageModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalHeader"></h2>
+        <p id="modalMessage"></p>
+    </div>
+</div>
+
+
+<script>
+function checkMapObjects() {
+    if (
+        (typeof window.boldMap !== 'undefined' || typeof window.SCMap !== 'undefined') &&
+        (typeof window.boldMap?.getDiv === 'function' || typeof window.SCMap?.getDiv === 'function') &&
+        (typeof window.boldMap?.mapUrl !== 'undefined' || typeof window.SCMap?.mapUrl !== 'undefined') &&
+        (typeof window.boldMap?.__gm?.innerContainer !== 'undefined' || typeof window.SCMap?.__gm?.innerContainer !== 'undefined')
+    ) {
+        console.log('boldMap or SCMap object is present:', window.boldMap || window.SCMap);
+        openModal('SC Store Locator', 'Getting users location...');
+        updateUserLocation();
+        createGeoButton();
+        observer.disconnect();
+    } else {
+        console.log('Neither boldMap nor SCMap object is present...exiting');
+    }
+}
+
+const observer = new MutationObserver((mutations) => {
+    checkMapObjects();
+    observeMapElements();
+});
+const config = { childList: true, subtree: true };
+
+observer.observe(document.body, config);
+
+
+// function to bserve map elements using MutationObserver to speed-up the load of the map
+    function observeMapElements() {
+        const observer = new MutationObserver(mutationsList => {
+            mutationsList.forEach(mutation => {
+                if (mutation.type === 'childList') {
+                    const addedNodes = mutation.addedNodes;
+                    addedNodes.forEach(node => {
+                        if (node.classList &&
+                            (node.classList.contains('leaflet-container') ||
+                            node.classList.contains('gm-style') ||
+                            node.classList.contains('mapboxgl-map'))) {
+                                console.log('Map element found:', node);
+                                console.log('loaded');
+                                reInitializeValues();
+                                executeGroupOrdering();
+                                observer.disconnect();
+                                executeAnimations();
+                                focPopup();
+                                minHeader();
+                            }
+                    });
+                }
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+  
+    let pin;
+    let pulse;
+  
+  function checkForMapElements() {
+    const mapElements = document.querySelectorAll('.leaflet-container, .gm-style, .mapboxgl-map');
+    const shopBlock = document.querySelector('.page-width');
+    const mapContainer = document.getElementById('col-main');
+    if (!pin && !pulse) {
+        pin = document.createElement('div');
+        pin.classList.add('pin');
+        pulse = document.createElement('div');
+        pulse.classList.add('pulse');
+        shopBlock.appendChild(pin);
+        shopBlock.appendChild(pulse);
+    }
+    if (mapElements.length > 0) {
+        mapElements.forEach(element => {
+            console.log('Map element found:', element);
+        });
+        console.log('SC Map loaded...');
+        shopBlock.removeChild(pin);
+        shopBlock.removeChild(pulse);
+        clearInterval(interval);
+        mapContainer.style.visibility = 'unset';
+    } else {
+        console.log('SC Map loading...');
+        mapContainer.style.visibility = 'hidden';
+    }
+  }
+
+  const interval = setInterval(checkForMapElements, 100);
+  
+    // Check for common map library imports
+    const scripts = document.querySelectorAll('script');
+    if (scripts.length > 0) {
+        scripts.forEach(script => {
+            const src = script.getAttribute('src');
+            if (src && (src.includes('leaflet.js') || src.includes('googleapis.com/maps') || src.includes('mapbox.com/mapbox.js'))) {
+                console.log('Map library script found:', src);
+            }
+        });
+    } else {
+        console.log('No script elements found.');
+    }
+
+
+async function updateUserLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+
+            const targetZoom = 8;
+            const mapInstance = typeof SCMap !== 'undefined' ? SCMap : (typeof boldMap !== 'undefined' ? boldMap : null);
+            const currentZoom = (typeof SCMap !== 'undefined' && typeof SCMap.getZoom === 'function') 
+                ? SCMap.getZoom() 
+                : (typeof boldMap !== 'undefined' && typeof boldMap.getZoom === 'function') 
+                    ? boldMap.getZoom() 
+                    : null;
+
+            removeUserLocationMarker();
+
+            const userMarker = new google.maps.Marker({
+                position: { lat: userLat, lng: userLng },
+                map: mapInstance,
+                icon: youIcon,
+                title: youAreHere,
+                draggable: true,
+            });
+
+            smoothZoom(mapInstance, targetZoom, currentZoom);
+            mapInstance.setCenter({ lat: userLat, lng: userLng });
+
+            google.maps.event.addListener(userMarker, 'dragend', function (event) {
+                updateUserLocation(event.latLng);
+            });
+
+        }, (error) => {
+            console.warn('Error getting geolocation!', error);
+            openModal('SC Store Locator', 'Error getting geolocation!');
+        });
+    } else {
+        console.warn('Geolocation is not supported by this browser!');
+        openModal('SC Store Locator', 'Geolocation is not supported by this browser!');
+    } 
+}
+
+
+  const removeUserLocationMarker = () => {
+      markersArray.forEach((marker, index) => {
+          if (marker.id === 0) {
+              marker.setMap(null);
+              markersArray.splice(index, 1)
+          }
+      })
+  }
+
+  function smoothZoom(map, targetZoom, currentZoom) {
+    var zoomChange = targetZoom - currentZoom;
+    var step = Math.abs(zoomChange) / 12;
+
+    function smoothZoomStep() {
+        if (currentZoom !== targetZoom) {
+            if (zoomChange > 0) {
+                currentZoom = Math.min(currentZoom + step, targetZoom);
+            } else {
+                currentZoom = Math.max(currentZoom - step, targetZoom);
+            }
+            map.setZoom(currentZoom);
+            setTimeout(smoothZoomStep, 80);
+        }
+    }
+    smoothZoomStep();
+  }
+
+  const createGeoButton = () => {
+    const existingButton = document.getElementById('submitBtn');
+    const geoButton = document.createElement('button');
+    
+    geoButton.innerText = 'Usar mi ubicación';
+    geoButton.id = 'submitBtn';
+
+    geoButton.onclick = () => {
+      openModal('SC Store Locator', 'Getting users location...');
+      updateUserLocation();
+    }
+    
+    existingButton.insertAdjacentElement('afterend', geoButton);
+  }
+
+const modal = document.getElementById('messageModal');
+const modalInner = document.querySelector('.modal-content');
+
+function openModal(header, message) {
+    document.getElementById('modalHeader').innerText = header;
+    document.getElementById('modalMessage').innerText = message;
+    modal.style.display = 'block';
+
+
+    modalInner.classList.add('show');
+
+    setTimeout(() => {
+      modal.classList.remove('show');
+        modal.style.display = 'none';
+    }, 1500);
+}
+</script>
+
+<style>
+  #col-main select {
+    padding: 0 12px;
+  }
+
+  .search_bar {
+    align-items: center;
+  }
+
+.modal p,
+.modal h2  {
+  color: black;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 0% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    transition: transform 0.5s ease;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal.show .modal-content {
+  transform: translateY(-100%);
+}
+
+.modal-content.show {
+    display: block;
+    transition: transform 0.5s ease;
+    transform: translateY(0);
+}
+
+#submitBtn {
+  text-wrap: balance !important;
+}
+
+  .pin {
+    -webkit-animation-name: pin !important;
+    animation-duration: 1.2s !important;
+    animation-iteration-count: infinite !important;
+    width: 30px;
+    height: 30px;
+    border-radius: 50% 50% 50% 0;
+    background: #73af4c;
+    position: absolute;
+    transform: rotate(-45deg);
+    left: 50%;
+    top: 60%;
+    margin: -120px 0 0 -20px;
+    animation-name: pin !important;
+  }
+  .pin:after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    margin: 8px 0 0 8px;
+    background: white;
+    position: absolute;
+    border-radius: 50%;
+  }
+  .pulse {
+    background: rgba(0,0,0,0.2);
+    border-radius: 50%;
+    height: 14px;
+    width: 14px;
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    margin: -89px 0px 0px -12px;
+    transform: rotateX(55deg);
+    z-index: 99;
+  }
+  .pulse:after {
+    content: "";
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    margin: -13px 0 0 -13px;
+    -webkit-animation: pulsate 1s ease-out;
+    -webkit-animation-iteration-count: infinite;
+    opacity: 0;
+    box-shadow: 0 0 3px 3px #73af4c;
+  }
+  @-webkit-keyframes pulsate {
+    0% {
+      -webkit-transform: scale(0.1, 0.1);
+      transform: scale(0.1, 0.1);
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: scale(1.2, 1.2);
+      transform: scale(1.2, 1.2);
+    }
+  }
+  @-webkit-keyframes bounce {
+    0% {
+      -webkit-transform: translateY(-2000px) rotate(-45deg);
+    }
+    60% {
+      -webkit-transform: translateY(30px) rotate(-45deg);
+    }
+    80% {
+      -webkit-transform: translateY(-10px) rotate(-45deg);
+    }
+    100% {
+      -webkit-transform: translateY(0) rotate(-45deg);
+    }
+  }
+  @-webkit-keyframes pin{
+      100% {top:55%; bottom:60px;}
+  }
+/* end of custom loading feature */
+
+
+</style>

@@ -1,0 +1,80 @@
+{%- comment -%}
+  Renderiza una tarjeta de producto
+
+  Acepta:
+  - Producto
+
+  Uso:
+  {% render 'product-card', product: product %}
+{%- endcomment -%}
+
+{%- liquid 
+  assign metafields = product.metafields.custom
+  assign available = product.available
+  assign title = product.title
+  assign type = product.type
+  assign etapa = metafields.etapa.value | handleize
+  assign url_etiqueta = metafields.etiqueta.value
+  assign url = product.url
+  assign featured_image = product.featured_image
+-%}
+
+<article class="product-card">
+  <div class="product-card-image-container-wrapper{% if hover_image != blank %} with-hover-image{% endif %}">
+    <div class="product-card-image-container"></div>
+    <div class="product-card-image-wrapper">
+      <div class="product-card-image-content">
+        <a href="{{- url -}}">
+          {%- unless featured_image == blank -%}
+            <div class="js-product-card-featured-image">
+              {%- if product.metafields.custom.producto_nuevo == true -%}
+                {%- render 'new-product' -%}
+              {%- endif -%}
+              <img class="product-card-image featured-image" alt="{{- featured_image.alt -}}" loading="lazy" src="{{- featured_image | image_url: width: 900 -}}" width="900" height="900">
+            </div>
+          {%- endunless -%}
+        </a>
+      </div>
+    </div>
+  </div>
+  <p class="product-card-type">
+    {%- unless type == blank -%}
+      <a href="{{- url -}}">{{- type -}}</a>
+    {%- endunless -%}
+  </p>
+  <h3 class="product-card-title">
+    <a href="{{- url -}}">{{- title -}}</a>
+  </h3>
+  <div class="product-card-badge-wrapper">
+    {%- unless etapa == blank -%}
+      <a class="product-card-badge {{ etapa -}}" href="{{- url -}}">
+        {%- render "icon", icon: etapa -%}
+      </a>
+    {%- endunless -%}
+  </div>
+  <div class="product-card-reviews">
+    <a href="{{- url -}}">
+      {%- render "judgeme_widgets", widget_type: "judgeme_preview_badge", jm_style: "", concierge_install: false, product: product -%}
+    </a>
+  </div>
+  <a class="product-card-price" href="{{- url -}}">
+    {%- render "price-from", product: product -%}
+  </a>
+  <div class="product-card-button-wrapper">
+    <a class="product-card-button button secondary-button{% unless available %} disabled{% endunless %}" href="{{- url -}}">
+      {%- unless available -%}
+        {{- "Agotado" -}}
+      {%- else -%}
+        {{- "Detalles del producto" -}}
+      {%- endunless -%}
+    </a>
+  </div>
+  {%- if url_etiqueta != blank -%}
+    <div class="product-card-external-button-wrapper">
+      <a class="product-card-external-button" href="{{- url_etiqueta -}}" target="_blank">
+        {%- render "icon", icon: "download" -%}
+        <span class="product-card-external-button-label">Descargar etiqueta</span>
+      </a>
+    </div>
+  {%- endif -%}
+</article>

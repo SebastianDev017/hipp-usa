@@ -1,0 +1,21 @@
+
+{%- liquid
+  assign icon = block.settings.icon
+  assign text = block.settings.text
+
+  if icon == blank and text == blank
+    continue
+  endif
+-%}
+      <a href="{{ block.settings.url }}">
+<div class="pau-ib-item">
+  <div class="pau-ib-icon-wrapper">
+    {% unless icon == blank %}
+      <img class="pau-ib-icon" src="{{ icon | image_url: width: 300 }}" alt="{{ icon.alt }}" loading="lazy">
+    {% endunless %}
+  </div>
+  {%- unless text == blank -%}
+    <p class="pau-ib-text secondary-font-bold">{{- text -}}</p>
+  {%- endunless -%}
+</div>
+      </a>

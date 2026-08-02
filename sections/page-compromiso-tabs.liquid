@@ -1,0 +1,84 @@
+{{- "css-page-ingredientes-tabs.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-page-compromiso-tabs.js' | asset_url -}}"></script>
+
+{%- liquid 
+  assign blocks_size = section.blocks | size
+-%}
+
+{%- if blocks_size > 0 -%}
+  <div class="ings" data-section-id="{{- section.id -}}" data-section-type="page-compromiso-tabs">
+    <div class="ings-tabs">
+      <div class="ings-tabs-carousel-wrapper">
+        <div class="ings-tabs-carousel swiper" data-slides="{{- blocks_size -}}">
+          <div class="swiper-wrapper">
+            {%- for block in section.blocks -%}
+              {%- assign title = block.settings.title -%}
+              {%- assign block_id = title | handleize | append: "-" | append: block.id -%}
+
+              <div class="ings-tab swiper-slide">
+                <button class="ings-tab-button" data-block="{{- block_id -}}" role="tab" type="button">
+                  <div class="ings-tab-button-content">
+                    <span class="ings-tab-title">{{- title -}}</span>
+                  </div>
+                </button>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+        <button class="ings-tabs-swiper-button swiper-button prev">
+          {%- render "icon", icon: "arrow-prev-rounded" -%}
+        </button>
+        <button class="ings-tabs-swiper-button swiper-button next">
+          {%- render "icon", icon: "arrow-next-rounded" -%}
+        </button>
+      </div>
+    </div>
+
+    <div class="ings-blocks">
+      {%- for block in section.blocks -%}
+        {%- liquid 
+          assign title = block.settings.title
+          assign block_id = title | handleize | append: "-" | append: block.id
+        -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{%- schema -%}
+  {
+    "name": "Compromisos - Pestañas",
+    "tag": "section",
+    "class": "ings-section",
+    "max_blocks": 4,
+    "blocks": [
+      {
+        "type": "text",
+        "name": "Pestaña",
+        "settings": [
+          {
+            "type": "range",
+            "id": "sections_quantity",
+            "min": 0,
+            "max": 10,
+            "step": 1,
+            "unit": "#",
+            "label": "Número de secciones",
+            "default": 1
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Título de la pestaña"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Compromisos - Pestañas",
+        "category": "Page Compromisos"
+      }
+    ]
+  }
+{% endschema %}

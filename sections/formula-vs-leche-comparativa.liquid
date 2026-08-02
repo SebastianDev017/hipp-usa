@@ -1,0 +1,838 @@
+{%- liquid
+  assign uid = section.id | replace: '-', '' | downcase
+  assign s = section.settings
+
+  if s.title_font == 'primary'
+    assign title_font_var = 'var(--primary-font-bold, Georgia, serif)'
+  else
+    assign title_font_var = 'var(--secondary-font-bold, Georgia, serif)'
+  endif
+
+  if s.body_font == 'secondary'
+    assign body_font_var = 'var(--secondary-font, Helvetica, Arial, sans-serif)'
+  else
+    assign body_font_var = 'var(--primary-font, Helvetica, Arial, sans-serif)'
+  endif
+
+  assign has_bg_image = false
+  if s.background_image != blank
+    assign has_bg_image = true
+  endif
+
+  assign attr_blocks = section.blocks | where: 'type', 'attr'
+-%}
+
+<section class="fvl-comp fvl-comp-{{ uid }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="formula-vs-leche-comparativa"
+         style="
+           {% if s.use_bg_color %}--fc-bg: {{ s.background_color }};{% else %}--fc-bg: transparent;{% endif %}
+           {% if has_bg_image %}--fc-bg-image: url('{{ s.background_image | image_url: width: 2000 }}');{% endif %}
+           --fc-half-top-color: {{ s.half_top_color }};
+           --fc-half-bottom-color: {{ s.half_bottom_color }};
+           --fc-title-color: {{ s.title_color }};
+           --fc-vs-color: {{ s.vs_color }};
+           --fc-attr-text-color: {{ s.attr_text_color }};
+           --fc-list-title-color: {{ s.list_title_color }};
+           --fc-list-text-color: {{ s.list_text_color }};
+           --fc-references-color: {{ s.references_color }};
+           --fc-play-color: {{ s.play_color }};
+           --fc-arrow-color: {{ s.arrow_color }};
+           --fc-title-font: {{ title_font_var }};
+           --fc-body-font: {{ body_font_var }};
+           --fc-title-size-d: {{ s.title_size_desktop }}px;
+           --fc-title-size-m: {{ s.title_size_mobile }}px;
+           --fc-vs-size-d: {{ s.vs_size_desktop }}px;
+           --fc-vs-size-m: {{ s.vs_size_mobile }}px;
+           --fc-attr-size-d: {{ s.attr_size_desktop }}px;
+           --fc-attr-size-m: {{ s.attr_size_mobile }}px;
+           --fc-attr-icon-d: {{ s.attr_icon_size_desktop }}px;
+           --fc-attr-icon-m: {{ s.attr_icon_size_mobile }}px;
+           --fc-glass-max: {{ s.glass_max_width }}px;
+           --fc-side-gap: {{ s.side_gap }}px;
+           --fc-pad-top-d: {{ s.padding_top_desktop }}px;
+           --fc-pad-bottom-d: {{ s.padding_bottom_desktop }}px;
+           --fc-pad-top-m: {{ s.padding_top_mobile }}px;
+           --fc-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+           --fc-max-width: 1080px;
+         ">
+
+  {%- if s.show_half_top -%}
+    <div class="fvl-comp-half fvl-comp-half-top" aria-hidden="true"></div>
+  {%- endif -%}
+  {%- if s.show_half_bottom -%}
+    <div class="fvl-comp-half fvl-comp-half-bottom" aria-hidden="true"></div>
+  {%- endif -%}
+
+  {%- if s.wave_image_top != blank -%}
+    <div class="fvl-comp-wave fvl-comp-wave-top" aria-hidden="true">
+      <img src="{{ s.wave_image_top | image_url: width: 2400 }}" alt="" loading="lazy">
+    </div>
+  {%- endif -%}
+
+  <div class="fvl-comp-inner">
+
+    <div class="fvl-comp-compare">
+
+      {%- comment -%} ===== LADO HiPP ===== {%- endcomment -%}
+      <div class="fvl-comp-side fvl-comp-side-hipp">
+        {%- if s.hipp_title != blank -%}
+          <h2 class="fvl-comp-title">{{ s.hipp_title }}</h2>
+        {%- endif -%}
+
+        <div class="fvl-comp-glass-group">
+          <div class="fvl-comp-attrs fvl-comp-attrs-left">
+            {%- for block in attr_blocks -%}
+              {%- if block.settings.side == 'left' -%}
+                <div class="fvl-comp-attr" {{ block.shopify_attributes }}>
+                  <div class="fvl-comp-attr-icon">
+                    {%- if block.settings.icon != blank -%}
+                      <img src="{{ block.settings.icon | image_url: width: 160 }}" alt="{{ block.settings.label | escape }}" loading="lazy">
+                    {%- endif -%}
+                  </div>
+                  <span class="fvl-comp-attr-label">{{ block.settings.label }}</span>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          <div class="fvl-comp-glass">
+            {%- if s.hipp_glass_image != blank -%}
+              <img src="{{ s.hipp_glass_image | image_url: width: 600 }}" alt="{{ s.hipp_title | escape }}" loading="lazy">
+            {%- else -%}
+              <div class="fvl-comp-glass-placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+            {%- endif -%}
+          </div>
+
+          <div class="fvl-comp-attrs fvl-comp-attrs-right">
+            {%- for block in attr_blocks -%}
+              {%- if block.settings.side == 'right' -%}
+                <div class="fvl-comp-attr" {{ block.shopify_attributes }}>
+                  <div class="fvl-comp-attr-icon">
+                    {%- if block.settings.icon != blank -%}
+                      <img src="{{ block.settings.icon | image_url: width: 160 }}" alt="{{ block.settings.label | escape }}" loading="lazy">
+                    {%- endif -%}
+                  </div>
+                  <span class="fvl-comp-attr-label">{{ block.settings.label }}</span>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} ===== VS CENTRAL ===== {%- endcomment -%}
+      {%- if s.show_vs -%}
+        <div class="fvl-comp-vs-row">
+          {%- if s.show_play -%}
+            {%- if s.video_link != blank -%}
+              <a class="fvl-comp-play" href="{{ s.video_link }}" target="_blank" rel="noopener" aria-label="Reproducir video">
+            {%- else -%}
+              <span class="fvl-comp-play" aria-hidden="true">
+            {%- endif -%}
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 8l6 4-6 4z" fill="currentColor"/></svg>
+            {%- if s.video_link != blank -%}</a>{%- else -%}</span>{%- endif -%}
+          {%- endif -%}
+          <span class="fvl-comp-vs">{{ s.vs_text }}</span>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} ===== LADO CONVENCIONAL ===== {%- endcomment -%}
+      <div class="fvl-comp-side fvl-comp-side-conv">
+        {%- if s.conv_title != blank -%}
+          <h2 class="fvl-comp-title">{{ s.conv_title }}</h2>
+        {%- endif -%}
+
+        <div class="fvl-comp-glass-group">
+          <div class="fvl-comp-list fvl-comp-list-left">
+            {%- if s.contains_list != blank -%}
+              {%- if s.contains_title != blank -%}<h3 class="fvl-comp-list-title">{{ s.contains_title }}</h3>{%- endif -%}
+              {%- if s.show_arrows -%}
+                <span class="fvl-comp-arrow fvl-comp-arrow-left" aria-hidden="true">
+                  <svg viewBox="0 0 72 46" fill="none"><path d="M6,12 C30,2 50,12 64,32" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M64,32 L51,31 M64,32 L60,19" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              {%- endif -%}
+              <div class="fvl-comp-list-body">{{ s.contains_list }}</div>
+            {%- endif -%}
+          </div>
+
+          <div class="fvl-comp-glass">
+            {%- if s.conv_glass_image != blank -%}
+              <img src="{{ s.conv_glass_image | image_url: width: 600 }}" alt="{{ s.conv_title | escape }}" loading="lazy">
+            {%- else -%}
+              <div class="fvl-comp-glass-placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+            {%- endif -%}
+          </div>
+
+          <div class="fvl-comp-list fvl-comp-list-right">
+            {%- if s.effects_list != blank -%}
+              {%- if s.effects_title != blank -%}<h3 class="fvl-comp-list-title">{{ s.effects_title }}</h3>{%- endif -%}
+              {%- if s.show_arrows -%}
+                <span class="fvl-comp-arrow fvl-comp-arrow-right" aria-hidden="true">
+                  <svg viewBox="0 0 72 46" fill="none"><path d="M6,12 C30,2 50,12 64,32" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M64,32 L51,31 M64,32 L60,19" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              {%- endif -%}
+              <div class="fvl-comp-list-body">{{ s.effects_list }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    {%- comment -%} ===== REFERENCIAS ===== {%- endcomment -%}
+    {%- if s.show_references and s.references != blank -%}
+      <div class="fvl-comp-references">{{ s.references }}</div>
+    {%- endif -%}
+
+  </div>
+
+  {%- if s.wave_image_bottom != blank -%}
+    <div class="fvl-comp-wave fvl-comp-wave-bottom" aria-hidden="true">
+      <img src="{{ s.wave_image_bottom | image_url: width: 2400 }}" alt="" loading="lazy">
+    </div>
+  {%- endif -%}
+
+</section>
+
+{% style %}
+.fvl-comp-{{ uid }} {
+  position: relative;
+  background-color: var(--fc-bg, transparent);
+  {% if has_bg_image %}
+  background-image: var(--fc-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  {% endif %}
+  padding: var(--fc-pad-top-m, 48px) 20px var(--fc-pad-bottom-m, 48px);
+  text-align: center;
+  overflow: hidden;
+}
+
+.fvl-comp-{{ uid }} .fvl-comp-half {
+  position: absolute; left: 0; width: 100%; height: 50%; z-index: 0; pointer-events: none;
+}
+.fvl-comp-{{ uid }} .fvl-comp-half-top { top: 0; background: var(--fc-half-top-color, #c8d9b6); }
+.fvl-comp-{{ uid }} .fvl-comp-half-bottom { bottom: 0; background: var(--fc-half-bottom-color, #c8d9b6); }
+
+.fvl-comp-{{ uid }} .fvl-comp-wave {
+  position: absolute; left: 0; width: 100%; line-height: 0; pointer-events: none; z-index: 1;
+}
+.fvl-comp-{{ uid }} .fvl-comp-wave img { width: 100%; height: auto; display: block; }
+.fvl-comp-{{ uid }} .fvl-comp-wave-top { top: 0; }
+.fvl-comp-{{ uid }} .fvl-comp-wave-bottom { bottom: 0; }
+
+.fvl-comp-{{ uid }} .fvl-comp-inner {
+  position: relative; z-index: 2;
+  max-width: var(--fc-max-width, 1080px);
+  margin: 0 auto;
+}
+
+/* ===== Contenedor comparativa: móvil vertical / desktop horizontal ===== */
+.fvl-comp-{{ uid }} .fvl-comp-compare {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fc-side-gap, 16px);
+}
+
+.fvl-comp-{{ uid }} .fvl-comp-side {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+}
+
+.fvl-comp-{{ uid }} .fvl-comp-title {
+  font-family: var(--fc-title-font);
+  font-size: var(--fc-title-size-m, 24px);
+  line-height: 1.2;
+  color: var(--fc-title-color, #1f5a2c);
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+/* Grupo vaso + info a los lados (grid 3 columnas) */
+.fvl-comp-{{ uid }} .fvl-comp-glass-group {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.fvl-comp-{{ uid }} .fvl-comp-attrs {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.fvl-comp-{{ uid }} .fvl-comp-attrs-left { align-items: center; }
+.fvl-comp-{{ uid }} .fvl-comp-attrs-right { align-items: center; }
+
+.fvl-comp-{{ uid }} .fvl-comp-attr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.fvl-comp-{{ uid }} .fvl-comp-attr-icon { height: var(--fc-attr-icon-m, 48px); }
+.fvl-comp-{{ uid }} .fvl-comp-attr-icon img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
+
+.fvl-comp-{{ uid }} .fvl-comp-attr-label {
+  font-family: var(--fc-body-font);
+  font-size: var(--fc-attr-size-m, 12px);
+  line-height: 1.3;
+  color: var(--fc-attr-text-color, #2d7a3e);
+  text-align: center;
+}
+
+.fvl-comp-{{ uid }} .fvl-comp-glass img {
+  width: 100%;
+  max-width: var(--fc-glass-max, 160px);
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+.fvl-comp-{{ uid }} .fvl-comp-glass-placeholder {
+  width: 110px; height: 150px; margin: 0 auto; opacity: .4;
+}
+
+/* Listas del vaso convencional */
+.fvl-comp-{{ uid }} .fvl-comp-list { text-align: center; }
+.fvl-comp-{{ uid }} .fvl-comp-list-title {
+  font-family: var(--fc-body-font);
+  font-weight: 700;
+  font-size: var(--fc-attr-size-m, 12px);
+  color: var(--fc-list-title-color, #1f5a2c);
+  margin: 0 0 6px;
+}
+.fvl-comp-{{ uid }} .fvl-comp-list-body {
+  font-family: var(--fc-body-font);
+  font-size: var(--fc-attr-size-m, 11px);
+  line-height: 1.5;
+  color: var(--fc-list-text-color, #2d7a3e);
+  text-align: left;
+}
+.fvl-comp-{{ uid }} .fvl-comp-list-body ul { margin: 0; padding-left: 16px; }
+.fvl-comp-{{ uid }} .fvl-comp-list-body p { margin: 0; }
+
+/* Flechas curvas hacia el vaso */
+.fvl-comp-{{ uid }} .fvl-comp-arrow {
+  display: block;
+  width: 56px;
+  margin: 4px auto 8px;
+  color: var(--fc-arrow-color, #1f5a2c);
+}
+.fvl-comp-{{ uid }} .fvl-comp-arrow svg { width: 100%; height: auto; display: block; }
+.fvl-comp-{{ uid }} .fvl-comp-arrow-right { transform: scaleX(-1); }
+
+/* VS */
+.fvl-comp-{{ uid }} .fvl-comp-vs-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-shrink: 0;
+}
+.fvl-comp-{{ uid }} .fvl-comp-play {
+  display: inline-flex;
+  width: 48px; height: 48px;
+  color: var(--fc-play-color, #1f5a2c);
+}
+.fvl-comp-{{ uid }} .fvl-comp-play svg { width: 100%; height: 100%; }
+
+.fvl-comp-{{ uid }} .fvl-comp-vs {
+  font-family: var(--fc-title-font);
+  font-size: var(--fc-vs-size-m, 52px);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--fc-vs-color, #1f5a2c);
+  line-height: 1;
+}
+
+/* Referencias */
+.fvl-comp-{{ uid }} .fvl-comp-references {
+  font-family: var(--fc-body-font);
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--fc-references-color, #8a9a7c);
+  text-align: left;
+  margin-top: 36px;
+}
+.fvl-comp-{{ uid }} .fvl-comp-references p { margin: 0 0 4px; }
+
+/* ===== DESKTOP: horizontal ===== */
+@media (min-width: 768px) {
+  .fvl-comp-{{ uid }} {
+    padding: var(--fc-pad-top-d, 72px) 40px var(--fc-pad-bottom-d, 72px);
+  }
+
+  .fvl-comp-{{ uid }} .fvl-comp-compare {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--fc-side-gap, 16px);
+  }
+
+  .fvl-comp-{{ uid }} .fvl-comp-title { font-size: var(--fc-title-size-d, 30px); margin-bottom: 28px; }
+  .fvl-comp-{{ uid }} .fvl-comp-attr-icon { height: var(--fc-attr-icon-d, 58px); }
+  .fvl-comp-{{ uid }} .fvl-comp-attr-label { font-size: var(--fc-attr-size-d, 13px); }
+  .fvl-comp-{{ uid }} .fvl-comp-list-title { font-size: var(--fc-attr-size-d, 14px); }
+  .fvl-comp-{{ uid }} .fvl-comp-list-body { font-size: var(--fc-attr-size-d, 13px); }
+  .fvl-comp-{{ uid }} .fvl-comp-vs { font-size: var(--fc-vs-size-d, 72px); }
+  .fvl-comp-{{ uid }} .fvl-comp-play { width: 56px; height: 56px; }
+  .fvl-comp-{{ uid }} .fvl-comp-references { font-size: 10px; }
+}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "FvL · Comparativa",
+  "tag": "section",
+  "class": "fvl-comp-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🥛 Parte 1 — HiPP"
+    },
+    {
+      "type": "text",
+      "id": "hipp_title",
+      "label": "Título HiPP",
+      "default": "Fórmula de continuación HiPP 1 - 3 años"
+    },
+    {
+      "type": "image_picker",
+      "id": "hipp_glass_image",
+      "label": "Imagen del vaso HiPP"
+    },
+    {
+      "type": "paragraph",
+      "content": "Los atributos (Prebióticos, Vitamina D, etc.) se agregan como bloques abajo. Cada uno elige si va a la izquierda o derecha del vaso."
+    },
+    {
+      "type": "header",
+      "content": "⚖️ VS central"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vs",
+      "label": "Mostrar VS",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "vs_text",
+      "label": "Texto del centro",
+      "default": "VS"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_play",
+      "label": "Mostrar botón de play",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "video_link",
+      "label": "Enlace del video (opcional)",
+      "info": "Si lo pones, el botón de play abre el video. Si lo dejas vacío, el play es decorativo."
+    },
+    {
+      "type": "header",
+      "content": "🥛 Parte 2 — Convencional"
+    },
+    {
+      "type": "text",
+      "id": "conv_title",
+      "label": "Título convencional",
+      "default": "Fórmulas convencionales 1 - 3 años"
+    },
+    {
+      "type": "image_picker",
+      "id": "conv_glass_image",
+      "label": "Imagen del vaso convencional"
+    },
+    {
+      "type": "text",
+      "id": "contains_title",
+      "label": "Título lista izquierda",
+      "default": "Contiene:"
+    },
+    {
+      "type": "richtext",
+      "id": "contains_list",
+      "label": "Lista izquierda",
+      "default": "<ul><li>Sólidos de jarabe de maíz</li><li>Azúcares añadidos</li></ul>"
+    },
+    {
+      "type": "text",
+      "id": "effects_title",
+      "label": "Título lista derecha",
+      "default": "Posibles efectos secundarios:"
+    },
+    {
+      "type": "richtext",
+      "id": "effects_list",
+      "label": "Lista derecha",
+      "default": "<ul><li>Caries</li><li>Picky eater</li><li>Hiperactividad</li><li>Obesidad infantil</li><li>Cambios en la microbiota</li></ul>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Mostrar flechas curvas hacia el vaso",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "📚 Referencias"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_references",
+      "label": "Mostrar referencias",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "references",
+      "label": "Referencias bibliográficas"
+    },
+    {
+      "type": "header",
+      "content": "🖼 Fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Imagen de fondo (opcional)"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_bg_color",
+      "label": "Usar color de fondo sólido",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#dce8cd"
+    },
+    {
+      "type": "header",
+      "content": "🟩 Fondo por mitades"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_half_top",
+      "label": "Fondo en la mitad superior",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "half_top_color",
+      "label": "Color mitad superior",
+      "default": "#dce8cd"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_half_bottom",
+      "label": "Fondo en la mitad inferior",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "half_bottom_color",
+      "label": "Color mitad inferior",
+      "default": "#dce8cd"
+    },
+    {
+      "type": "header",
+      "content": "🌊 Ondas de leche"
+    },
+    {
+      "type": "image_picker",
+      "id": "wave_image_top",
+      "label": "Onda superior (SVG/PNG)"
+    },
+    {
+      "type": "image_picker",
+      "id": "wave_image_bottom",
+      "label": "Onda inferior (SVG/PNG)"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colores"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color de títulos",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "color",
+      "id": "vs_color",
+      "label": "Color del VS",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "color",
+      "id": "play_color",
+      "label": "Color del botón play",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Color de las flechas",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "color",
+      "id": "attr_text_color",
+      "label": "Color texto de atributos",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "list_title_color",
+      "label": "Color título de listas",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "color",
+      "id": "list_text_color",
+      "label": "Color texto de listas",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "references_color",
+      "label": "Color de referencias",
+      "default": "#8a9a7c"
+    },
+    {
+      "type": "header",
+      "content": "🔤 Tipografía"
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Fuente de títulos",
+      "options": [
+        { "value": "secondary", "label": "Secundaria del tema (serif)" },
+        { "value": "primary", "label": "Primaria del tema (sans)" }
+      ],
+      "default": "secondary"
+    },
+    {
+      "type": "select",
+      "id": "body_font",
+      "label": "Fuente de textos",
+      "options": [
+        { "value": "primary", "label": "Primaria del tema (sans)" },
+        { "value": "secondary", "label": "Secundaria del tema (serif)" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Tamaño títulos — Escritorio",
+      "min": 18,
+      "max": 44,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño títulos — Móvil",
+      "min": 16,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "vs_size_desktop",
+      "label": "Tamaño VS — Escritorio",
+      "min": 40,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "vs_size_mobile",
+      "label": "Tamaño VS — Móvil",
+      "min": 30,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "attr_size_desktop",
+      "label": "Tamaño textos — Escritorio",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "attr_size_mobile",
+      "label": "Tamaño textos — Móvil",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "attr_icon_size_desktop",
+      "label": "Tamaño íconos — Escritorio",
+      "min": 30,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 58
+    },
+    {
+      "type": "range",
+      "id": "attr_icon_size_mobile",
+      "label": "Tamaño íconos — Móvil",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "glass_max_width",
+      "label": "Ancho máximo de los vasos",
+      "min": 100,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "side_gap",
+      "label": "Espacio entre lados / VS",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "📐 Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1080
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Espaciado superior — Escritorio",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Espaciado inferior — Escritorio",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Espaciado superior — Móvil",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Espaciado inferior — Móvil",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Atributo HiPP",
+      "type": "attr",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Ícono"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Texto",
+          "default": "Atributo"
+        },
+        {
+          "type": "select",
+          "id": "side",
+          "label": "Lado del vaso",
+          "options": [
+            { "value": "left", "label": "Izquierda" },
+            { "value": "right", "label": "Derecha" }
+          ],
+          "default": "left"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "FvL · Comparativa",
+      "category": "Formula vs Leche de Vaca",
+      "blocks": [
+        { "type": "attr", "settings": { "label": "Prebióticos", "side": "left" } },
+        { "type": "attr", "settings": { "label": "Azúcares añadidos", "side": "left" } },
+        { "type": "attr", "settings": { "label": "Vitamina D", "side": "right" } },
+        { "type": "attr", "settings": { "label": "Omega 3 y 6", "side": "right" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

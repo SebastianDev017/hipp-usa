@@ -1,0 +1,93 @@
+{%- liquid 
+	assign title = section.settings.title
+	assign text = section.settings.text
+	assign image = section.settings.image
+	assign form_title = section.settings.form_title
+-%}
+
+{{- 'css-image-with-form-white.css' | asset_url | stylesheet_tag -}}
+
+<div class="iwf-white section" data-section-id="{{- section.id -}}" data-section-type="iwf-white">
+
+	{%- if title != blank or text != blank -%}
+		<div class="iwf-white-content-wrapper">
+			<div class="iwf-white-content section-content text-center">
+				{%- unless title == blank -%}
+					<header class="iwf-white-title-wrapper" data-aos="fade-up">
+						<h2 class="iwf-white-title section-title-richtext color-dark-blue">{{- title -}}</h2>
+					</header>
+				{%- endunless -%}
+				{%- unless text == blank -%}
+					<p class="iwf-white-text section-title-richtext color-dark-blue" data-aos="fade-up">{{- text -}}</p>
+				{%- endunless -%}
+			</div>
+		</div>
+	{%- endif -%}
+	<div class="iwf-white-grid">
+		<div class="iwf-white-image-wrapper">
+			{%- unless image == blank -%}
+				<img src="{{ image | image_url: width: 800 }}" alt="{{ image.alt }}" class="iwf-white-image">
+			{%- endunless -%}
+		</div>
+		<div class="iwf-white-form-wrapper">
+			<div class="iwf-white-form">
+				{%- unless form_title == blank -%}
+					<p class="iwf-white-form-title color-dark-blue secondary-font-bold">{{- form_title -}}</p>
+				{%- endunless -%}
+				<div class="iwf-white-klaviyo-form">
+					<div class="recetario-form klaviyo-form-{{ section.settings.klaviyo }}" id="recetario-form"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Imagen con formulario (B)",
+	"tag": "section",
+	"class": "iwf-white-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Contenido"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "title",
+			"label": "Título"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text",
+			"label": "Texto"
+		},
+		{
+			"type": "image_picker",
+			"id": "image",
+			"label": "Imagen"
+		},
+		{
+			"type": "header",
+			"content": "Formulario"
+		},
+		{
+			"type": "text",
+			"id": "form_title",
+			"label": "Título"
+		},
+        {
+          "type": "text",
+          "id": "klaviyo",
+          "label": "ID Klaviyo form",
+          "default": "XDkmNQ"
+        }
+	],
+	"presets": [
+		{
+			"category": "Homepage",
+			"name": "Imagen con formulario - (Blanco)"
+		}
+	]
+}
+{% endschema %}

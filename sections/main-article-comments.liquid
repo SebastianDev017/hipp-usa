@@ -1,0 +1,60 @@
+{% liquid
+  assign anchorId = '#comments'
+%}
+
+
+{%- if blog.comments_enabled? and article.comments_count > 0 -%}
+  {{ 'css-main-blogpost-comments.css' | asset_url | stylesheet_tag }}
+
+  <div class="article-comments-row-inner">
+    <header class="article-comments-header" id="comments">
+      <h2 class="article-comments-title section-title-richtext color-green">Comentarios de <strong>clientes</strong></h2>
+    </header>
+
+    {% paginate article.comments by 5 %}
+      <div class="article-comments-list color-green">
+        {%- if comment.status == 'pending' and comment.content -%}
+          <article class="article-comment" id="{{ comment.id }}">
+            <header class="article-comment-header">
+              <h3 class="article-comment-title">{{ comment.author }}</h3>
+              <p class="article-comment-date">{{ comment.created_at | date: '%m/%d/%y' }}</p>
+            </header>
+
+            <div class="article-comment-content">
+              {{ comment.content }}
+            </div>
+          </article>
+        {%- endif -%}
+
+        {%- for comment in article.comments -%}
+          <article class="article-comment" id="{{ comment.id }}">
+            <header class="article-comment-header">
+              <h3 class="article-comment-title">{{ comment.author }}</h3>
+              <p class="article-comment-date">{{ comment.created_at | date: '%m/%d/%y' }}</p>
+            </header>
+
+            <div class="article-comment-content">
+              {{ comment.content }}
+            </div>
+          </article>
+        {%- endfor -%}
+
+        {% liquid
+          if paginate.pages > 1
+            render 'pagination', paginate: paginate, anchor: anchorId, custom_class: 'article-comments-pagination'
+          endif
+        %}
+
+      </div>
+    {% endpaginate %}
+  </div>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Comentarios",
+  "class": "article-comments-row",
+  "tag": "section"
+}
+{% endschema %}

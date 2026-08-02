@@ -1,0 +1,156 @@
+{%- liquid 
+  assign text = section.settings.text
+  assign title = section.settings.title
+  assign logo = section.settings.logo
+-%}
+
+{{- "css-page-about-us-image-with-icons-white.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-imwt-white-container">
+
+  <div class="pau-imwt-white-content">
+
+    {%- if title != blank or text != blank -%}
+      <div class="pau-imwt-white-header">
+        {%- if text != blank -%}
+          <div class="pau-imwt-white-header-text-wrapper">
+            <p class="pau-imwt-white-header-text title-1">{{ text }}</p>
+          </div>
+        {%- endif -%}
+
+        {%- if title != blank -%}
+          <header class="pau-imwt-white-header-title-wrapper">
+            <h2 class="pau-imwt-white-header-title section-title-richtext">{{ title }}</h2>
+          </header>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pau-imwt-white-logo-tablet">
+      <div class="pau-imwt-white-logo-item-image-wrapper back-img-wrapper">
+        {%- if logo != blank -%}
+          <picture class="picture-wrapper">
+            <img class="back-img pau-imwt-white-logo-item-image" alt="{{ logo.alt }}" loading="lazy" src="{{ logo | image_url: width: 800 }}">
+          </picture>
+        {%- endif -%}
+        {%- unless section.blocks.size == 0 -%}
+          <img class="pau-imwt-white-arrow-tablet left" src="{{ 'arrow-mobile-1-blue.png' | asset_url }}" alt="flecha">
+          <img class="pau-imwt-white-arrow-tablet right" src="{{ 'arrow-mobile-2-blue.png' | asset_url }}" alt="flecha">
+        {%- endunless -%}
+      </div>
+    </div>
+
+    <div class="pau-imwt-white-items">
+
+      {%- for block in section.blocks -%}
+
+        {%- liquid 
+          assign block_icon = block.settings.block_icon
+          assign block_text = block.settings.block_text
+          assign arrow = 'arrow-' | append: forloop.index | append: '-blue.png'
+        -%}
+
+        <div class="pau-imwt-white-item {{ 'pau-imwt-white-item-' | append: forloop.index }}">
+
+          <div class="pau-imwt-white-item-image-wrapper back-img-wrapper">
+            {%- if block_icon != blank -%}
+              <picture class="picture-wrapper">
+                <img class="back-img pau-imwt-white-item-image" alt="{{ block_icon.alt }}" loading="lazy" src="{{ block_icon | image_url: width: 800 }}">
+              </picture>
+            {%- endif -%}
+          </div>
+
+          {%- if block_text != blank -%}
+            <div class="pau-imwt-white-item-text-wrapper">
+              <p class="pau-imwt-white-item-text">{{ block_text }}</p>
+              <div class="pau-imwt-white-item-asset">
+                <img src="{{ arrow | asset_url }}" alt="flecha">
+              </div>
+            </div>
+          {%- endif -%}
+
+        </div>
+
+      {%- endfor -%}
+
+      <div class="pau-imwt-white-logo-item on-desktop">
+        <div class="pau-imwt-white-logo-item-image-wrapper back-img-wrapper">
+          {%- if logo != blank -%}
+            <picture class="picture-wrapper">
+              <img class="back-img pau-imwt-white-logo-item-image" alt="{{ logo.alt }}" loading="lazy" src="{{ logo | image_url: width: 800 }}">
+            </picture>
+          {%- endif -%}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Imagen c/ íconos - (B)",
+    "tag": "section",
+    "class": "pau-imwt-white",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Título 1"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título 2"
+      },
+      {
+        "type": "header",
+        "content": "Imagen"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Imagen"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Tarjeta",
+        "type": "card",
+        "limit": 6,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Ícono"
+          },
+          {
+            "type": "image_picker",
+            "id": "block_icon",
+            "label": "Ícono"
+          },
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "inline_richtext",
+            "id": "block_text",
+            "label": "Texto"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - Imagen c/ íconos - (Blanco)",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

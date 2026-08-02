@@ -1,0 +1,145 @@
+{%- liquid 
+  assign title = section.settings.title
+  assign text_1 = section.settings.text_1
+  assign text_2 = section.settings.text_2
+  assign text_3 = section.settings.text_3
+-%}
+
+{{- "css-page-about-us-cards-with-title.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-cw-title-container">
+
+  <div class="pau-cw-title-content">
+
+    {%- if title != blank or text_1 != blank -%}
+      <div class="pau-cw-title-header">
+        {%- if title != blank -%}
+          <header class="pau-cw-title-header-title-wrapper">
+            <h2 class="pau-cw-title-header-title section-title-richtext">{{ title }}</h2>
+          </header>
+        {%- endif -%}
+
+        {%- if text_1 != blank -%}
+          <div class="pau-cw-title-header-text-wrapper">
+            <p class="pau-cw-title-header-text">{{ text_1 }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pau-cw-title-items">
+
+      {%- for block in section.blocks -%}
+
+        {%- liquid 
+          assign card_image = block.settings.card_image
+          assign card_title = block.settings.card_title
+        -%}
+
+        <div class="pau-cw-title-item">
+          <div class="pau-cw-title-item-image-wrapper back-img-wrapper">
+            {%- if card_image != blank -%}
+              <picture class="picture-wrapper">
+                <img class="back-img pau-cw-title-item-image" alt="{{ card_image.alt }}" loading="lazy" src="{{ card_image | image_url: width: 800 }}">
+              </picture>
+            {%- endif -%}
+          </div>
+
+          {%- if card_title != blank -%}
+            <div class="pau-cw-title-item-title-wrapper">
+              <p class="pau-cw-title-item-title">{{ card_title }}</p>
+            </div>
+          {%- endif -%}
+
+        </div>
+
+      {%- endfor -%}
+
+    </div>
+
+    {%- if text_2 != blank or text_3 != blank -%}
+      <div class="pau-cw-title-footer">
+        {%- if text_2 != blank -%}
+          <div class="pau-cw-title-footer-text-top-wrapper">
+            <p class="pau-cw-title-footer-text-top">{{ text_2 }}</p>
+          </div>
+        {%- endif -%}
+
+        {%- if text_3 != blank -%}
+          <div class="pau-cw-title-footer-text-bottom-wrapper">
+            <p class="pau-cw-title-footer-text-bottom">{{ text_3 }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - T/Título",
+    "tag": "section",
+    "class": "pau-cw-title",
+    "max_blocks": 2,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text_1",
+        "label": "Texto 1"
+      },
+      {
+        "type": "text",
+        "id": "text_2",
+        "label": "Texto 2"
+      },
+      {
+        "type": "text",
+        "id": "text_3",
+        "label": "Texto 3"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Tarjeta",
+        "type": "card",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Logo"
+          },
+          {
+            "type": "image_picker",
+            "id": "card_image",
+            "label": "Logo"
+          },
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "text",
+            "id": "card_title",
+            "label": "Título"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - T/Título",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

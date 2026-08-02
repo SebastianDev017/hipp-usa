@@ -1,0 +1,139 @@
+{{- "css-main-page-blog-blogs.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-main-page-blog-blogs.js' | asset_url -}}"></script>
+
+
+{%- liquid 
+  assign title = section.settings.title
+  assign blocks_size = section.blocks | size
+  assign articles_per_page = 12
+-%}
+
+{%- if blocks_size > 0 -%}
+  <div class="blogs" data-section-id="{{- section.id -}}" data-section-type="pabe-blog-blogs">
+    {%- unless title == blank -%}
+      <header class="blogs-header text-center">
+        <div class="section-content">
+          <h2 class="blogs-title">
+            {{- title -}}
+          </h2>
+        </div>
+      </header>
+    {%- endunless -%}
+
+    <div class="blogs-tabs">
+      <div class="blogs-tabs-carousel-wrapper">
+        <div class="blogs-tabs-carousel swiper" data-slides="{{- blocks_size -}}">
+          <div class="swiper-wrapper">
+            {%- for block in section.blocks -%}
+              {%- assign blog = block.settings.blog -%}
+
+              <div class="blogs-tab swiper-slide">
+                <button class="blogs-tab-button" data-blog="{{- blog.handle -}}" role="tab" type="button">
+                  <div class="blogs-tab-button-content">
+                    <span class="blogs-tab-title">{{- blog.title -}}</span>
+                  </div>
+                </button>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+        <button class="blogs-tabs-swiper-button swiper-button prev">
+          {%- render 'icon', icon: 'arrow-prev-rounded' -%}
+        </button>
+        <button class="blogs-tabs-swiper-button swiper-button next">
+          {%- render 'icon', icon: 'arrow-next-rounded' -%}
+        </button>
+      </div>
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign blog = block.settings.blog -%}
+
+      <div class="blogs-blog" data-blog="{{- blog.handle -}}">
+
+        <div class="blogs-tags">
+          <div class="blogs-tags-content">
+            <div class="blogs-tags-grid">
+              <button class="blogs-tag active" data-url="{{- blog.url -}}" role="button" type="button">
+                <span class="blogs-tag-text">Todos los temas</span>
+              </button>
+
+              {%- for tag in blog.all_tags -%}
+                {%- assign tag_handle = tag | handleize -%}
+
+                <button class="blogs-tag" data-url="/blogs/{{- blog.handle -}}/tagged/{{- tag_handle -}}">
+                  <span class="blogs-tag-text">{{- tag -}}</span>
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+
+        <div class="blogs-blog-content">
+          <header class="blogs-blog-header text-center">
+            <div class="section-content">
+              <h2 class="blogs-blog-title color-green">{{- blog.title -}}</h2>
+            </div>
+          </header>
+
+          <div class="blog-articles-wrapper">
+            <div class="blog-articles">
+              <div class="blog-articles-grid section-content" id="{{- blog.handle -}}-ajaxinate-loop">
+                {%- for article in blog.articles limit: articles_per_page -%}
+                  {%- render "article-card", article: article -%}
+                {%- endfor -%}
+              </div>
+
+              <div class="blog-articles-pagination" id="{{- blog.handle -}}-ajaxinate-pagination">
+                {%- if blog.articles_count > articles_per_page -%}
+                  <div class="blog-button-wrapper button-container center">
+                    <a class="load-more-button button" href="{{- blog.url | append: '?page=2' -}}">Leer más</a>
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{%- schema -%}
+  {
+    "name": "Blog - Blogs",
+    "tag": "section",
+    "class": "blog-blogs",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título"
+      }
+    ],
+    "max_blocks": 20,
+    "blocks": [
+      {
+        "type": "blog",
+        "name": "Blog",
+        "settings": [
+          {
+            "type": "blog",
+            "id": "blog",
+            "label": "Blog"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Blog - Blogs",
+        "category": "Page"
+      }
+    ]
+  }
+{% endschema %}

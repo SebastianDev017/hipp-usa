@@ -1,0 +1,165 @@
+{%- liquid
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign sort_by_label = "sections.collection_template.sort_by_label" | t
+-%}
+
+<div class="collection-custom-sort" data-collection-sort>
+
+  <button class="collection-custom-sort-button button" type="button" aria-haspopup="listbox" aria-expanded="false">
+    <svg class="collection-custom-sort-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <line x1="4" y1="7"  x2="20" y2="7"  stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      <line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+    <span class="collection-custom-sort-label">{{- sort_by_label -}}</span>
+  </button>
+
+  <ul class="collection-custom-sort-options list-menu" role="listbox">
+    {%- for option in collection.sort_options -%}
+      {%- liquid
+        assign option_name = option.name | escape
+        assign selected_class = nil
+        if option.value == sort_by
+          assign selected_class = "selected"
+        endif
+      -%}
+      <li class="collection-custom-sort-option {{ selected_class }}"
+          role="option"
+          {% if option.value == sort_by %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
+          data-name="{{- option_name -}}"
+          data-value="{{ option.value | escape }}">
+        {%- if option.value == "manual" -%}
+          {{- "Destacados" -}}
+        {%- else -%}
+          {{- option_name -}}
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+
+</div>
+
+{% style %}
+.collection-custom-sort {
+  --ccs-green: #2d7a3e;
+  --ccs-green-dark: #125b4e;
+  position: relative;
+  display: inline-block;
+}
+
+/* ===== BOTÓN ===== */
+.collection-custom-sort-button.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: 0;
+  padding: 8px 4px;
+  color: var(--ccs-green);
+  font-family: var(--secondary-font-bold, inherit);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.collection-custom-sort-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.collection-custom-sort-label {
+  pointer-events: none;
+}
+
+/* ===== DROPDOWN ===== */
+.collection-custom-sort-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 30;
+  min-width: 220px;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid rgba(45, 122, 62, 0.25);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity .18s ease, transform .18s ease, visibility .18s;
+}
+
+.collection-custom-sort.is-open .collection-custom-sort-options {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ===== OPCIONES ===== */
+.collection-custom-sort-option {
+  padding: 10px 18px;
+  font-family: var(--primary-font, inherit);
+  font-size: 15px;
+  color: var(--ccs-green-dark);
+  cursor: pointer;
+  transition: background .15s ease;
+}
+
+.collection-custom-sort-option:hover {
+  background: #eef4e7;
+}
+
+.collection-custom-sort-option.selected {
+  font-family: var(--primary-font-bold, inherit);
+  color: var(--ccs-green);
+  background: #eef4e7;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 680px) {
+  .collection-custom-sort-button.button {
+    font-size: 16px;
+  }
+
+  .collection-custom-sort-options {
+    min-width: 200px;
+  }
+}
+{% endstyle %}
+
+<script>
+(function () {
+  var sorts = document.querySelectorAll('[data-collection-sort]');
+
+  sorts.forEach(function (sort) {
+    var button = sort.querySelector('.collection-custom-sort-button');
+    if (!button) return;
+
+    /* Abre / cierra el dropdown */
+    button.addEventListener('click', function (e) {
+      e.stopPropagation();
+      sort.classList.toggle('is-open');
+      button.setAttribute('aria-expanded', sort.classList.contains('is-open'));
+    });
+
+    /* Cierra al hacer click fuera */
+    document.addEventListener('click', function (e) {
+      if (!sort.contains(e.target)) {
+        sort.classList.remove('is-open');
+        button.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    /* Cierra con la tecla Escape */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        sort.classList.remove('is-open');
+        button.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+})();
+</script>

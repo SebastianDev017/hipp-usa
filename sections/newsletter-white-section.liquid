@@ -1,0 +1,41 @@
+{{- 'css-newsletter-white-section.css' | asset_url | stylesheet_tag -}}
+
+{%- liquid 
+	assign title = section.settings.title
+-%}
+
+<div class="newsletter-white section" data-section-id="{{- section.id -}}" data-section-type="newsletter">
+  <div class="newsletter-white-container">
+    <div class="newsletter-white-head">
+      <h1 class="newsletter-white-title">{{ title }}</h1>
+    </div>
+    <div class="newsletter-white-form-wrap klaviyo-newsletter">
+      <div class="klaviyo-form-WjChZk"></div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+	"name": "Newsletter fondo blanco",
+	"tag": "section",
+	"class": "newsletter-white-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Contenido"
+		},
+		{
+			"type": "richtext",
+			"id": "title",
+			"label": "Título"
+		},
+	],
+	"presets": [
+		{
+			"category": "Homepage",
+			"name": "Newsletter fondo blanco"
+		}
+	]
+}
+{% endschema %}

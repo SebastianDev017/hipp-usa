@@ -1,0 +1,439 @@
+{%- liquid
+  assign uid = section.id | replace: '-', '' | downcase
+  assign s = section.settings
+
+  if s.title_font == 'primary'
+    assign title_font_var = 'var(--primary-font-bold, Georgia, serif)'
+  else
+    assign title_font_var = 'var(--secondary-font-bold, Georgia, serif)'
+  endif
+
+  assign has_bg = false
+  if s.bg_image_desktop != blank or s.bg_image_mobile != blank
+    assign has_bg = true
+  endif
+-%}
+
+<section class="nf-banner nf-banner-{{ uid }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="nuestra-familia-banner"
+         style="
+           --nf-overlay: {{ s.overlay_color }};
+           --nf-title-color: {{ s.title_color }};
+           --nf-highlight-color: {{ s.highlight_color }};
+           --nf-title-font: {{ title_font_var }};
+           --nf-title-size-d: {{ s.title_size_desktop }}px;
+           --nf-title-size-m: {{ s.title_size_mobile }}px;
+           --nf-height-d: {{ s.height_desktop }}px;
+           --nf-height-m: {{ s.height_mobile }}px;
+           --nf-content-max: {{ s.content_max_width }}px;
+           --nf-text-align-d: {{ s.text_align_desktop }};
+           --nf-text-x-d: {{ s.text_x_desktop }};
+           --nf-text-y-d: {{ s.text_y_desktop }};
+           --nf-text-align-m: {{ s.text_align_mobile }};
+           --nf-text-x-m: {{ s.text_x_mobile }};
+           --nf-text-y-m: {{ s.text_y_mobile }};
+           --nf-badge-size-d: {{ s.badge_size_desktop }}px;
+           --nf-badge-size-m: {{ s.badge_size_mobile }}px;
+         ">
+
+  <div class="nf-banner-bg">
+    {%- if s.bg_image_desktop != blank -%}
+      <img class="nf-banner-bg-img nf-banner-bg-desktop"
+           src="{{ s.bg_image_desktop | image_url: width: 2200 }}"
+           alt="{{ s.bg_image_desktop.alt | escape }}"
+           loading="lazy"
+           width="{{ s.bg_image_desktop.width }}"
+           height="{{ s.bg_image_desktop.height }}">
+    {%- endif -%}
+    {%- if s.bg_image_mobile != blank -%}
+      <img class="nf-banner-bg-img nf-banner-bg-mobile"
+           src="{{ s.bg_image_mobile | image_url: width: 1200 }}"
+           alt="{{ s.bg_image_mobile.alt | escape }}"
+           loading="lazy"
+           width="{{ s.bg_image_mobile.width }}"
+           height="{{ s.bg_image_mobile.height }}">
+    {%- elsif s.bg_image_desktop != blank -%}
+      <img class="nf-banner-bg-img nf-banner-bg-mobile-fallback"
+           src="{{ s.bg_image_desktop | image_url: width: 1200 }}"
+           alt="{{ s.bg_image_desktop.alt | escape }}"
+           loading="lazy">
+    {%- endif -%}
+
+    {%- unless has_bg -%}
+      <div class="nf-banner-bg-placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+    {%- endunless -%}
+  </div>
+
+  {%- if s.show_overlay -%}
+    <div class="nf-banner-overlay" aria-hidden="true"></div>
+  {%- endif -%}
+
+  {%- if s.title != blank or s.badge_image != blank -%}
+    <div class="nf-banner-content">
+      {%- if s.title != blank -%}
+        <div class="nf-banner-title section-title-richtext">{{ s.title }}</div>
+      {%- endif -%}
+
+      {%- if s.badge_image != blank -%}
+        <div class="nf-banner-badge">
+          <img src="{{ s.badge_image | image_url: width: 600 }}"
+               alt="{{ s.badge_image.alt | default: '125 años' | escape }}"
+               loading="lazy">
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+</section>
+
+{% style %}
+.nf-banner-{{ uid }} {
+  position: relative;
+  width: 100%;
+  min-height: var(--nf-height-m, 520px);
+  overflow: hidden;
+}
+
+.nf-banner-{{ uid }} .nf-banner-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.nf-banner-{{ uid }} .nf-banner-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.nf-banner-{{ uid }} .nf-banner-bg-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: #cdd8c2; opacity: .5;
+}
+
+.nf-banner-{{ uid }} .nf-banner-bg-desktop { display: none; }
+.nf-banner-{{ uid }} .nf-banner-bg-mobile,
+.nf-banner-{{ uid }} .nf-banner-bg-mobile-fallback { display: block; }
+
+.nf-banner-{{ uid }} .nf-banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--nf-overlay, rgba(0,0,0,0.15));
+}
+
+/* ===== Contenido (texto) ===== */
+.nf-banner-{{ uid }} .nf-banner-content {
+  position: relative;
+  z-index: 2;
+  min-height: var(--nf-height-m, 520px);
+  display: flex;
+  flex-direction: column;
+  align-items: var(--nf-text-x-m, center);
+  justify-content: var(--nf-text-y-m, flex-start);
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+.nf-banner-{{ uid }} .nf-banner-title {
+  max-width: var(--nf-content-max, 760px);
+  font-family: var(--nf-title-font);
+  font-size: var(--nf-title-size-m, 26px) !important;
+  line-height: 1.2em !important;
+  font-weight: 400;
+  color: var(--nf-title-color, #ffffff);
+  text-align: var(--nf-text-align-m, center);
+}
+.nf-banner-{{ uid }} .nf-banner-title strong,
+.nf-banner-{{ uid }} .nf-banner-title b {
+  font-weight: 700;
+  color: var(--nf-highlight-color, #ffffff);
+  font-size: inherit !important;
+}
+.nf-banner-{{ uid }} .nf-banner-title p,
+.nf-banner-{{ uid }} .nf-banner-title * {
+  font-size: inherit !important;
+  margin: 0 0 6px;
+}
+.nf-banner-{{ uid }} .nf-banner-title p:last-child { margin-bottom: 0; }
+
+/* ===== Sello / badge (en el flujo, debajo del texto) ===== */
+.nf-banner-{{ uid }} .nf-banner-badge {
+  width: var(--nf-badge-size-m, 150px);
+  max-width: 80%;
+  margin: 28px auto 0;
+}
+.nf-banner-{{ uid }} .nf-banner-badge img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===== DESKTOP ===== */
+@media (min-width: 768px) {
+  .nf-banner-{{ uid }} { min-height: var(--nf-height-d, 600px); }
+
+  .nf-banner-{{ uid }} .nf-banner-bg-desktop { display: block; }
+  .nf-banner-{{ uid }} .nf-banner-bg-mobile,
+  .nf-banner-{{ uid }} .nf-banner-bg-mobile-fallback { display: none; }
+
+  .nf-banner-{{ uid }} .nf-banner-content {
+    min-height: var(--nf-height-d, 600px);
+    align-items: var(--nf-text-x-d, flex-start);
+    justify-content: var(--nf-text-y-d, flex-start);
+    padding: 60px 64px;
+  }
+  .nf-banner-{{ uid }} .nf-banner-title {
+    font-size: var(--nf-title-size-d, 26px) !important;
+    text-align: var(--nf-text-align-d, center);
+  }
+  .nf-banner-{{ uid }} .nf-banner-badge {
+    width: var(--nf-badge-size-d, 220px);
+  }
+}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "NF · Banner final",
+  "tag": "section",
+  "class": "nf-banner-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🖼 Imagen de fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_desktop",
+      "label": "Imagen de fondo — Escritorio"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image_mobile",
+      "label": "Imagen de fondo — Móvil",
+      "info": "Opcional. Si no la subes, se usa la de escritorio."
+    },
+    {
+      "type": "header",
+      "content": "🏅 Sello / badge (PNG)"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_image",
+      "label": "Sello (ej. 125 años)",
+      "info": "PNG con transparencia recomendado."
+    },
+    {
+      "type": "range",
+      "id": "badge_size_desktop",
+      "label": "Tamaño del sello — Escritorio",
+      "min": 80,
+      "max": 360,
+      "step": 10,
+      "unit": "px",
+      "default": 220
+    },
+    {
+      "type": "range",
+      "id": "badge_size_mobile",
+      "label": "Tamaño del sello — Móvil",
+      "min": 60,
+      "max": 260,
+      "step": 10,
+      "unit": "px",
+      "default": 150
+    },
+    {
+      "type": "header",
+      "content": "📝 Texto"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Título",
+      "info": "Usa negrita para resaltar partes.",
+      "default": "<p><strong>Empresa familiar</strong> alemana con un firme <strong>compromiso</strong> con la nutrición infantil con <strong>más de 125 años de experiencia.</strong></p>"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del texto",
+      "min": 300,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 760
+    },
+    {
+      "type": "header",
+      "content": "📐 Posición del texto — Escritorio"
+    },
+    {
+      "type": "select",
+      "id": "text_x_desktop",
+      "label": "Posición horizontal",
+      "options": [
+        { "value": "flex-start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_y_desktop",
+      "label": "Posición vertical",
+      "options": [
+        { "value": "flex-start", "label": "Arriba" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Abajo" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_align_desktop",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "📐 Posición del texto — Móvil"
+    },
+    {
+      "type": "select",
+      "id": "text_x_mobile",
+      "label": "Posición horizontal",
+      "options": [
+        { "value": "flex-start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_y_mobile",
+      "label": "Posición vertical",
+      "options": [
+        { "value": "flex-start", "label": "Arriba" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Abajo" }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colores"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Color del texto resaltado",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Mostrar capa de color sobre la imagen",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color de la capa (overlay)",
+      "info": "Usa transparencia para oscurecer/aclarar la imagen y mejorar la legibilidad.",
+      "default": "#00000026",
+      "alpha": true
+    },
+    {
+      "type": "header",
+      "content": "🔤 Tipografía"
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Fuente del título",
+      "options": [
+        { "value": "secondary", "label": "Secundaria del tema (serif)" },
+        { "value": "primary", "label": "Primaria del tema (sans)" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Tamaño del texto — Escritorio",
+      "min": 16,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño del texto — Móvil",
+      "min": 16,
+      "max": 44,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "header",
+      "content": "📐 Altura de la sección"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "Altura — Escritorio",
+      "min": 300,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Altura — Móvil",
+      "min": 300,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 520
+    }
+  ],
+  "presets": [
+    {
+      "name": "NF · Banner final",
+      "category": "Nuestra Familia"
+    }
+  ]
+}
+{% endschema %}

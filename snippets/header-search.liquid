@@ -1,0 +1,23 @@
+<details-modal class="header-icon-item header-search desktop">
+  <details>
+    <summary class="header-icon modal__toggle" aria-haspopup="dialog" aria-label="{{ 'general.search.search' | t }}">
+      {% render 'icon', icon: 'search' %}
+    </summary>
+    <div class="search-modal modal__content" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t }}">
+      <div class="search-modal__content" tabindex="-1">
+        <form action="{{ routes.search_url }}" method="get" role="search" class="search search-modal-form">
+          <div class="field">
+            <input class="search__input form-input" id="Search-In-Modal" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.search' | t }}">
+            <input type="hidden" name="options[prefix]" value="last">
+            <button class="search__button field__button" aria-label="{{ 'general.search.search' | t }}">
+              {% render 'icon', icon: 'search' %}
+            </button>
+          </div>
+        </form>
+        <button type="button" class="search-modal__close-button modal__close-button link link--text" aria-label="{{ 'accessibility.close' | t }}">
+          {% render 'icon', icon: 'close' %}
+        </button>
+      </div>
+    </div>
+  </details>
+</details-modal>

@@ -1,0 +1,36 @@
+{% comment %}theme-check-disable ConvertIncludeToRender{% endcomment %}
+
+<nav class="desktop-nav">
+  <ul class="desktop-nav-list list-menu" role="list">
+    
+    {%- for link in linklists[menu].links -%}
+      {%- assign link_title = link.title | strip -%}
+
+      <li class="desktop-nav-item {% if link.links != blank %}with-dropdown dropdown-toggle{% endif %} {% if link.current or link.child_active %}active{% endif %}">
+
+        {%- if link.links != blank -%}
+
+          <a href="{{ link.url }}" class="desktop-nav-link" {% if link.current %} aria-current="page"{% endif %}>
+            <span class="desktop-nav-label">
+              {{ link_title }}
+            </span>
+          </a>
+
+          {% render 'header-dropdown', link: link %}
+
+        {%- else -%}
+
+          <a href="{{ link.url }}" class="desktop-nav-link {% if link.current %}active{% endif %}" {% if link.current %} aria-current="page"{% endif %}>
+            <span class="desktop-nav-label">
+              {{ link_title }}
+            </span>
+          </a>
+
+        {%- endif -%}
+
+      </li>
+
+    {%- endfor -%}
+
+  </ul>
+</nav>

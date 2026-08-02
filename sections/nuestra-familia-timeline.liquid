@@ -1,0 +1,625 @@
+{%- liquid
+  assign uid = section.id | replace: '-', '' | downcase
+  assign s = section.settings
+
+  if s.title_font == 'primary'
+    assign title_font_var = 'var(--primary-font-bold, Georgia, serif)'
+  else
+    assign title_font_var = 'var(--secondary-font-bold, Georgia, serif)'
+  endif
+
+  if s.body_font == 'secondary'
+    assign body_font_var = 'var(--secondary-font, Helvetica, Arial, sans-serif)'
+  else
+    assign body_font_var = 'var(--primary-font, Helvetica, Arial, sans-serif)'
+  endif
+
+  assign node_blocks = section.blocks | where: 'type', 'node'
+  assign nodes_size = node_blocks | size
+-%}
+
+<section class="nf-tl nf-tl-{{ uid }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="nuestra-familia-timeline"
+         style="
+           {% if s.use_bg_color %}--nf-bg: {{ s.background_color }};{% else %}--nf-bg: transparent;{% endif %}
+           --nf-line-color: {{ s.line_color }};
+           --nf-line-track-color: {{ s.line_track_color }};
+           --nf-dot-color: {{ s.dot_color }};
+           --nf-photo-border: {{ s.photo_border_color }};
+           --nf-photo-bg: {{ s.photo_bg_color }};
+           --nf-title-color: {{ s.title_color }};
+           --nf-highlight-color: {{ s.title_highlight_color }};
+           --nf-text-color: {{ s.text_color }};
+           --nf-text-highlight-color: {{ s.text_highlight_color }};
+           --nf-title-font: {{ title_font_var }};
+           --nf-body-font: {{ body_font_var }};
+           --nf-title-size-d: {{ s.title_size_desktop }}px;
+           --nf-title-size-m: {{ s.title_size_mobile }}px;
+           --nf-text-size-d: {{ s.text_size_desktop }}px;
+           --nf-text-size-m: {{ s.text_size_mobile }}px;
+           --nf-photo-size-d: {{ s.photo_size_desktop }}px;
+           --nf-photo-size-m: {{ s.photo_size_mobile }}px;
+           --nf-pad-top-d: {{ s.padding_top_desktop }}px;
+           --nf-pad-bottom-d: {{ s.padding_bottom_desktop }}px;
+           --nf-pad-top-m: {{ s.padding_top_mobile }}px;
+           --nf-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+           --nf-max-width: {{ s.content_max_width }}px;
+         ">
+
+  {%- if s.title != blank -%}
+    <div class="nf-tl-header">
+      <h2 class="nf-tl-title">{{ s.title }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="nf-tl-stage">
+
+    <svg class="nf-tl-svg" data-nf-svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <mask data-nf-mask-id id="nf-reveal-{{ uid }}">
+          <path data-nf-reveal fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round"></path>
+        </mask>
+      </defs>
+      <path data-nf-track fill="none" stroke="var(--nf-line-track-color, #9bc089)" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round" opacity="0.5"></path>
+      <path data-nf-progress fill="none" stroke="var(--nf-line-color, #2d7a3e)" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round" mask="url(#nf-reveal-{{ uid }})"></path>
+      <g data-nf-dots></g>
+    </svg>
+
+    <div class="nf-tl-items" data-nf-items>
+      {%- for block in node_blocks -%}
+        {%- assign rail = block.settings.rail_side | default: 'left' -%}
+        <div class="nf-tl-item rail-{{ rail }}" {{ block.shopify_attributes }}>
+          <div class="nf-tl-rail" aria-hidden="true"></div>
+          <div class="nf-tl-content">
+            <div class="nf-tl-photo">
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 400 }}"
+                     alt="{{ block.settings.image.alt | default: block.settings.name | escape }}"
+                     loading="lazy">
+              {%- else -%}
+                <span class="nf-tl-photo-ph">{{ 'image' | placeholder_svg_tag }}</span>
+              {%- endif -%}
+            </div>
+            {%- if block.settings.text != blank -%}
+              <div class="nf-tl-text">{{ block.settings.text }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+  </div>
+
+</section>
+
+{% style %}
+.nf-tl-{{ uid }} {
+  position: relative;
+  background-color: var(--nf-bg, transparent);
+  padding: var(--nf-pad-top-m, 36px) 0 var(--nf-pad-bottom-m, 56px);
+  overflow: hidden;
+}
+
+.nf-tl-{{ uid }} .nf-tl-header { text-align: center; padding: 0 24px 22px; }
+.nf-tl-{{ uid }} .nf-tl-title {
+  font-family: var(--nf-title-font);
+  font-size: var(--nf-title-size-m, 28px);
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--nf-title-color, #2d7a3e);
+  margin: 0;
+}
+.nf-tl-{{ uid }} .nf-tl-title strong,
+.nf-tl-{{ uid }} .nf-tl-title b { font-weight: 700; color: var(--nf-highlight-color, #1f5a2c); }
+.nf-tl-{{ uid }} .nf-tl-title p { margin: 0; }
+
+.nf-tl-{{ uid }} .nf-tl-stage { position: relative; max-width: var(--nf-max-width, 460px); margin: 0 auto; }
+
+.nf-tl-{{ uid }} .nf-tl-svg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+
+.nf-tl-{{ uid }} .nf-tl-items { position: relative; z-index: 1; }
+
+.nf-tl-{{ uid }} .nf-tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 4px;
+  padding: 0 24px;
+  margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.nf-tl-{{ uid }} .nf-tl-item.is-visible { opacity: 1; transform: translateY(0); }
+
+.nf-tl-{{ uid }} .nf-tl-item.rail-right { grid-template-columns: 1fr 56px; }
+.nf-tl-{{ uid }} .nf-tl-item.rail-right .nf-tl-rail { order: 2; }
+.nf-tl-{{ uid }} .nf-tl-item.rail-right .nf-tl-content { order: 1; }
+
+.nf-tl-{{ uid }} .nf-tl-rail { position: relative; }
+.nf-tl-{{ uid }} .nf-tl-content { min-width: 0; }
+
+.nf-tl-{{ uid }} .nf-tl-photo {
+  width: var(--nf-photo-size-m, 130px);
+  height: var(--nf-photo-size-m, 130px);
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 14px;
+  border: 4px solid var(--nf-photo-border, #e8efe2);
+  background: var(--nf-photo-bg, #b9c4a8);
+  position: relative;
+  z-index: 2;
+}
+.nf-tl-{{ uid }} .nf-tl-item:not(.rail-right) .nf-tl-photo { margin-left: 0; }
+.nf-tl-{{ uid }} .nf-tl-item.rail-right .nf-tl-photo { margin-left: auto; }
+.nf-tl-{{ uid }} .nf-tl-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nf-tl-{{ uid }} .nf-tl-photo-ph { display: flex; width: 100%; height: 100%; opacity: .4; align-items: center; justify-content: center; }
+
+.nf-tl-{{ uid }} .nf-tl-text {
+  font-family: var(--nf-body-font);
+  font-size: var(--nf-text-size-m, 14px);
+  line-height: 1.55;
+  color: var(--nf-text-color, #2d7a3e);
+  margin: 0;
+}
+.nf-tl-{{ uid }} .nf-tl-text strong,
+.nf-tl-{{ uid }} .nf-tl-text b { color: var(--nf-text-highlight-color, #1f5a2c); font-weight: 700; }
+.nf-tl-{{ uid }} .nf-tl-text p { margin: 0 0 10px; }
+.nf-tl-{{ uid }} .nf-tl-text p:last-child { margin-bottom: 0; }
+
+/* ===== DESKTOP: horizontal ===== */
+@media (min-width: 768px) {
+  .nf-tl-{{ uid }} { padding: var(--nf-pad-top-d, 64px) 0 var(--nf-pad-bottom-d, 80px); }
+  .nf-tl-{{ uid }} .nf-tl-title { font-size: var(--nf-title-size-d, 40px); }
+  .nf-tl-{{ uid }} .nf-tl-stage { max-width: 1180px; padding: 0 20px; }
+
+  .nf-tl-{{ uid }} .nf-tl-items {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .nf-tl-{{ uid }} .nf-tl-item {
+    display: block;
+    flex: 1 1 0;
+    padding: 0 8px;
+    margin-bottom: 0;
+    text-align: center;
+  }
+  .nf-tl-{{ uid }} .nf-tl-item.rail-right .nf-tl-content,
+  .nf-tl-{{ uid }} .nf-tl-item.rail-right .nf-tl-rail { order: initial; }
+  .nf-tl-{{ uid }} .nf-tl-rail { display: none; }
+  .nf-tl-{{ uid }} .nf-tl-photo {
+    width: var(--nf-photo-size-d, 150px);
+    height: var(--nf-photo-size-d, 150px);
+    margin: 0 auto 18px !important;
+  }
+  .nf-tl-{{ uid }} .nf-tl-text { font-size: var(--nf-text-size-d, 15px); text-align: center; }
+
+  /* En desktop la línea es horizontal por arriba de las fotos */
+  .nf-tl-{{ uid }} .nf-tl-svg { height: auto; }
+}
+{% endstyle %}
+
+<script>
+(function () {
+  var root = document.querySelector('.nf-tl-{{ uid }}');
+  if (!root) return;
+
+  var svg = root.querySelector('[data-nf-svg]');
+  var track = root.querySelector('[data-nf-track]');
+  var progress = root.querySelector('[data-nf-progress]');
+  var revealPath = root.querySelector('[data-nf-reveal]');
+  var dotsGroup = root.querySelector('[data-nf-dots]');
+  var stage = root.querySelector('.nf-tl-stage');
+  var items = Array.prototype.slice.call(root.querySelectorAll('.nf-tl-item'));
+  if (!items.length) return;
+
+  var W = 0, H = 0, totalLen = 0;
+  var isDesktop = false;
+
+  function buildPath() {
+    isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    var sRect = stage.getBoundingClientRect();
+    W = stage.clientWidth;
+    H = stage.scrollHeight;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+
+    var nodes = items.map(function (it) {
+      var rail = it.querySelector('.nf-tl-rail');
+      var photo = it.querySelector('.nf-tl-photo');
+      var pr = photo.getBoundingClientRect();
+      var rr = rail.getBoundingClientRect();
+      var photoCx = pr.left - sRect.left + pr.width / 2;
+      var photoCy = pr.top - sRect.top + pr.height / 2;
+      var railX = isDesktop ? photoCx : (rr.left - sRect.left + rr.width / 2);
+      return {
+        railX: railX, cx: photoCx, cy: photoCy, r: pr.width / 2,
+        side: it.classList.contains('rail-right') ? 'right' : 'left',
+        rect: { top: it.getBoundingClientRect().top - sRect.top, bottom: it.getBoundingClientRect().bottom - sRect.top }
+      };
+    });
+
+    var d = '';
+    var dots = [];
+    var R = 14;
+
+    if (isDesktop) {
+      // Línea horizontal recta que conecta la parte superior de cada foto
+      var lineY = nodes[0].cy - nodes[0].r - 24;
+      d = 'M ' + (nodes[0].railX - nodes[0].r) + ' ' + lineY;
+      nodes.forEach(function (n) {
+        d += ' L ' + n.railX + ' ' + lineY;
+        dots.push([n.railX, lineY]);
+      });
+      d += ' L ' + (nodes[nodes.length - 1].railX + nodes[nodes.length - 1].r) + ' ' + lineY;
+    } else {
+      // Móvil: recta vertical por el carril + curvas suaves de radio fijo en los cruces
+      var startY = Math.max(8, nodes[0].rect.top - 12);
+      d = 'M ' + nodes[0].railX + ' ' + startY;
+
+      nodes.forEach(function (n, i) {
+        dots.push([n.railX, n.cy]);
+
+        if (i < nodes.length - 1) {
+          var next = nodes[i + 1];
+          var crossY = n.rect.bottom + 14;
+          var dir = (next.railX > n.railX) ? 1 : -1;
+          d += ' L ' + n.railX + ' ' + (crossY - R);
+          d += ' Q ' + n.railX + ' ' + crossY + ' ' + (n.railX + dir * R) + ' ' + crossY;
+          d += ' L ' + (next.railX - dir * R) + ' ' + crossY;
+          d += ' Q ' + next.railX + ' ' + crossY + ' ' + next.railX + ' ' + (crossY + R);
+        } else {
+          d += ' L ' + n.railX + ' ' + (H - 8);
+        }
+      });
+    }
+
+    track.setAttribute('d', d);
+    progress.setAttribute('d', d);
+    revealPath.setAttribute('d', d);
+
+    dotsGroup.innerHTML = '';
+    dots.forEach(function (pt, di) {
+      var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', pt[0]); c.setAttribute('cy', pt[1]); c.setAttribute('r', 5);
+      c.setAttribute('fill', 'var(--nf-dot-color, #2d7a3e)');
+      c.setAttribute('class', 'nf-tl-dot');
+      c.style.transition = 'r .25s ease, opacity .25s ease';
+      c.style.opacity = '0.35';
+      c.dataset.frac = (dots.length > 1) ? (di / (dots.length - 1)) : 0;
+      dotsGroup.appendChild(c);
+    });
+
+    totalLen = revealPath.getTotalLength();
+    revealPath.style.strokeDasharray = totalLen + ' ' + totalLen;
+    revealPath.style.strokeDashoffset = totalLen;
+  }
+
+  function onScroll() {
+    var rect = root.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var totalScroll = rect.height - vh * 0.4;
+    var scrolled = (vh * 0.6 - rect.top);
+    var ratio = Math.max(0, Math.min(1, scrolled / totalScroll));
+    if (totalLen) revealPath.style.strokeDashoffset = totalLen * (1 - ratio);
+
+    // Activar dots conforme el progreso los alcanza (sensación de línea de tiempo)
+    var allDots = dotsGroup.querySelectorAll('.nf-tl-dot');
+    allDots.forEach(function (c) {
+      var frac = parseFloat(c.dataset.frac || '0');
+      if (ratio >= frac - 0.02) {
+        c.style.opacity = '1';
+        c.setAttribute('r', '6');
+      } else {
+        c.style.opacity = '0.35';
+        c.setAttribute('r', '5');
+      }
+    });
+
+    items.forEach(function (it) {
+      if (it.getBoundingClientRect().top < vh * 0.85) it.classList.add('is-visible');
+    });
+  }
+
+  function init() { buildPath(); onScroll(); }
+
+  if (document.readyState === 'complete') { init(); }
+  else { window.addEventListener('load', init); }
+  window.addEventListener('resize', function () { setTimeout(init, 120); });
+  window.addEventListener('scroll', onScroll, { passive: true });
+  setTimeout(init, 300);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "NF · Timeline",
+  "tag": "section",
+  "class": "nf-timeline-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "📝 Título"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Título",
+      "info": "Usa negrita para resaltar (ej. 'familiar').",
+      "default": "<p>HiPP, una historia <strong>familiar</strong></p>"
+    },
+    {
+      "type": "header",
+      "content": "🖼 Fondo"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_bg_color",
+      "label": "Usar color de fondo sólido",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#e8efe2"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colores de la línea y fotos"
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Color de la línea (trazada)",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "line_track_color",
+      "label": "Color de la línea de fondo",
+      "default": "#9bc089"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Color de los puntos",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "photo_border_color",
+      "label": "Borde de las fotos",
+      "default": "#e8efe2"
+    },
+    {
+      "type": "color",
+      "id": "photo_bg_color",
+      "label": "Fondo de las fotos (placeholder)",
+      "default": "#b9c4a8"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colores de texto"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "title_highlight_color",
+      "label": "Resaltado del título",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#2d7a3e"
+    },
+    {
+      "type": "color",
+      "id": "text_highlight_color",
+      "label": "Resaltado del texto (negritas)",
+      "default": "#1f5a2c"
+    },
+    {
+      "type": "header",
+      "content": "🔤 Tipografía"
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Fuente del título",
+      "options": [
+        { "value": "secondary", "label": "Secundaria del tema (serif)" },
+        { "value": "primary", "label": "Primaria del tema (sans)" }
+      ],
+      "default": "secondary"
+    },
+    {
+      "type": "select",
+      "id": "body_font",
+      "label": "Fuente del texto",
+      "options": [
+        { "value": "primary", "label": "Primaria del tema (sans)" },
+        { "value": "secondary", "label": "Secundaria del tema (serif)" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Tamaño título — Escritorio",
+      "min": 22,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño título — Móvil",
+      "min": 18,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Tamaño texto — Escritorio",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Tamaño texto — Móvil",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "📐 Tamaños y espaciado"
+    },
+    {
+      "type": "range",
+      "id": "photo_size_desktop",
+      "label": "Tamaño de fotos — Escritorio",
+      "min": 100,
+      "max": 240,
+      "step": 5,
+      "unit": "px",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "photo_size_mobile",
+      "label": "Tamaño de fotos — Móvil",
+      "min": 90,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 130
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho del contenido — Móvil",
+      "min": 360,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 460
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Espaciado superior — Escritorio",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Espaciado inferior — Escritorio",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Espaciado superior — Móvil",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Espaciado inferior — Móvil",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Nodo",
+      "type": "node",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre (para accesibilidad)",
+          "default": "Persona"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Texto",
+          "default": "<p>Descripción del momento histórico.</p>"
+        },
+        {
+          "type": "select",
+          "id": "rail_side",
+          "label": "Lado de la línea (móvil)",
+          "info": "Por dónde baja la línea junto a este nodo.",
+          "options": [
+            { "value": "left", "label": "Izquierda" },
+            { "value": "right", "label": "Derecha" }
+          ],
+          "default": "left"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "NF · Timeline",
+      "category": "Nuestra Familia",
+      "blocks": [
+        { "type": "node", "settings": { "name": "Josef Hipp", "rail_side": "left", "text": "<p>HiPP empezó en 1899, cuando <strong>Josef Hipp</strong>, un agricultor y panadero apoyó en la alimentación de sus gemelos después de un parto difícil. <strong>En ese momento hizo el primer producto HiPP, un alimento natural y nutritivo a base de harinas.</strong></p>" } },
+        { "type": "node", "settings": { "name": "Georg Hipp", "rail_side": "right", "text": "<p>En 1932, <strong>Georg Hipp</strong>, hijo de Josef, formalizó la empresa, ya que familias por toda Alemania llegaban buscando el famoso <strong>cereal HiPP</strong>. Georg también tomó la decisión de que <strong>todos los ingredientes deberían de ser orgánicos</strong>, ya que vieron que las cosechas de las granjas eran mucho más saludables.</p>" } },
+        { "type": "node", "settings": { "name": "Claus Hipp", "rail_side": "left", "text": "<p>Su nieto Claus, desarrolló el estándar de agricultura orgánica HiPP, décadas antes de que se estableciera la regulación orgánica de la Unión Europea. <strong>Como pionero de la agricultura orgánica</strong>, el propio Claus emprendió visitando agricultores, educándolos sobre los beneficios orgánicos, creando la primera red de agricultores HiPP.</p>" } },
+        { "type": "node", "settings": { "name": "Stefan Hipp", "rail_side": "right", "text": "<p>Hoy en día, el <strong>director Stefan Hipp</strong>, hijo de Claus, se ha dedicado a crear productos alimenticios para nuestros hijos, usando solo la mejor calidad de ingredientes orgánicos con una sólida base científica y nutricional. <strong>Su red de agricultores llega hasta Costa Rica, Colombia y Ecuador y los productos HiPP se venden en más de 60 países.</strong></p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

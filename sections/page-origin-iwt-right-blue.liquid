@@ -1,0 +1,123 @@
+{%- liquid 
+  assign image = section.settings.image
+  assign upper_title_1 = section.settings.upper_title_1
+  assign upper_title_2 = section.settings.upper_title_2
+  assign upper_text = section.settings.upper_text
+  assign title = section.settings.title
+  assign text_1 = section.settings.text_1
+  assign text_2 = section.settings.text_2
+-%}
+
+{{- "css-page-origin-iwt-right-blue.css" | asset_url | stylesheet_tag -}}
+
+<div class="po-iwt-right-blue-container" data-section-id="{{ section.id }}" data-section-type="section-po-iwt-right-blue">
+
+  <div class="po-iwt-right-blue-content">
+
+    <div class="po-iwt-right-blue-head">
+      <h3 class="po-iwt-right-blue-upper-title-1">{{ upper_title_1 }}</h3>
+      <h1 class="po-iwt-right-blue-upper-title-2">{{ upper_title_2 }}</h1>
+      <div class="po-iwt-right-blue-upper-text">{{ upper_text }}</div>
+    </div>
+
+    <div class="po-iwt-right-blue-image-side">
+      <div class="po-iwt-right-blue-image-super-wrapper">
+        <div class="po-iwt-right-blue-image-wrapper back-img-wrapper {% if image == blank %}no-image{% endif %}">
+          {%- if image != blank -%}
+            <picture class="picture-wrapper">
+              <source media="(max-width: 680px)" srcset="{{ image | image_url: width: 780 }}">
+              <img class="po-iwt-right-blue-image back-img" alt="{{ image.alt }}" loading="lazy" src="{{ image | image_url: width: 700 }}">
+            </picture>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <div class="po-iwt-right-blue-info">
+
+      {%- if title != blank -%}
+        <header class="po-iwt-right-blue-info-title-wrapper">
+          <h2 class="po-iwt-right-blue-info-title section-title-richtext">{{ title }}</h2>
+        </header>
+      {%- endif -%}
+
+      {%- if text_1 != blank -%}
+        <div class="po-iwt-right-blue-info-text-wrapper text-1">
+          <p class="po-iwt-right-blue-info-text">{{ text_1 }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if text_2 != blank -%}
+        <div class="po-iwt-right-blue-info-text-wrapper text-2">
+          <p class="po-iwt-right-blue-info-text">{{ text_2 }}</p>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Origen - IWT (D)",
+    "tag": "section",
+    "class": "po-iwt-right-blue",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido superior"
+      },
+      {
+        "type": "text",
+        "id": "upper_title_1",
+        "label": "Título superior 1"
+      },
+      {
+        "type": "text",
+        "id": "upper_title_2",
+        "label": "Título superior 2"
+      },
+      {
+        "type": "richtext",
+        "id": "upper_text",
+        "label": "Texto superior"
+      },
+      {
+        "type": "header",
+        "content": "Imagen"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Imagen"
+      },
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text_1",
+        "label": "Texto 1"
+      },
+      {
+        "type": "text",
+        "id": "text_2",
+        "label": "Texto 2"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Origen - IWT (D)",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

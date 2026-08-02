@@ -1,0 +1,148 @@
+{%- liquid 
+  assign menu = linklists[section.settings.menu]
+  assign secondary_menu = linklists[section.settings.secondary_menu]
+  assign icon_image = section.settings.icon_image
+  assign icon_link = section.settings.icon_link
+  assign has_icon = false
+
+  if icon_image != blank and icon_link != blank
+    assign has_icon = true
+  endif
+-%}
+
+<div class="header-wrapper" data-section-id="{{ section.id }}" data-section-type="header-section">
+  <header class="header">
+
+    <div class="header-content">
+
+      <div class="header-side header-left">
+        {%- if menu != blank or secondary_menu != blank -%}
+          {% render 'header-mobile-nav', main_menu: menu, secondary_menu: secondary_menu %}
+        {%- endif -%}
+      </div>
+      
+      <div class="header-side header-center">
+        {% render 'header-logo' %}
+      </div>
+
+      <div class="header-side header-right">
+        <div class="header-icons">
+          {%- if has_icon -%}
+            <div class="header-custom-icon header-icon-item header-icon">
+              {%- capture target -%}{%- if icon_link contains 'http' or icon_link contains 'tel:' or icon_link contains 'maps/' or icon_link contains 'mailto:' -%}target="_blank"{%- endif -%}{%- endcapture -%}
+              <a href="{{ icon_link }}" {{ target }}>
+                <img class="header-custom-icon-image" src="{{ icon_image | image_url: width: 200 }}" alt="{{ icon_image.alt }}">
+              </a>
+            </div>
+          {%- endif -%}
+          {%- if shop.customer_accounts_enabled -%}
+            <a class="header-icon-item header-icon" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}">
+              {% render 'icon', icon: 'account' %}
+              <span class="visually-hidden">
+                {%- liquid
+                  if customer
+                    echo 'customer.account_fallback' | t
+                  else
+                    echo 'customer.log_in' | t
+                  endif
+                -%}
+              </span>
+            </a>
+          {%- endif -%}
+    
+          <a class="header-icon-item header-icon header-icon-cart" href="{{ routes.cart_url }}" id="cart-icon-bubble">
+            {%- render 'icon', icon: 'cart' -%}
+            <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+            <div class="cart-count-bubble">
+              <span class="cart-count-counter" aria-hidden="true">{{- cart.item_count -}}</span>
+              <span class="visually-hidden">{{- 'sections.header.cart_count' | t: count: cart.item_count -}}</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </header>
+</div>
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "url": {{ shop.url | json }},
+    "foundingDate": "1899",
+    "parentOrganization": {
+      "@type": "Organization",
+      "name": "HiPP",
+      "sameAs": "https://www.hipp.de"
+    },
+    "areaServed": "MX",
+    {% if section.settings.logo %}
+      {% assign image_size = section.settings.logo.width %}
+      "logo": {{ section.settings.logo | image_url: image_size | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+      "https://web.facebook.com/hipp.mx/",
+      "https://www.instagram.com/hipp.mx/",
+      "https://www.youtube.com/channel/UC0x0hJeGR2AcRjCfRCKW6eA"
+    ]
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {% assign potential_action_target = shop.url | append: routes.search_url | append: "?q={search_term_string}" %}
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ potential_action_target | json }},
+        "query-input": "required name=search_term_string"
+      },
+      "url": {{ shop.url | append: page.url | json }}
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "class": "header-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Menús"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menú principal"
+    },
+    {
+      "type": "link_list",
+      "id": "secondary_menu",
+      "label": "Menú secundario"
+    },
+    {
+      "type": "header",
+      "content": "Ícono"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "url",
+      "id": "icon_link",
+      "label": "Enlace"
+    }
+  ]
+}
+{% endschema %}

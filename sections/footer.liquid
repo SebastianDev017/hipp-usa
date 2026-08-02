@@ -1,0 +1,137 @@
+{%- liquid 
+	assign legal_menu = section.settings.legal_menu
+	assign legal_menu_links = linklists[legal_menu].links
+	assign newsletter_block = section.blocks | where: "type", "newsletter" | map: "settings" | first
+-%}
+
+<div class="footer-wrapper">
+  <div class="footer-logos">
+    <div class="footer-logo square-image image-contain">
+      <img class="footer-logo-image" alt="Logo HiPP No.1 organic baby food brand" src="{{- 'logo-footer-2.png' | asset_url -}}">
+    </div>
+    <div class="footer-logo square-image image-contain">
+      <img class="footer-logo-image" alt="Logo HiPP No.1 organic baby food brand" src="{{- 'footer-logo@3x.png' | asset_url -}}">
+    </div>
+  </div>
+  <div class="footer-background"></div>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-top">
+        <div class="footer-columns">
+          {%- for block in section.blocks -%}
+            {%- liquid 
+                  assign type = block.type
+                  assign title = block.settings.title
+                  assign menu = block.settings.menu
+
+                  if type == "newsletter"
+                      continue
+                  endif
+              -%}
+            <div class="footer-column color-white">
+              {%- unless title == blank -%}
+                <p class="footer-column-title">{{- title -}}</p>
+              {%- endunless -%}
+              {%- unless menu == blank -%}
+                {%- render "footer-linklist", linklist: menu -%}
+              {%- endunless -%}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="footer-newsletter-wrapper">
+          {%- if newsletter_block != blank -%}
+            {%- unless newsletter_block.title == blank -%}
+              <p class="footer-newsletter-title footer-column-title color-white">{{- newsletter_block.title -}}</p>
+            {%- endunless -%}
+            {%- unless newsletter_block.text == blank -%}
+              <p class="footer-newsletter-text footer-menu-link color-white">{{- newsletter_block.text -}}</p>
+            {%- endunless -%}
+            <div class="footer-newsletter">
+              {% comment %} {%- render "newsletter", form_id: "footer-newsletter-form" -%} {% endcomment %}
+              <div class="klaviyo-newsletter">
+                <div class="klaviyo-form-WjChZk"></div>
+              </div>
+            </div>
+          {%- endif -%}
+          {%- render "footer-social" -%}
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="copyright">
+          <p class="copyright-text color-green">&copy;HiPP México, {{ "now" | date: "%Y" -}}</p>
+        </div>
+        <div class="legales">
+          {%- unless legal_menu == blank -%}
+            <ul class="legales-menu list-menu color-green">La leche materna es la mejor fuente de nutrición para tu bebé
+
+              {%- for link in legal_menu_links -%}
+                <li class="legales-item">
+                  {%- capture target -%}
+                    {%- if link.url contains "http" or link.url contains "tel:" or link.url contains "maps/" or link.url contains "mailto:" -%}target="_blank"{%- endif -%}
+                  {%- endcapture -%}
+                  <a class="legales-link footer-menu-link{% if link.current %} active{% endif %}" href="{{- link.url -}}" {{ target -}}>
+                    {{- link.title -}}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endunless -%}
+        </div>
+        <div class="payment-methods">
+          <img class="payment-methods-image" alt="payment methods: visa, paypal, amex, master card, oxxo" src="{{- 'payments-method.svg' | asset_url -}}">
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+{%- schema -%}
+  {
+    "name": "t:sections.footer.name",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "legal_menu",
+        "label": "Menú legal"
+      }
+    ],
+    "max_blocks": 3,
+    "blocks": [
+      {
+        "name": "Menú",
+        "type": "menu",
+        "limit": 2,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Título"
+          },
+          {
+            "type": "link_list",
+            "id": "menu",
+            "label": "Menú"
+          }
+        ]
+      },
+      {
+        "name": "Suscripción al boletín",
+        "type": "newsletter",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Título"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Texto"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

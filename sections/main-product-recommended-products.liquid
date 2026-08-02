@@ -1,0 +1,53 @@
+{%- comment -%}theme-check-disable LiquidTag{%- endcomment -%}
+{%- liquid 
+  assign title_original = section.settings.title
+-%}
+
+{% capture title %}
+  {% assign splitted_title = title_original | split: ' ' %}
+
+  {% for word in splitted_title %}
+    {% unless forloop.last %}
+      {{- word -}}
+    {% endunless %}
+    {% if forloop.last %}
+      {% if forloop.index > 1 %}
+        <strong>{{- word -}}</strong>
+      {% else %}
+        {{- word -}}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+<div class="related-products section" data-section-id="{{- section.id -}}" data-section-type="related-products">
+  <div class="section-content">
+    {%- unless title == blank -%}
+      <header class="related-header text-center">
+        <h2 class="related-title section-title-richtext color-green">{{- title -}}</h2>
+      </header>
+    {%- endunless -%}
+    {%- render 'rebuy-widget-recommended-products' -%}
+  </div>
+</div>
+
+<script src="{{- 'js-main-related-products.js' | asset_url -}}" defer></script>
+
+{%- schema -%}
+  {
+    "name": "Productos relacionados",
+    "class": "related-products-section",
+    "tag": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,24 @@
+<div class="product-reviews section" data-section-id="{{- section.id -}}" data-section-type="product-reviews">
+  <div class="product-reviews-content section-content">
+    <div class="product-reviews-widget color-green">
+      {%- for block in section.blocks -%}
+        {% render block %}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script src="{{- 'js-main-product-reviews.js' | asset_url -}}" defer></script>
+
+{% schema %}
+  {
+    "name": "Reseñas",
+    "tag": "section",
+    "class": "product-reviews-section",
+    "blocks": [
+      {
+        "type": "@app"
+      }
+    ]
+  }
+{% endschema %}

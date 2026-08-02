@@ -1,0 +1,154 @@
+{{- 'css-newsletter-w-images.css' | asset_url | stylesheet_tag -}}
+
+{%- liquid 
+	assign title = section.settings.title
+	assign text = section.settings.text
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+-%}
+
+<div class="newsletter-w-images section" data-section-id="{{- section.id -}}" data-section-type="newsletter">
+  <div class="nwi-container">
+    <h1 class="nwi-title">{{ title }}</h1>
+    <div class="nwi-main-text">{{ text }}</div>
+      {% if section.settings.klaviyo_check == false %}
+    <div class="nwi-klaviyo-newsletter klaviyo-newsletter">
+        <div class="klaviyo-form-WjChZk"></div>
+    </div>
+        {% else %}
+          <a href="{{ section.settings.url_header }}" class="nwi-main-button button">{{ section.settings.btn_header }}</a>
+      {% endif %}
+    <div class="nwi-image-links">
+      <ul class="nwi-image-list">
+        {% for block in section.blocks %}
+          {%- liquid
+            assign block_link = block.settings.image_url
+            assign first_char = block_link.url | slice: 0, 1 
+            assign is_external_link = 'target="_blank"'
+            if block_link.url contains shop.domain or first_char == "/"
+              assign is_external_link = ''
+            endif
+            if block_link.url contains ".pdf"
+              assign is_external_link = 'target="_blank"'
+            endif
+          -%}
+          {%- if block.settings.text != blank or block.settings.image != blank -%}
+          <li class="nwi-list-item">
+            {%- if block.settings.image_url != blank and block.settings.image != blank -%}
+              <a href="{{ block.settings.image_url.url }}" class="nwi-image-wrap" target="_blank">
+            {%- else -%}
+              <div class="nwi-image-wrap">
+            {%- endif -%}
+              {%- if block.settings.image != blank -%}
+                <img class="nwi-image" src="{{ block.settings.image | image_url }}" alt="{{ block.settings.image.alt }}" loading="lazy">
+              {%- endif -%}
+            {%- if block.settings.image_url != blank and block.settings.image != blank -%}
+              </a>
+            {%- else -%}
+              </div>
+            {%- endif -%}
+            <p class="nwi-image-text">
+              {%- if block.settings.image_url != blank -%}
+                <a href="{{ block.settings.image_url.url }}" target="_blank">{{ block.settings.text }}</a>
+              {%- else -%}
+                {{ block.settings.text }}
+              {%- endif -%}
+            </p>
+          </li>
+          {%- endif -%}
+        {% endfor %}
+      </ul>
+    </div>
+    {%- if button_link != blank -%}
+      <a href="{{ button_link.url }}" class="nwi-main-button button">{{ button_label }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+	"name": "Newsletter con imagenes",
+	"tag": "section",
+	"class": "newsletter-w-images-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Contenido"
+		},
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Título"
+		},
+		{
+			"type": "richtext",
+			"id": "text",
+			"label": "Texto"
+		},
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace"
+    },
+      {
+        "type": "checkbox",
+        "id": "klaviyo_check",
+        "label": "Desactivar formulario?",
+      },
+      {
+        "type": "header",
+        "content": "Configuración del botón del encabezado"
+      },
+      {
+        "type": "url",
+        "label": "Enlace del botón del encabezado",
+        "id": "url_header"
+      },
+      {
+        "type": "text",
+        "id": "btn_header",
+        "label": "Texto del botón",
+        "default": "Suscríbete"
+      }
+	],
+  "blocks":[
+    {
+      "name":"Imagen",
+      "type":"image",
+      "settings":[
+        {
+          "type": "image_picker",
+          "id":"image",
+          "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id":"text",
+          "label": "Texto"
+        },
+        {
+          "type": "url",
+          "id": "image_url",
+          "label": "Link de imagen"
+        }
+      ]
+    },
+  ],
+  "max_blocks": 3,
+	"presets": [
+		{
+			"category": "Homepage",
+			"name": "Newsletter con imagenes"
+		}
+	]
+}
+{% endschema %}

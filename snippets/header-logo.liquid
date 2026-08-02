@@ -1,0 +1,15 @@
+<div class="header-logo-container">
+  {%- if request.page_type == 'index' -%}
+    <h1 class="header-logo">
+  {%- else -%}
+    <div class="header-logo">
+  {%- endif -%}
+      <a class="header-logo-link" href="{{ routes.root_url }}">
+        {%- render 'icon', icon: 'logo' -%}
+      </a>
+  {%- if request.page_type == 'index' -%}
+    </h1>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+</div>

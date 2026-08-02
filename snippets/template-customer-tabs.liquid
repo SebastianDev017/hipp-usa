@@ -1,0 +1,10 @@
+<div class="customer-tabs">
+  <nav class="customer-tabs-nav">
+    <div class="customer-tab-items">
+      <a class="customer-tab {% if active == 'orders' %}is-active{% endif %}" href="#historial">{{- 'customer.tabs.order_history' | t -}}</a>
+      <a class="customer-tab" href="#detalles">{{- 'customer.tabs.account_details' | t -}}</a>
+      <a class="customer-tab {% if active == 'addresses' %}is-active{% endif %}" href="#direcciones">{{- 'customer.tabs.addresses' | t -}}</a>
+      <a class="customer-tab customer-tab--recharge" href="/tools/recurring/login/">Administrar suscripción</a>
+    </div>
+  </nav>
+</div>

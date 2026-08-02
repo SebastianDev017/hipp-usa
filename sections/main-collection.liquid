@@ -1,0 +1,137 @@
+{%- comment -%}theme-check-disable LiquidTag{%- endcomment -%}
+{{- "css-main-collection.css" | asset_url | stylesheet_tag -}}
+
+{%- liquid
+	assign image = collection.image
+	assign title = collection.title
+	assign description = collection.description
+	assign has_products = false
+	assign collection_empty_class = "is-empty"
+
+	if collection.products.size > 0
+		assign has_products = true
+		assign collection_empty_class = nil
+	endif
+-%}
+
+{% capture collection_title %}
+  {% assign splitted_title = title | split: ' ' %}
+
+  {% for word in splitted_title %}
+    {% unless forloop.last %}
+      {{- word -}}
+    {% endunless %}
+    {% if forloop.last %}
+      {% if forloop.index > 1 %}
+        <span class="secondary-font-bold">{{- word -}}</span>
+      {% else %}
+        {{- word -}}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+<!--<div class="collection-cover{% if image == blank %} no-image{%- endif -%}">
+  {%- unless image == blank -%}
+    <div class="collection-image-wrapper">
+      <picture>
+        <source media="(max-width: 450px)" srcset="{{- image | image_url: width: 600 -}}">
+        <source media="(max-width: 834px)" srcset="{{- image | image_url: width: 800 -}}">
+        <img class="collection-image no-touch" alt="{{- image.alt -}}" fetchpriority="high" src="{{- image | image_url: width: 1000 -}}">
+      </picture>
+    </div>
+  {%- endunless -%}
+  <div class="collection-info">
+    <div class="collection-info-inner-wrapper">
+      <div class="collection-info-inner">
+        <div class="collection-title-wrapper">
+          <h1 class="collection-title color-green secondary-font">{{- collection_title -}}</h1>
+        </div>
+        {%- unless description == blank -%}
+          <div class="collection-description color-green page-text">{{- description -}}</div>
+        {%- endunless -%}
+      </div>
+    </div>
+  </div>
+</div>
+-->
+{%- paginate collection.products by 36 -%}
+
+  <section class="collection {{ collection_empty_class }}" data-section-id="{{- section.id -}}" data-section-type="main-collection">
+
+    <div class="collection-container">
+
+      {%- if has_products -%}
+        <div class="collection-header">
+          {%- render "main-collection-custom-sort", collection: collection, has_products: has_products -%}
+        </div>
+      {%- endif -%}
+
+      <div class="collection-content-wrapper">
+        <div class="collection-content section-content" id="ProductGridContainer">
+
+          {%- if has_products -%}
+						<div class="collection-grid products-grid js-product-cards-grid">
+							{%- render "product-card" for collection.products as product -%}
+						</div>
+						{%- render "pagination", paginate: paginate, custom_class: "collection-pagination" -%}
+          {%- else -%}
+						<p class="collection-message page-text page-text-fit text-center">
+							{{- "sections.collection_template.empty" | t -}}
+						</p>
+          {%- endif -%}
+
+        </div>
+      </div>
+
+    </div>
+   <h5 style="text-align:center;padding:20px 10px;font-family:Advert Bold;">Todos los precios mostrados son en moneda local MXN.00 <h6>
+
+  </section>
+
+{%- endpaginate -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "{{ shop.url }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ collection.title | json }},
+      "item": "{{ shop.url }}/collections/{{ collection.handle }}"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": {{ collection.title | json }},
+  "description": {{ collection.description | strip_html | json }},
+  "url": "{{ shop.url }}/collections/{{ collection.handle }}",
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{ collection.image | image_url: width: 1200 | prepend: 'https:' }}"
+  },
+  "numberOfItems": {{ collection.products_count }},
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "url": "{{ shop.url }}"
+  }
+}
+</script>
+{%- schema -%}
+  {
+    "name": "Colección",
+    "class": "collection-section content-hidden"
+  }
+{% endschema %}

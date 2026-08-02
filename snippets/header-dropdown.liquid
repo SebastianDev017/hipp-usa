@@ -1,0 +1,11 @@
+<ul class="desktop-nav-dropdown list-menu" role="list" tabindex="-1">
+  {%- for childlink in link.links -%}
+    <li>
+      <a href="{{ childlink.url }}" class="desktop-nav-link desktop-nav-dropdown-link {% if childlink.current %}active{% endif %}"{% if childlink.current %} aria-current="page"{% endif %}>
+        <span class="desktop-nav-label desktop-nav-dropdown-label">
+          {{ childlink.title | escape }}
+        </span>
+      </a>
+    </li>
+  {%- endfor -%}
+</ul>

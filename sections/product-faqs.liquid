@@ -1,0 +1,150 @@
+{%- comment -%}
+  product-faqs.liquid
+  FAQ para la plantilla de PRODUCTO. Lee el metacampo de lista de metaobjetos
+  (por defecto custom.faq_productos -> "Pares de preguntas y respuestas") y se
+  pinta solo. Si el producto no tiene FAQs seleccionadas, no muestra NADA
+  (ni assets, ni markup, ni schema).
+
+  Requisito: la DEFINICIÓN del metaobjeto debe tener acceso de Storefronts
+  activado (Configuración > Datos personalizados > Metaobjetos), si no Liquid
+  lo lee vacío.
+
+  Reutiliza el css/js de FAQ del tema y la misma estructura .faq-item.
+{%- endcomment -%}
+
+{%- liquid
+  assign uid   = section.id | replace: '-', '' | downcase
+  assign ns    = section.settings.mf_namespace | default: 'custom'
+  assign key   = section.settings.mf_key       | default: 'faq_productos'
+  assign q_key = section.settings.question_key | default: 'question'
+  assign a_key = section.settings.answer_key   | default: 'answer'
+
+  assign faq_list = product.metafields[ns][key].value
+-%}
+
+{%- assign items_html = '' -%}
+{%- assign json_entries = '' -%}
+{%- assign valid_count = 0 -%}
+
+{%- if faq_list != blank -%}
+  {%- for faq in faq_list -%}
+    {%- capture q -%}{{ faq[q_key] }}{%- endcapture -%}
+    {%- capture a -%}{{ faq[a_key] }}{%- endcapture -%}
+    {%- assign q = q | strip -%}
+    {%- assign a_plain = a | strip_html | strip -%}
+
+    {%- if q != blank and a_plain != blank -%}
+      {%- assign valid_count = valid_count | plus: 1 -%}
+
+      {%- capture item -%}
+        <div class="faq-item">
+          <div class="faq-item-header">
+            <p class="faq-item-title">{{ q }}</p>
+            <span class="faq-item-icon"></span>
+          </div>
+          <div class="faq-item-content-wrapper">
+            <div class="faq-item-content page-text page-text-fit">{{ a }}</div>
+          </div>
+        </div>
+      {%- endcapture -%}
+      {%- assign items_html = items_html | append: item -%}
+
+      {%- capture entry -%}{% if valid_count > 1 %},{% endif %}{"@type":"Question","name":{{ q | json }},"acceptedAnswer":{"@type":"Answer","text":{{ a_plain | json }}}}{%- endcapture -%}
+      {%- assign json_entries = json_entries | append: entry -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- if valid_count > 0 -%}
+  {{- 'css-faqs.css' | asset_url | stylesheet_tag -}}
+  <script src="{{ 'js-faqs.js' | asset_url }}" defer></script>
+
+  {%- if section.settings.heading != blank -%}
+    {% style %}
+      .faqs-title-{{ uid }} {
+        font-family: "{{ section.settings.heading_font }}", var(--page-bold-text-font, Georgia, serif);
+        font-weight: 700;
+        line-height: 1.1;
+        color: {{ section.settings.heading_color }};
+        text-align: {{ section.settings.heading_align }};
+        margin: 0 0 {{ section.settings.heading_margin }}px;
+        font-size: {{ section.settings.heading_size_mobile }}px;
+      }
+      @media (min-width: 768px) {
+        .faqs-title-{{ uid }} { font-size: {{ section.settings.heading_size_desktop }}px; }
+      }
+    {% endstyle %}
+  {%- endif -%}
+
+  <div class="faqs-section page-content"
+       data-section-id="{{ section.id }}"
+       data-section-type="faqs"
+       style="
+         --faqs-question-min-font-size: {{ section.settings.q_min_font }};
+         --faqs-question-max-font-size: {{ section.settings.q_max_font }};
+         --faqs-answer-padding-bottom-desktop: {{ section.settings.answer_pad_d }}px;
+         --faqs-answer-padding-bottom-mobile: {{ section.settings.answer_pad_m }}px;
+         --faqs-question-padding-mobile: {{ section.settings.q_pad_m }}px 0;
+       ">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="faqs-title faqs-title-{{ uid }}">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {{ items_html }}
+  </div>
+
+  {%- if section.settings.show_schema -%}
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ json_entries }}]}
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FAQ producto",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    { "type": "header", "content": "Encabezado" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Preguntas frecuentes", "info": "Déjalo vacío para no mostrar encabezado." },
+    { "type": "text", "id": "heading_font", "label": "Fuente del título", "default": "Advert Bold", "info": "Nombre de la familia tal como está cargada en el tema (entre comillas internas no hace falta)." },
+    { "type": "color", "id": "heading_color", "label": "Color del título", "default": "#1f5a2c" },
+    {
+      "type": "select", "id": "heading_align", "label": "Alineación del título",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    { "type": "range", "id": "heading_size_desktop", "label": "Tamaño del título — Escritorio", "min": 24, "max": 72, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Tamaño del título — Móvil", "min": 18, "max": 48, "step": 1, "unit": "px", "default": 26 },
+    { "type": "range", "id": "heading_margin", "label": "Espacio bajo el título", "min": 0, "max": 64, "step": 4, "unit": "px", "default": 24 },
+
+    { "type": "header", "content": "Origen de datos" },
+    {
+      "type": "paragraph",
+      "content": "Lee un metacampo de producto tipo lista de metaobjetos. El metaobjeto debe tener acceso de Storefronts activado."
+    },
+    { "type": "text", "id": "mf_namespace", "label": "Namespace del metacampo", "default": "custom" },
+    { "type": "text", "id": "mf_key", "label": "Key del metacampo", "default": "faq_productos" },
+    { "type": "text", "id": "question_key", "label": "Campo de la pregunta (handle)", "default": "question", "info": "El handle del campo dentro del metaobjeto. Verifícalo en la definición del metaobjeto." },
+    { "type": "text", "id": "answer_key", "label": "Campo de la respuesta (handle)", "default": "answer" },
+
+    { "type": "header", "content": "Esquema (SEO / AEO)" },
+    { "type": "checkbox", "id": "show_schema", "label": "Incluir JSON-LD FAQPage", "default": true, "info": "Schema válido para buscadores y sistemas de IA. El rich result visual de FAQ ya no se muestra (deprecado por Google)." },
+
+    { "type": "header", "content": "Tamaños y espaciado" },
+    { "type": "range", "id": "q_min_font", "label": "Tamaño mínimo de pregunta", "min": 12, "max": 24, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "q_max_font", "label": "Tamaño máximo de pregunta", "min": 14, "max": 32, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "answer_pad_d", "label": "Espacio bajo respuesta — Escritorio", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 20 },
+    { "type": "range", "id": "answer_pad_m", "label": "Espacio bajo respuesta — Móvil", "min": 0, "max": 60, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "q_pad_m", "label": "Espacio vertical de pregunta — Móvil", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 24 }
+  ],
+  "presets": [
+    { "name": "FAQ producto" }
+  ]
+}
+{% endschema %}

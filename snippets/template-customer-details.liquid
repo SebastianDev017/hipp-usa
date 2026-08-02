@@ -1,0 +1,43 @@
+<span class="customer-swipe page-text">{{ 'customer.swipe' | t }}{% render 'icon', icon: 'accounts-swipe-arrow' %}</span>
+<div class="table-container">
+  <div class="table-wrapper">
+    <table class="customer-table customer-details-table table page-text">
+      <tr>
+        <th width="175">{{- "customer.account_details.name" | t -}}</th>
+        <td class="page-text">{{ customer.default_address.first_name }} {{ customer.default_address.last_name }}</td>
+      </tr>
+      <tr>
+        <th width="175">{{- "customer.account_details.email" | t -}}</th>
+        <td class="page-text">{{ customer.email }}</td>
+      </tr>
+      <tr>
+        <th width="175">{{- "customer.account_details.address" | t -}}</th>
+        <td class="page-text">
+          {%- if customer.default_address.address1 != blank -%}
+            {{ customer.default_address.address1 }},&nbsp;
+          {%- endif -%}
+          {%- if customer.default_address.city != blank -%}
+            {{ customer.default_address.city }},&nbsp;
+          {%- endif -%}
+          {%- if customer.default_address.country != blank -%}
+            {{ customer.default_address.country }},&nbsp;
+          {%- endif -%}
+          {%- if customer.default_address.province != blank -%}
+            {{ customer.default_address.province }},&nbsp;
+          {%- endif -%}
+          {%- if customer.default_address.zip != blank -%}
+            {{ customer.default_address.zip }}
+          {%- endif -%}
+        </td>
+      </tr>
+      <tr>
+        <th width="175">{{- "customer.account_details.phone" | t -}}</th>
+        <td class="page-text">{{ customer.default_address.phone }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="customer-logout-container">
+  <a class="button" href="{{ routes.account_logout_url }}" id="customer_logout_link">{{ 'customer.log_out' | t }}</a>
+</div>

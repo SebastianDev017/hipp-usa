@@ -1,0 +1,18 @@
+{%- assign video_desktop = section.video_desktop -%}
+{%- assign mobile_video = section.video_mobile -%}
+
+{%- if video_desktop != blank -%}
+
+  <div class="cover-media-container no-touch{% if mobile_video != blank %} has-mobile-video{% endif %}">
+    <template class="template-cover-video-desktop">
+      {{- video_desktop | video_tag: class: 'cover-video desktop cover-media', autoplay: true, loop: true, controls: false, muted: true, image_size: '1920x' -}}
+    </template>
+    {% unless mobile_video == blank %}
+      <template class="template-cover-video-mobile">
+        {{- mobile_video | video_tag: class: 'cover-video mobile cover-media', autoplay: true, loop: true, controls: false, muted: true -}}
+      </template>
+    {% endunless %}
+  </div>
+
+
+{%- endif -%}

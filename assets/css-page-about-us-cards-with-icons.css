@@ -1,0 +1,103 @@
+/* css-page-about-us-cards-with-icons.css
+   Limpio para la versión flip-cards.
+   Este archivo solo maneja: fondo de sección, encabezado (título/subtítulo)
+   y el contenedor responsivo. La grilla, las tarjetas, el flip y los logos
+   los define el bloque {% style %} de la sección (scoped por uid). */
+
+.page-type-about-us .pau-cwi:last-child:before { display: block; }
+
+.pau-cwi { position: relative; background-color: #cce0bc; }
+.pau-cwi:before {
+  content: "";
+  position: absolute;
+  bottom: -500px;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 500px;
+  background: #cce0bc;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.pau-cwi-container {
+  --section-margin-top: 0;
+  --section-margin-bottom: 0;
+  --section-padding: 110px 0;
+  --info-text-max-width: clamp(555px, calc(555px + (702 - 555) * ((100vw - 1024px) / (1212 - 1024))), 702px);
+  --header-margin-bottom: 71px;
+  --title-margin-bottom: 37px;
+  --title-baseline: calc(clamp(6px, calc(6px + (10 - 6) * ((100vw - 1024px) / (1440 - 1024))), 10px) * -1) 0 calc(clamp(8px, calc(8px + (13 - 8) * ((100vw - 1024px) / (1440 - 1024))), 13px) * -1);
+  --text-baseline: calc(clamp(5px, calc(5px + (6 - 5) * ((100vw - 1024px) / (1440 - 1024))), 6px) * -1) 0 -7px;
+  padding: var(--section-padding);
+  margin: var(--section-margin-top) auto var(--section-margin-bottom);
+}
+
+.pau-cwi-content {
+  justify-content: center;
+  width: calc(100% - (var(--header-desktop-padding) * 2));
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.pau-cwi-content,
+.pau-cwi-header { display: flex; flex-direction: column; align-items: center; }
+
+.pau-cwi-header { margin-bottom: var(--header-margin-bottom); }
+.pau-cwi-header-title-wrapper:not(:last-child) { margin-bottom: var(--title-margin-bottom); }
+.pau-cwi-header-title {
+  --font-size: clamp(36px, calc(36px + (56 - 36) * ((100vw - 1024px) / (1440 - 1024))), 56px);
+  --line-height: normal;
+  --color: var(--primary-color);
+  --link-hover-color: var(--white);
+  margin: var(--title-baseline);
+  text-align: center;
+}
+.pau-cwi-header-text-wrapper { max-width: var(--info-text-max-width); }
+.pau-cwi-header-text-wrapper:not(:last-child) { margin-bottom: var(--text-margin-bottom); }
+.pau-cwi-header-text {
+  margin: var(--text-baseline);
+  text-align: center;
+  font-family: var(--primary-font);
+  font-size: clamp(15px, calc(15px + (22 - 15) * ((100vw - 1024px) / (1440 - 1024))), 22px);
+  font-weight: 500;
+  line-height: clamp(25px, calc(25px + (30 - 25) * ((100vw - 1024px) / (1440 - 1024))), 30px);
+  color: var(--primary-color);
+}
+
+/* Contenedor de tarjetas: solo ancho/centrado.
+   La grilla (columnas + gap) la pone el bloque {% style %} de la sección. */
+.pau-cwi-items {
+  width: 100%;
+  max-width: 1212px !important;
+  margin: 0 auto;
+}
+
+@media (max-width: 1439px) {
+  .pau-cwi-container {
+    --section-padding: 69px 0;
+    --header-margin-bottom: 44px;
+    --title-margin-bottom: 21px;
+  }
+  .pau-cwi-content {
+    width: calc(100% - (var(--header-laptop-padding) * 2));
+    max-width: 1315px;
+  }
+}
+@media (max-width: 834px) {
+  .pau-cwi-container {
+    --section-padding: 51px 0;
+    --header-margin-bottom: 42px;
+  }
+}
+@media (max-width: 680px) {
+  .pau-cwi-container {
+    --section-padding: 39px 0;
+    --header-margin-bottom: 28px;
+    --title-margin-bottom: 28px;
+  }
+  .pau-cwi-content {
+    width: calc(100% - (var(--header-mobile-padding) * 2));
+    max-width: 588px;
+  }
+}

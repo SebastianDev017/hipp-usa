@@ -1,0 +1,82 @@
+{%- liquid 
+  assign image_desktop = section.settings.image_desktop
+  assign image_mobile = section.settings.image_mobile
+  assign title = section.settings.title
+  assign text = section.settings.text
+-%}
+
+{%- unless image_desktop == blank -%}
+  <style>
+    #{{ section.id }}.pau-banner-two-container {
+      --backgroud-image-url-desktop: url('{{ image_desktop | image_url: width: 1920 }}');
+      {% if image_mobile != blank %}
+        --backgroud-image-url-mobile: url('{{ image_mobile | image_url: width: 1000 }}');
+      {%- else -%}
+        --backgroud-image-url-mobile: url('{{ image_desktop | image_url: width: 1000 }}');
+      {%- endif -%}
+    }
+  </style>
+{%- endunless -%}
+
+
+{{- "css-page-about-us-banner-two.css" | asset_url | stylesheet_tag -}}
+{{- "css-page-about-us-banner-two-with-text.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-banner-two-container" id="{{ section.id }}">
+  <div class="pau-banner-two-content">
+    {%- if title != blank -%}
+      <header class="pau-banner-two-title-wrapper">
+        <h2 class="pau-banner-two-title section-title-richtext">{{ title }}</h2>
+      </header>
+      <section>
+        <p class="pau-banner-two-text section-title-richtext">
+          {{ text }}
+        </p>
+      </section>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - Banner2wt",
+    "tag": "section",
+    "class": "pau-banner-two",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Imágenes"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_desktop",
+        "label": "Imagen escritorio"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_mobile",
+        "label": "Imagen móvil"
+      },
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Parrafo"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - Banner 2 with text",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

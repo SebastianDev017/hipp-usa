@@ -1,0 +1,47 @@
+{%- liquid 
+  assign title = section.settings.title
+  assign image = section.settings.image
+-%}
+
+{{- "css-page-origen-title-and-image-blue.css" | asset_url | stylesheet_tag -}}
+
+<div class="po-title-image-blue" data-section-id="{{- section.id -}}" data-section-type="pau-cards-with-icons">
+  <div class="po-title-image-blue-wrap">
+    <h1 class="po-title-image-blue-title">{{ title }}</h1>
+    <div class="po-title-image-blue-image-wrap">
+      {%- if image != blank -%}
+        <img src="{{ image | image_url}}" alt="{{ image.alt }}" loading="lazy">
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{%- schema -%}
+  {
+    "name": "Origen - Titulo c/ imagen",
+    "tag": "section",
+    "class": "po-title-image-blue-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Imagen"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Origen - Titulo c/ imagen",
+        "category": "Origen"
+      }
+    ]
+  }
+{% endschema %}

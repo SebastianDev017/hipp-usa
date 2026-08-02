@@ -1,0 +1,98 @@
+{%- liquid 
+  assign image = section.settings.image
+  assign asset = section.settings.asset
+  assign title = section.settings.title
+  assign text = section.settings.text
+-%}
+
+{{- "css-page-about-us-cover.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-cover-container" data-section-id="{{ section.id }}" data-section-type="section-pau-cover">
+
+  <div class="pau-cover-content ">
+
+    <div class="pau-cover-info">
+
+      {%- if title != blank -%}
+        <header class="pau-cover-info-title-wrapper">
+          <h2 class="pau-cover-info-title section-title-richtext">{{ title }}</h2>
+        </header>
+      {%- endif -%}
+
+      {%- if text != blank -%}
+        <div class="pau-cover-info-text-wrapper">
+          <p class="pau-cover-info-text">{{ text }}</p>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+    <div class="pau-cover-images-wrapper">
+      <div class="pau-cover-main-image-wrapper">
+        <div class="pau-cover-image-wrapper back-img-wrapper pau-cover-main-image {% if image == blank %}no-image{% endif %}">
+          {%- if image != blank -%}
+            <picture class="picture-wrapper">
+              <source media="(max-width: 680px)" srcset="{{ image | image_url: width: 780 }}">
+              <img class="pau-cover-image back-img" alt="{{ image.alt }}" src="{{ image | image_url: width: 600 }}">
+            </picture>
+          {%- endif -%}
+        </div>
+
+        <div class="pau-cover-image-wrapper back-img-wrapper pau-cover-asset {% if asset == blank %}no-image{% endif %}">
+          {%- if asset != blank -%}
+            <picture class="picture-wrapper">
+              <source media="(max-width: 680px)" srcset="{{ asset | image_url: width: 780 }}">
+              <img class="pau-cover-image back-img" alt="{{ image.alt }}" src="{{ asset | image_url: width: 400 }}">
+            </picture>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - Portada",
+    "tag": "section",
+    "class": "pau-cover",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Imágenes"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Imagen"
+      },
+      {
+        "type": "image_picker",
+        "id": "asset",
+        "label": "Imagen flotante"
+      },
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - Portada",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

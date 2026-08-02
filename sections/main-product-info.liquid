@@ -1,0 +1,168 @@
+{%- comment -%}theme-check-disable LiquidTag, UnknownFilter{%- endcomment -%}
+
+{{- 'css-main-product-info.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'js-main-product-info.js' | asset_url -}}" defer></script>
+
+{%- liquid 
+  assign original_title = section.settings.title
+
+  assign metafields = product.metafields.custom
+  assign image = metafields.info_image
+  assign icon = metafields.info_icon
+  assign tab_1_title = "Preparación"
+  assign tab_1_text = metafields.pestana_4_texto
+  assign tab_2_title = "Descripción detallada"
+  assign tab_2_text = product.description
+  assign tab_3_title = "Más información"
+  assign tab_3_text = metafields.pestana_5_texto
+
+  assign has_tabs = false
+  assign has_tab_1 = false
+  assign has_tab_2 = false
+  assign has_tab_3 = false
+
+  if tab_1_title != blank and tab_1_text != blank
+    assign has_tab_1 = true
+    assign has_tabs = true
+  endif
+  if tab_2_title != blank and tab_2_text != blank
+    assign has_tab_2 = true
+    assign has_tabs = true
+  endif
+  if tab_3_title != blank and tab_3_text != blank
+    assign has_tab_3 = true
+    assign has_tabs = true
+  endif
+-%}
+
+{%- capture title -%}
+  {% assign splitted_title = original_title | split: ' ' %}
+
+  {% for word in splitted_title %}
+    {% unless forloop.last %}
+      {{- word -}}
+    {% endunless %}
+    {% if forloop.last %}
+      {% if forloop.index > 1 %}
+        <strong>{{- word -}}</strong>
+      {% else %}
+        {{- word -}}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{%- endcapture -%}
+
+{%- if original_title != blank or has_tabs -%}
+  <div class="product-info section" data-section-id="{{- section.id -}}" data-section-type="product-info">
+    <div class="product-info-content section-content">
+      {%- unless title == blank -%}
+        <header class="product-info-header text-center">
+          <h2 class="product-info-title section-title-richtext color-green secondary-font">{{- title -}}</h2>
+        </header>
+      {%- endunless -%}
+
+      <div class="product-info-grid">
+        <div class="product-info-left">
+          {%- if has_tabs -%}
+            <div class="product-info-tabs color-green">
+              <div class="product-info-tabs-bar-wrapper">
+                <div class="product-info-tabs-wrapper">
+                  <div class="product-info-tabs-bar swiper">
+                    <div class="product-info-tabs-bar-inner swiper-wrapper" role="tablist">
+                      {%- if has_tab_1 -%}
+                        <button class="product-info-tab-title swiper-slide" aria-controls="tabpanel-1" aria-selected="true" data-tab="1" role="tab" type="button">
+                          <p class="product-info-tab-title-text" data-title="{{- tab_1_title -}}">{{- tab_1_title -}}</p>
+                        </button>
+                      {%- endif -%}
+                      {%- if has_tab_2 -%}
+                        <button class="product-info-tab-title swiper-slide" aria-controls="tabpanel-2" aria-selected="{% if has_tab_1 %}false{% else %}true{% endif %}" data-tab="2" role="tab" {% if has_tab_1 == false %}tabindex="-1"{% endif %} type="button">
+                          <p class="product-info-tab-title-text" data-title="{{- tab_2_title -}}">{{- tab_2_title -}}</p>
+                        </button>
+                      {%- endif -%}
+                      {%- if has_tab_3 -%}
+                        <button class="product-info-tab-title swiper-slide" aria-controls="tabpanel-3" aria-selected="{% if has_tab_1 or has_tab_2 %}false{% else %}true{% endif %}" data-tab="3" role="tab" {% if has_tab_1 == false and has_tab_2 == false %}tabindex="-1"{% endif %} type="button">
+                          <p class="product-info-tab-title-text" data-title="{{- tab_3_title -}}">{{- tab_3_title -}}</p>
+                        </button>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+                <div class="product-info-tabs-scroll-arrow main-product-tabs-scroll-indicator left"></div>
+                <div class="product-info-tabs-scroll-button left swiper-button prev">
+                  {%- render "icon", icon: "arrow-prev" -%}
+                </div>
+                <div class="product-info-tabs-scroll-arrow main-product-tabs-scroll-indicator right"></div>
+                <div class="product-info-tabs-scroll-button right swiper-button next">
+                  {%- render "icon", icon: "arrow-next" -%}
+                </div>
+              </div>
+              <div class="product-info-tablist">
+                {%- if has_tab_1 -%}
+                  <div class="product-info-tabpanel-wrapper" id="product-info-tabpanel-1" aria-labelledby="tab-2" role="tabpanel" tabindex="0">
+                    <div class="product-info-tabpanel page-text">
+                      {{- tab_1_text | metafield_tag -}}
+                    </div>
+                  </div>
+                {%- endif -%}
+                {%- if has_tab_2 -%}
+                  <div class="product-info-tabpanel-wrapper {% if has_tab_1 %}is-hidden{% endif %}" id="product-info-tabpanel-2" aria-labelledby="tab-2" role="tabpanel" tabindex="0">
+                    <div class="product-info-tabpanel page-text product-description">
+                      {{- tab_2_text -}}
+                    </div>
+                  </div>
+                {%- endif -%}
+                {%- if has_tab_3 -%}
+                  <div class="product-info-tabpanel-wrapper {% if has_tab_1 or has_tab_2 %}is-hidden{% endif %}" id="product-info-tabpanel-3" aria-labelledby="tab-3" role="tabpanel" tabindex="0">
+                    <div class="product-info-tabpanel page-text">
+                      {{- tab_3_text | metafield_tag -}}
+                    </div>
+                  </div>
+                {%- endif -%}
+                <div class="product-info-read-more-button-wrapper button-wrapper center">
+                  <button class="product-info-read-more-button customer-secondary-button" type="button">Leer más</button>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+        <div class="product-info-right">
+          {%- if image != blank or icon != blank -%}
+            <div class="product-info-asset asset-right">
+              <div>
+                <div class="product-info-asset-image-wrapper square-image image-cover">
+                  {%- unless image == blank -%}
+                    <img class="product-info-asset-image" src="{{- image | image_url -}}" alt="{{- image.alt -}}" loading="lazy" fetchpriority="low">
+                  {%- endunless -%}
+                </div>
+                {%- unless icon == blank -%}
+                  <div class="product-info-asset-icon-wrapper square-image image-contain">
+                    <img class="product-info-asset-icon icon-right" src="{{- icon | image_url -}}" alt="{{- icon.alt -}}" loading="lazy" fetchpriority="low">
+                  </div>
+                {%- endunless -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Información del producto",
+    "class": "product-info-section",
+    "tag": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título"
+      }
+    ]
+  }
+{% endschema %}

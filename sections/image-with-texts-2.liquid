@@ -1,0 +1,165 @@
+{{- "css-image-with-texts.css" | asset_url | stylesheet_tag -}}
+
+{%- liquid 
+  assign desktop_image = section.settings.desktop_image
+  assign mobile_image = section.settings.mobile_image
+  assign content_image = section.settings.content_image
+  assign title = section.settings.title
+  assign subtitle = section.settings.subtitle
+  assign text = section.settings.text
+  assign text_2 = section.settings.text_2
+  assign button_label = section.settings.button_label
+  assign button_link = section.settings.button_link
+  assign has_button = false
+  
+  if button_label != blank and button_link != blank
+    assign has_button = true
+  endif
+-%}
+
+<div class="iwts section" data-section-id="{{- section.id -}}" data-section-type="image-with-texts">
+
+  <div class="iwts-content">
+    {%- unless title == blank -%}
+      <h2 class="iwts-title section-title-richtext color-green" data-aos="fade-up">{{- title -}}</h2>
+    {%- endunless -%}
+
+    {%- unless content_image == blank -%}
+      <div class="iwts-content-image-wrapper square-image">
+        <img class="iwts-content-image" src="{{- content_image | image_url -}}" alt="{{- image.alt -}}" data-aos="fade-up">
+      </div>
+    {%- endunless -%}
+
+    {%- unless subtitle == blank -%}
+      <div class="iwts-subtitle-wrapper" data-aos="fade-up">
+        <p class="iwts-subtitle primary-font-bold color-green">{{- subtitle -}}</p>
+      </div>
+    {%- endunless -%}
+
+    {%- unless text == blank -%}
+      <div class="iwts-text-wrapper" data-aos="fade-up">
+        <div class="iwts-text color-green">{{- text -}}</div>
+      </div>
+    {%- endunless -%}
+
+    {%- if desktop_image != blank or mobile_image != blank -%}
+      <div class="iwts-image-wrapper mobile square-image" data-aos="fade-up">
+        <picture>
+          {% if mobile_image != blank %}
+            <source media="(max-width: 834px)" srcset="{{ mobile_image | image_url: width: 500 }}">
+          {% else %}
+            <source media="(max-width: 834px)" srcset="{{ desktop_image | image_url: width: 500 }}">
+          {% endif %}
+          {% if desktop_image != blank %}
+            <img class="iwts-image" src="{{- desktop_image | image_url: width: 500 -}}" alt="{{- image.alt -}}" loading="lazy">
+          {% endif %}
+        </picture>
+      </div>
+    {%- endif -%}
+
+    {%- unless text_2 == blank -%}
+      <div class="iwts-text-2-wrapper" data-aos="fade-up">
+        <p class="iwts-text-2 color-green">{{- text_2 -}}</p>
+      </div>
+    {%- endunless -%}
+
+    {%- if has_button -%}
+      {%- capture target -%}{%- if button_link contains 'http' or button_link contains 'tel:' or button_link contains 'maps/' or button_link contains 'mailto:' -%}target="_blank"{%- endif -%}{%- endcapture -%}  
+        <div class="iwts-button-wrapper" data-aos="fade-up">
+          <a class="iwts-button button" href="{{- button_link -}}" title="{{- button_label -}}" {{ target -}}>{{- button_label -}}</a>
+        </div>
+    {%- endif -%}
+  </div>
+
+  <div class="iwts-assets" data-aos="fade-up">
+    <div class="iwts-circle"></div>
+
+    {%- if desktop_image != blank or mobile_image != blank -%}
+      <div class="iwts-image-wrapper square-image">
+        <picture>
+          {% if mobile_image != blank %}
+            <source media="(max-width: 834px)" srcset="{{ mobile_image | image_url: width: 500 }}">
+          {% else %}
+            <source media="(max-width: 834px)" srcset="{{ desktop_image | image_url: width: 500 }}">
+          {% endif %}
+          {% if desktop_image != blank %}
+            <img class="iwts-image" src="{{- desktop_image | image_url: width: 500 -}}" alt="{{- image.alt -}}" loading="lazy">
+          {% endif %}
+        </picture>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Imagen con textos 2",
+    "tag": "section",
+    "class": "iwts-section iwts-section-2",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Imágenes"
+      },
+      {
+        "type": "image_picker",
+        "id": "desktop_image",
+        "label": "Imagen tamaño escritorio"
+      },
+      {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Imagen tamaño móvil"
+      },
+      {
+        "type": "image_picker",
+        "id": "content_image",
+        "label": "Imagen contenido"
+      },
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "subtitle",
+        "label": "Subtítulo"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Texto"
+      },
+      {
+        "type": "text",
+        "id": "text_2",
+        "label": "Texto 2"
+      },
+      {
+        "type": "header",
+        "content": "Botón"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Texto"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Enlace"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Homepage",
+        "name": "Imagen con textos 2"
+      }
+    ]
+  }
+{% endschema %}

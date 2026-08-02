@@ -1,0 +1,75 @@
+{%- liquid 
+  assign image = section.settings.image
+  assign title = section.settings.title
+  assign text = section.settings.text
+-%}
+
+{{- "css-page-about-us-texts-with-image.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-twi-container">
+
+  <div class="pau-twi-content">
+
+    {%- if title != blank -%}
+      <header class="pau-twi-title-wrapper">
+        <h2 class="pau-twi-title section-title-richtext">{{ title }}</h2>
+      </header>
+    {%- endif -%}
+
+    <div class="pau-twi-image-wrapper back-img-wrapper {% if image == blank %}no-image{% endif %}">
+      {%- if image != blank -%}
+        <picture class="picture-wrapper">
+          <source media="(max-width: 680px)" srcset="{{ image | image_url: width: 780 }}">
+          <img class="pau-twi-image back-img" alt="{{ image.alt }}" loading="lazy" src="{{ image | image_url: width: 900 }}">
+        </picture>
+      {%- endif -%}
+    </div>
+
+    {%- if text != blank -%}
+      <div class="pau-twi-text-wrapper">
+        <p class="pau-twi-text">{{ text }}</p>
+      </div>
+    {%- endif -%}
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - Textos/Imagen",
+    "tag": "section",
+    "class": "pau-twi",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Imagen"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Imagen"
+      },
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - Textos/Imagen",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

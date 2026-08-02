@@ -1,0 +1,129 @@
+{%- liquid 
+  assign title_1 = section.settings.title_1
+  assign title = section.settings.title
+  assign text = section.settings.text
+-%}
+
+{{- "css-page-origen-cards-with-icons-white.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-page-origen-cards-with-icons-white.js' | asset_url -}}"></script>
+
+<div class="pau-cwi-white-container" data-section-id="{{- section.id -}}" data-section-type="pau-cards-with-icons">
+
+  <div class="pau-cwi-white-content">
+
+    {%- if title != blank or text != blank -%}
+      <div class="pau-cwi-white-header">
+        <header class="pau-cwi-white-header-title-wrapper">
+          {%- if title != blank or title_1 != blank -%}
+            {%- if title_1 != blank %}
+              <p class="pau-cwi-white-title-1 title-1">{{ title_1 }}</p>
+            {% endif -%}
+            {% if title != blank %}
+              <h2 class="pau-cwi-white-header-title section-title-richtext">{{ title }}</h2>
+            {% endif %}
+          {%- endif -%}
+        </header>
+
+        {%- if text != blank -%}
+          <div class="pau-cwi-white-header-text-wrapper">
+            <p class="pau-cwi-white-header-text">{{ text }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pau-cwi-white-items">
+
+      {%- for block in section.blocks -%}
+
+        {%- liquid 
+          assign card_logo = block.settings.card_logo
+          assign card_title = block.settings.card_title
+        -%}
+
+        <div class="pau-cwi-white-item">
+          <div class="pau-cwi-white-item-image-wrapper back-img-wrapper">
+            {%- if card_logo != blank -%}
+              <picture class="picture-wrapper">
+                <img class="back-img pau-cwi-white-item-image" alt="{{ card_logo.alt }}" loading="lazy" src="{{ card_logo | image_url: width: 800 }}">
+              </picture>
+            {%- endif -%}
+          </div>
+
+          {%- if card_title != blank -%}
+            <div class="pau-cwi-white-item-title-wrapper">
+              <h3 class="pau-cwi-white-item-title">{{ card_title }}</h3>
+            </div>
+          {%- endif -%}
+
+        </div>
+
+      {%- endfor -%}
+
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Origen - T/Íconos",
+    "tag": "section",
+    "class": "pau-cwi-white",
+    "max_blocks": 12,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title_1",
+        "label": "Título 1"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Tarjeta",
+        "type": "card",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Logo"
+          },
+          {
+            "type": "image_picker",
+            "id": "card_logo",
+            "label": "Logo"
+          },
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "text",
+            "id": "card_title",
+            "label": "Título"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Origen - T/Iconos",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

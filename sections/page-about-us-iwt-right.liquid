@@ -1,0 +1,95 @@
+{%- liquid 
+  assign image = section.settings.image
+  assign title = section.settings.title
+  assign text_1 = section.settings.text_1
+  assign text_2 = section.settings.text_2
+-%}
+
+{{- "css-page-about-us-iwt-right.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-iwt-right-container" data-section-id="{{ section.id }}" data-section-type="section-pau-iwt-right">
+
+  <div class="pau-iwt-right-content">
+
+    <div class="pau-iwt-right-image-side">
+      <div class="pau-iwt-right-image-super-wrapper">
+        <div class="pau-iwt-right-image-wrapper back-img-wrapper {% if image == blank %}no-image{% endif %}">
+          {%- if image != blank -%}
+            <picture class="picture-wrapper">
+              <source media="(max-width: 680px)" srcset="{{ image | image_url: width: 780 }}">
+              <img class="pau-iwt-right-image back-img" alt="{{ image.alt }}" loading="lazy" src="{{ image | image_url: width: 700 }}">
+            </picture>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <div class="pau-iwt-right-info">
+
+      {%- if title != blank -%}
+        <header class="pau-iwt-right-info-title-wrapper">
+          <h2 class="pau-iwt-right-info-title section-title-richtext">{{ title }}</h2>
+        </header>
+      {%- endif -%}
+
+      {%- if text_1 != blank -%}
+        <div class="pau-iwt-right-info-text-wrapper text-1">
+          <p class="pau-iwt-right-info-text">{{ text_1 }}</p>
+        </div>
+      {%- endif -%}
+
+      {%- if text_2 != blank -%}
+        <div class="pau-iwt-right-info-text-wrapper text-2">
+          <p class="pau-iwt-right-info-text">{{ text_2 }}</p>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - IWT (D)",
+    "tag": "section",
+    "class": "pau-iwt-right",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Imagen"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Imagen"
+      },
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text_1",
+        "label": "Texto 1"
+      },
+      {
+        "type": "text",
+        "id": "text_2",
+        "label": "Texto 2"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - IWT (D)",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

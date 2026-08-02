@@ -1,0 +1,34 @@
+{%- liquid 
+  assign image = article.image
+  assign url = article.url
+  assign title = article.title | escape
+  assign excerpt = article.excerpt
+  assign content = article.content
+-%}
+
+
+<article class="article-card {% if image == blank %} article-card-without-image{% endif %}" aria-labelledby="Article-{{- article.id -}}">
+  <a class="article-card-image-wrapper square-image image-cover" href="{{- article.url -}}">
+    {%- unless image == blank -%}
+      <img class="article-card-image" src="{{- image.src | image_url: width: 800 -}}" alt="{{- image.src.alt | escape -}}" loading="lazy" width="800" height="800">
+    {%- endunless -%}
+  </a>
+
+  <a class="article-card-info" href="{{- url -}}" id="Article-{{- article.id -}}">
+    <div class="article-card-info-inner">
+      <h3 class="article-card-title color-green">{{- title -}}</h3>
+  
+      {%- if excerpt.size > 0 or content.size > 0 -%}
+        <div class="article-card-excerpt-wrapper">
+          <p class="article-card-excerpt color-green">
+            {%- if excerpt.size > 0 -%}
+              {{- excerpt | strip_html | strip | truncate: 50  -}}
+            {%- else -%}
+              {{- content | strip_html | strip | truncate: 50  -}}
+            {%- endif -%}
+          </p>
+        </div>
+      {%- endif -%}
+    </div>
+  </a>
+</article>

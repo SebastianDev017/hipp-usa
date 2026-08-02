@@ -1,0 +1,153 @@
+{%- liquid 
+  assign text = section.settings.text
+  assign title = section.settings.title
+  assign logo = section.settings.logo
+-%}
+
+{{- "css-page-about-us-icons-with-text.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-icons-with-text-container">
+
+  <div class="pau-icons-with-text-content">
+
+    {%- if title != blank or text != blank -%}
+      <div class="pau-icons-with-text-header">
+        {%- if text != blank -%}
+          <div class="pau-icons-with-text-header-text-wrapper">
+            <p class="pau-icons-with-text-header-text">{{ text }}</p>
+          </div>
+        {%- endif -%}
+
+        {%- if title != blank -%}
+          <header class="pau-icons-with-text-header-title-wrapper">
+            <h2 class="pau-icons-with-text-header-title section-title-richtext">{{ title }}</h2>
+          </header>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pau-icons-with-text-logo-tablet">
+      <div class="pau-icons-with-text-logo-item-image-wrapper back-img-wrapper">
+        {%- if logo != blank -%}
+          <picture class="picture-wrapper">
+            <img class="back-img pau-icons-with-text-logo-item-image" alt="{{ logo.alt }}" loading="lazy" src="{{ logo | image_url: width: 800 }}">
+          </picture>
+        {%- endif -%}
+      </div>
+
+      <div class="pau-icons-with-text-divisor">
+        <div class="pau-icons-with-text-divisor-top"></div>
+      </div>
+    </div>
+
+    <div class="pau-icons-with-text-items">
+
+      {%- for block in section.blocks -%}
+
+        {%- liquid 
+          assign block_icon = block.settings.block_icon
+          assign block_text = block.settings.block_text
+        -%}
+
+        <div class="pau-icons-with-text-item {{ 'pau-icons-with-text-item-' | append: forloop.index }}">
+
+          <div class="pau-icons-with-text-item-image-wrapper back-img-wrapper">
+            {%- if block_icon != blank -%}
+              <picture class="picture-wrapper">
+                <img class="back-img pau-icons-with-text-item-image" alt="{{ block_icon.alt }}" loading="lazy" src="{{ block_icon | image_url: width: 800 }}">
+              </picture>
+            {%- endif -%}
+          </div>
+
+          {%- if block_text != blank -%}
+            <div class="pau-icons-with-text-item-text-wrapper">
+              <p class="pau-icons-with-text-item-text">{{ block_text }}</p>
+              <div class="pau-icons-with-text-item-asset"></div>
+            </div>
+          {%- endif -%}
+
+        </div>
+
+      {%- endfor -%}
+
+      <div class="pau-icons-with-text-logo-item on-desktop">
+        <div class="pau-icons-with-text-logo-item-image-wrapper back-img-wrapper">
+          {%- if logo != blank -%}
+            <picture class="picture-wrapper">
+              <img class="back-img pau-icons-with-text-logo-item-image" alt="{{ logo.alt }}" loading="lazy" src="{{ logo | image_url: width: 800 }}">
+            </picture>
+          {%- endif -%}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - Íconos c/texto",
+    "tag": "section",
+    "class": "pau-icons-with-text",
+    "max_blocks": 6,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "header",
+        "content": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Tarjeta",
+        "type": "card",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Ícono"
+          },
+          {
+            "type": "image_picker",
+            "id": "block_icon",
+            "label": "Ícono"
+          },
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "inline_richtext",
+            "id": "block_text",
+            "label": "Texto"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - Iconos c/texto",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

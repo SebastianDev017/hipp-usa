@@ -1,0 +1,55 @@
+{%- comment -%}
+  Renderiza el precio del producto
+
+  Acepta:
+  - Producto o variante
+
+  Uso:
+  {% render 'price', target: product | variant %}
+
+{%- endcomment -%}
+
+{%- liquid 
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price
+  assign available = target.available
+  
+  assign money_price = price | money | replace: ' ', ''
+-%}
+
+<dl class="price{%- if compare_at_price > price %} price--on-sale{%- endif -%} {%- unless available %} price--sold-out{%- endunless -%}" data-price>
+  <div class="price__regular">
+    <dt>
+      <span class="visually-hidden visually-hidden--inline">{{- 'products.product.price.regular_price' | t -}}</span>
+    </dt>
+    <dd>
+      <span class="price-item price-item-regular" data-regular-price>
+        {%- if compare_at_price > price -%}
+          <span class="price-item-compare compare-price price">
+            <del>{{- compare_at_price | money | replace: ' ', '' -}}</del>
+          </span>
+        {%- else -%}
+          {% if available %}
+            {{- money_price -}}
+          {% else %}
+            <del>{{- money_price -}}</del>
+          {% endif %}
+        {%- endif -%}
+      </span>
+    </dd>
+  </div>
+  <div class="price__sale">
+    <dt>
+      <span class="visually-hidden visually-hidden--inline">{{- 'products.product.price.sale_price' | t -}}</span>
+    </dt>
+    <dd>
+      <span class="price-item price-item-sale price" data-sale-price>
+        {% if available %}
+          {{- money_price -}}
+        {% else %}
+          <del>{{- money_price -}}</del>
+        {% endif %}
+      </span>
+    </dd>
+  </div>
+</dl>

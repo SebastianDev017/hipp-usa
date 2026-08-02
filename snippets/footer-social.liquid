@@ -1,0 +1,25 @@
+{%- liquid 
+	assign facebook_link = settings.social_facebook_link
+	assign instagram_link = settings.social_instagram_link
+	assign youtube_link = settings.social_youtube_link
+-%}
+
+{%- if instagram_link != blank or facebook_link != blank or youtube_link != blank -%}
+  <div class="social-icons">
+    {%- unless facebook_link == blank -%}
+      <a class="social-icon facebook" href="{{- facebook_link -}}" target="_blank">
+        {%- render "icon", icon: "facebook" -%}
+      </a>
+    {%- endunless -%}
+    {%- unless instagram_link == blank -%}
+      <a class="social-icon instagram" href="{{- instagram_link -}}" target="_blank">
+        {%- render "icon", icon: "instagram" -%}
+      </a>
+    {%- endunless -%}
+    {%- unless youtube_link == blank -%}
+      <a class="social-icon youtube" href="{{- youtube_link -}}" target="_blank">
+        {%- render "icon", icon: "youtube" -%}
+      </a>
+    {%- endunless -%}
+  </div>
+{%- endif -%}

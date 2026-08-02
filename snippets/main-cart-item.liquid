@@ -1,0 +1,139 @@
+{%- assign is_a_gift = false -%}
+{%- assign properties_size = item.properties | size -%}
+
+{%- liquid 
+  for tag in item.product.tags
+    assign tag_handleize = tag | handleize
+    if tag_handleize == 'regalo'
+      assign is_a_gift = true
+    endif
+    
+  endfor
+-%}
+
+<div class="cart-item">
+
+  <a class="cart-item-image-wrapper" href="{{- item.url -}}">
+    {% if item.image %}
+      <img class="cart-item-image" src="{{- item.image | image_url: width: 190 -}}" loading="lazy" alt="{{- item.title | escape -}}" data-item-url="{{- item.url -}}">
+    {% endif %}
+  </a>
+
+  <div class="cart-item-info-wrapper">
+
+    <div class="cart-item-title-wrapper">
+      <a href="{{- item.url -}}">
+        <h2 class="cart-item-title page-text">
+          {{- item.product.title -}}
+        </h2>
+      </a>
+    </div>
+
+    {%- unless item.variant.title contains 'Default' -%}
+      <div class="cart-item-variants">
+        {%- for option in item.product.options -%}
+          <div class="cart-item-variant">
+            <span class="cart-item-variant-label">{{- option -}}:&nbsp;</span>
+            <span class="cart-item-variant-value">{{- item.variant.options[forloop.index0] -}}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endunless -%}
+
+    {%- if item.selling_plan_allocation != nil -%}
+      <div class="cart-item-selling-plan-allocation cart-item-variant">
+        <span class="cart-item-selling-plan cart-item-variant-label">{{- item.selling_plan_allocation.selling_plan.name -}}</span>
+      </div>
+    {%- endif -%}
+
+    {%- if properties_size > 0 -%}
+      <div class="cart-item-line-properties">
+        {%- for p in item.properties -%}
+          {%- assign first_character = p.first | slice: 0 -%}
+
+          {%- unless p.last == blank or first_character == '_' -%}
+            <span class="cart-item-line-propertie-label">{{ p.first }}: </span>
+            
+            {%- if p.last contains '/uploads/' -%}
+              <a class="cart-item-line-propertie-link-value" href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+            {%- else -%}
+              <span class="cart-item-line-propertie-value">{{ p.last }}</span>
+            {%- endif -%}
+
+            <br>
+          {%- endunless -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="cart-item-info-price-wrapper">
+      <div class="cart-item-info-price-text cart-number">
+        {%- if item.original_price != item.final_price -%}
+          <s class="cart-item-old-price cart-number">
+            {{- item.original_price | money -}}
+          </s>
+          <span class="cart-item-price cart-number">
+            {{- item.final_price | money -}}
+          </span>
+        {%- else -%}
+          <span class="cart-item-price cart-number">
+            {{ item.price | money }}
+          </span>
+        {%- endif -%}
+      </div>
+      
+      {%- for discount in item.discounts -%}
+        <p class="cart-item-price-total-discount-wrapper-text">{{- discount.title -}}</p>
+      {%- endfor -%}
+    </div>
+
+    <div class="cart-item-btn-remove-wrapper {% if has_variants == false %}with-margin{% endif %}">
+      <a class="button-cart-remove" href="/cart/change?line={{- forloop.index -}}&amp;quantity=0" aria-label="{{ 'sections.cart.remove_title' | t }} {{ item.product.title }}">{{- 'sections.cart.remove' | t -}}</a>
+    </div>
+
+  </div>
+
+  <div class="cart-item-price-unit-wrapper">
+
+    <div class="cart-item-price-unit-text-wrapper">
+      <div class="cart-item-price-unit-text cart-item-prices-box">
+        {%- if item.original_price != item.final_price -%}
+          <s class="cart-item-old-price cart-number">
+            {{- item.original_price | money -}}
+          </s>
+          <span class="cart-item-price cart-number">
+            {{- item.final_price | money -}}
+          </span>
+        {%- else -%}
+          <span class="cart-item-price cart-number">
+            {{ item.price | money }}
+          </span>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="cart-item-price-total-wrapper">
+    <div class="cart-item-line-prices cart-item-prices-box">
+      {%- if item.original_line_price != item.line_price -%}
+        <s class="cart-item-line-old-price cart-item-info-old-price cart-number">
+          {{- item.original_line_price | money -}}
+        </s>
+        <span class="cart-item-line-price cart-item-price cart-number">
+          {{- item.final_line_price | money -}}
+        </span>
+      {%- else -%}
+        <span class="cart-item-line-price cart-item-price cart-number">
+          {{ item.line_price | money }}
+        </span>
+      {%- endif -%}
+    </div>
+
+    {%- for discount in item.discounts -%}
+      <div class="cart-item-price-total-discount-wrapper">
+        <p class="cart-item-price-total-discount-wrapper-text">{{ discount.title }}</p>
+      </div>
+    {%- endfor -%}
+  </div>
+
+</div>

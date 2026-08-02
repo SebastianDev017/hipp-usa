@@ -1,0 +1,11 @@
+{%- liquid 
+  assign image = block.settings.image
+-%}
+
+{%- unless image == blank -%}
+  <div class="logos-carousel-slide swiper-slide">
+    <div class="logos-carousel-image-wrapper square-image">
+      <img class="logos-carousel-image" src="{{- image | image_url -}}" alt="{{- image.alt -}}" loading="lazy">
+    </div>
+  </div>
+{%- endunless -%}

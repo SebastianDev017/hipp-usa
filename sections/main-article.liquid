@@ -1,0 +1,162 @@
+{%- comment -%}theme-check-disable SyntaxError{%- endcomment -%}
+{%- liquid
+
+  # Determinamos se mostraran los feautred blgopost, solo son los 5 ultimos sin repetir en el que estamos actualmente
+  assign show_featured = false
+  if blog.articles.size > 2
+    assign show_featured = true
+  endif
+
+  # Determinamos si el articulo actual esta en la lista de los ultimos 5, para asi agregar uno mas a la lista
+  assign limit_featured = 5
+  for article_card in blog.articles limit: 5
+    if article_card.handle == article.handle
+      assign limit_featured = 6
+    endif
+  endfor
+
+  assign article_image = article.image
+  assign article_title = article.title | escape
+  assign article_date = article.published_at | date: '%d de %B %Y'
+  assign article_date_iso = article.published_at | date: '%Y-%m-%dT%H:%M:%S-06:00'
+  assign article_content = article.content
+
+  assign months_es = "Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre" | split: ","
+  for month_es in months_es
+    assign month = month_es | date: "%B"
+    if article_date contains month
+      assign article_date = article_date | replace: month, month_es
+      break
+    endif
+  endfor
+-%}
+
+{{- 'css-main-blogpost.css' | asset_url | stylesheet_tag -}}
+
+<article class="article-template article-content-row color-green" itemscope itemtype="http://schema.org/BlogPosting">
+  {%- if article_image != blank -%}
+    <meta itemprop="image" content="{{ article_image | image_url: width: 1200 | prepend: 'https:' }}">
+  {%- endif -%}
+ {%- if article.author != blank -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": {{ article.author | json }},
+    "url": "https://hipp.mx/pages/profesionales-de-la-salud"
+  }
+  </script>
+  <div itemprop="author" itemscope itemtype="https://schema.org/Person">
+  <meta itemprop="name" content="{{ article.author }}">
+  <meta itemprop="url" content="https://hipp.mx/pages/profesionales-de-la-salud">
+</div>
+{%- endif -%}
+  {%- if article_image != blank -%}
+    <div class="article-cover" itemprop="image">
+      <picture>
+        <source media="(max-width: 360px)" srcset="{{ article_image | image_url: width: 495 }}">
+        <source media="(max-width: 375px)" srcset="{{ article_image | image_url: width: 518 }}">
+        <source media="(max-width: 390px)" srcset="{{ article_image | image_url: width: 540 }}">
+        <source media="(max-width: 414px)" srcset="{{ article_image | image_url: width: 576 }}">
+        <source media="(max-width: 428px)" srcset="{{ article_image | image_url: width: 597 }}">
+        <source media="(max-width: 680px)" srcset="{{ article_image | image_url: width: 975 }}">
+        <source media="(max-width: 749px)" srcset="{{ article_image | image_url: width: 1078 }}">
+        <source media="(max-width: 768px)" srcset="{{ article_image | image_url: width: 1104 }}">
+        <source media="(max-width: 1024px)" srcset="{{ article_image | image_url: width: 1155 }}">
+        <img class="article-cover-image" src="{{ article_image | image_url: width: 1474 }}" alt="{{ article_image.alt }}" fetchpriority="high">
+      </picture>
+    </div>
+  {%- endif -%}
+
+  <div class="article-grid">
+
+    <div class="article-left">
+
+      <header class="article-header">
+        <h1 class="article-title" itemprop="headline">{{- article_title -}}</h1>
+        <time class="article-date" itemprop="dateCreated pubdate" datetime="{{ article_date_iso }}">{{- article_date -}}</time>
+<meta itemprop="datePublished" content="{{ article_date_iso }}">
+      </header>
+
+
+      <div class="article-content page-text" itemprop="articleBody">
+        {{- article_content -}}
+      </div>
+
+    </div>
+
+    <aside class="article-right articles-related">
+      {%- if show_featured -%}
+        <h2 class="articles-related-title">Descubre más</h2>
+        <ul class="articles-related-card-list">
+          {%- for article_card in blog.articles limit: limit_featured -%}
+            {%- liquid
+              if article_card.handle == article.handle
+                continue
+              endif
+
+              assign card_image = article_card.image
+              assign card_title = article_card.title
+            -%}
+            <li class="articles-related-card">
+
+              <a class="articles-related-card-image-wrapper square-image image-cover" href="{{- article_card.url -}}">
+                {%- if card_image != blank -%}
+                  <img src="{{ card_image | image_url: width: 238 }}" loading="lazy" alt="{{ card_image.alt }}">
+                {%- endif -%}
+              </a>
+
+              <div class="articles-related-card-info">
+                <h3 class="articles-related-card-title">
+                  <a href="{{ article_card.url }}">
+                    {{- card_title -}}
+                  </a>
+                </h3>
+                <a class="articles-related-card-button" href="{{ article_card.url }}">
+                  <span>Leer Más</span>
+                </a>
+              </div>
+
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </aside>
+
+  </div>
+
+</article>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "{{ shop.url }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ blog.title | json }},
+      "item": "{{ shop.url }}/blogs/{{ blog.handle }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": {{ article.title | json }},
+      "item": "{{ shop.url }}{{ article.url }}"
+    }
+  ]
+}
+</script>
+{% schema %}
+{
+  "name": "Artículo",
+  "tag": "section",
+  "class": "article-row"
+}
+{% endschema %}

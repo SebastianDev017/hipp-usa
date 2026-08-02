@@ -1,0 +1,191 @@
+{{- 'css-logos-carousel-blue.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'js-logos-carousel-blue.js' | asset_url -}}" defer></script>
+
+{%- liquid 
+	assign image_1 = section.settings.image_1
+	assign icon_1 = section.settings.icon_1
+	assign image_2 = section.settings.image_2
+	assign icon_2 = section.settings.icon_2
+	assign title = section.settings.title
+	assign text = section.settings.text
+	assign blocks = section.blocks
+	assign blocks_size = blocks | size
+	assign button_label = section.settings.button_label
+	assign button_link = section.settings.button_link
+	assign has_assets = false
+	assign has_button = false
+
+	if image_1 != blank or icon_1 != blank or image_2 != blank or icon_2 != blank
+		assign has_assets = true
+	endif
+	
+	if button_label != blank and button_link != blank
+		assign has_button = true
+	endif
+-%}
+
+<div class="logos-carousel-blue section" style="--blocks-size: {{ blocks_size -}};" data-section-id="{{- section.id -}}" data-section-type="logos-carousel-blue">
+
+	<div class="logos-carousel-blue-content section-content text-center">
+		{%- unless title == blank -%}
+			<header class="logos-carousel-blue-title-wrapper" data-aos="fade-up">
+				<h2 class="logos-carousel-blue-title section-title-richtext color-dark-blue">{{- title -}}</h2>
+			</header>
+		{%- endunless -%}
+
+		{%- if blocks_size > 0 -%}
+			<div class="logos-carousel-blue-swiper-wrapper" data-aos="fade-up">
+				<div class="logos-carousel-blue-swiper swiper">
+					<div class="swiper-wrapper">
+						{%- render 'logos-carousel-item' for blocks as block -%}
+					</div>
+				</div>
+				<button class="logos-carousel-blue-swiper-button swiper-button prev transparent{% if blocks_size <= 3 %} hidden{% endif %}" type="button" role="button" aria-label="Previous">
+					{%- render 'icon', icon: 'arrow-prev' -%}
+				</button>
+				<button class="logos-carousel-blue-swiper-button swiper-button next transparent{% if blocks_size <= 3 %} hidden{% endif %}" type="button" role="button" aria-label="Next">
+					{%- render 'icon', icon: 'arrow-next' -%}
+				</button>
+			</div>
+		{%- endif -%}
+
+		{%- unless text == blank -%}
+			<p class="logos-carousel-blue-text color-dark-blue" data-aos="fade-up">{{- text -}}</p>
+		{%- endunless -%}
+
+		{%- if has_button -%}
+			{%- capture target -%}{%- if button_link contains 'http' or button_link contains 'tel:' or button_link contains 'maps/' or button_link contains 'mailto:' -%}target="_blank"{%- endif -%}{%- endcapture -%}
+			<div class="logos-carousel-blue-button-wrapper" data-aos="fade-up">
+				<a class="logos-carousel-blue-button button" href="{{- button_link -}}" title="{{- button_label -}}" {{ target -}}>{{- button_label -}}</a>
+			</div>
+		{%- endif -%}
+	</div>
+
+	{% comment %}
+		Assets flotantes de la sección
+	{% endcomment %}
+
+	{%- if has_assets -%}
+		<div class="logos-carousel-blue-assets no-touch" data-aos="fade-up">
+			{%- if image_1 != blank or icon_1 != blank -%}
+				<div class="logos-carousel-blue-asset asset-left">
+					<div>
+						<div class="logos-carousel-blue-asset-image-wrapper square-image image-cover">
+							{%- unless image_1 == blank -%}
+								<img class="logos-carousel-blue-asset-image" src="{{- image_1 | image_url -}}" alt="{{- image_1.alt -}}" loading="lazy">
+							{%- endunless -%}
+						</div>
+						{%- unless icon_1 == blank -%}
+							<div class="logos-carousel-blue-asset-icon-wrapper square-image image-contain">
+								<img class="logos-carousel-blue-asset-icon icon-left" src="{{- icon_1 | image_url -}}" alt="{{- icon_1.alt -}}" loading="lazy">
+							</div>
+						{%- endunless -%}
+					</div>
+				</div>
+			{%- endif -%}
+			{%- if image_2 != blank or icon_2 != blank -%}
+				<div class="logos-carousel-blue-asset asset-right">
+					<div>
+						<div class="logos-carousel-blue-asset-image-wrapper square-image image-cover">
+							{%- unless image_2 == blank -%}
+								<img class="logos-carousel-blue-asset-image" src="{{- image_2 | image_url -}}" alt="{{- image_2.alt -}}" loading="lazy">
+							{%- endunless -%}
+						</div>
+						{%- unless icon_2 == blank -%}
+							<div class="logos-carousel-blue-asset-icon-wrapper square-image image-contain">
+								<img class="logos-carousel-blue-asset-icon icon-right" src="{{- icon_2 | image_url -}}" alt="{{- icon_2.alt -}}" loading="lazy">
+							</div>
+						{%- endunless -%}
+					</div>
+				</div>
+			{%- endif -%}
+		</div>
+	{%- endif -%}
+
+</div>
+
+{% schema %}
+{
+	"name": "Carrusel de logos - Azul",
+	"tag": "section",
+	"class": "logos-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Imágenes"
+		},
+		{
+			"type": "image_picker",
+			"id": "image_1",
+			"label": "Imagen 1"
+		},
+		{
+			"type": "image_picker",
+			"id": "icon_1",
+			"label": "Ícono 1"
+		},
+		{
+			"type": "image_picker",
+			"id": "image_2",
+			"label": "Imagen 2"
+		},
+		{
+			"type": "image_picker",
+			"id": "icon_2",
+			"label": "Ícono 2"
+		},
+		{
+			"type": "header",
+			"content": "Contenido"
+		},
+		{
+			"type": "richtext",
+			"id": "title",
+			"label": "Título"
+		},
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Texto"
+		},
+		{
+			"type": "header",
+			"content": "Botón"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"label": "Texto"
+		},
+		{
+			"type": "url",
+			"id": "button_link",
+			"label": "Enlace"
+		}
+	],
+	"max_blocks": 12,
+	"blocks": [
+		{
+			"name": "Logo",
+			"type": "image",
+			"settings": [
+				{
+					"type": "header",
+					"content": "Imagen"
+				},
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Imagen"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"category": "Homepage",
+			"name": "Carrusel de logos - (Azul)"
+		}
+	]
+}
+{% endschema %}

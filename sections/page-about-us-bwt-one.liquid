@@ -1,0 +1,81 @@
+{% liquid 
+  assign image_desktop = section.settings.image_desktop
+  assign image_mobile = section.settings.image_mobile
+  assign title = section.settings.title
+  assign text = section.settings.text
+%}
+
+<style>
+  #{{section.id}}.pau-banner-one-container {
+    --backgroud-image-url-desktop: url("{{ image_desktop | image_url }}");
+    --backgroud-image-url-mobile: url("{{ image_mobile | image_url }}");
+  }
+</style>
+
+{{- 'css-page-about-us-banner-one.css' | asset_url | stylesheet_tag -}}
+
+<div class="pau-banner-one-container" id="{{ section.id }}">
+
+  <div class="pau-banner-one-content">
+
+    {% if title != blank %}
+      <header class="pau-banner-one-title-wrapper">
+        <h2 class="pau-banner-one-title section-title-richtext">{{ title }}</h2>
+      </header>
+    {% endif %}
+
+    {% if text != blank %}
+      <div class="pau-banner-one-text-wrapper">
+        <p class="pau-banner-one-text">
+          {{ text }}
+        </p>
+      </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "Nosotros - Banner 1",
+  "tag": "section",
+  "class": "pau-banner-one",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Imágenes"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Imagen escritorio"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Imagen móvil"
+    },
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Título"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Texto"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Nosotros - Banner 1",
+      "category": "About us"
+    }
+  ]
+}
+{% endschema %}

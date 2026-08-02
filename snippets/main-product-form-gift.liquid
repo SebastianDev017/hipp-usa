@@ -1,0 +1,13 @@
+{%- liquid 
+  assign is_available = gift.available
+  assign image = gift.featured_image
+  assign variant_id = gift.selected_or_first_available_variant.id
+-%}
+
+{%- if is_available -%}
+  <button class="main-product-form-gift square-image" data-variant-id="{{- variant_id -}}" role="button" type="button">
+    {%- unless image == blank -%}
+      <img class="main-product-form-gift-image no-touch" alt="{{- gift.title -}}" src="{{- image | image_url: width: 128 -}}">
+    {%- endunless -%}
+  </button>
+{%- endif -%}

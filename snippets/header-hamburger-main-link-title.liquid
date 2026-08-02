@@ -1,0 +1,20 @@
+{%- assign splitted_title = link.title | split: " " -%}
+
+{%- for word in splitted_title -%}
+  {%- if forloop.last and forloop.index == 1 -%}
+    <span class="secondary-font-bold">{{- word -}}</span>
+    {%- continue -%}
+  {%- endif -%}
+
+  {%- unless forloop.last -%}
+    {{- word }}
+  {%- endunless -%}
+
+  {%- if forloop.last -%}
+    {%- if forloop.index > 1 -%}
+      <span class="secondary-font-bold">{{- word -}}</span>
+    {%- else -%}
+      {{- word -}}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}

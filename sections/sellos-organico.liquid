@@ -1,0 +1,283 @@
+{%- liquid
+  assign uid = section.id | replace: '-', '' | downcase
+  assign s = section.settings
+
+  if s.title_font == 'primary'
+    assign title_font_var = 'var(--primary-font-bold, Georgia, serif)'
+  else
+    assign title_font_var = 'var(--secondary-font-bold, Georgia, serif)'
+  endif
+
+  if s.body_font == 'secondary'
+    assign body_font_var = 'var(--secondary-font, Helvetica, Arial, sans-serif)'
+  else
+    assign body_font_var = 'var(--primary-font, Helvetica, Arial, sans-serif)'
+  endif
+-%}
+
+<section class="sel sel-{{ uid }}"
+         data-section-id="{{ section.id }}"
+         data-section-type="sellos-organico"
+         style="
+           --sel-bg: {{ s.bg_color }};
+           --sel-title-color: {{ s.title_color }};
+           --sel-text-color: {{ s.text_color }};
+           --sel-highlight-color: {{ s.highlight_color }};
+           --sel-btn-color: {{ s.button_color }};
+           --sel-btn-text-color: {{ s.button_text_color }};
+           --sel-btn-hover-bg: {{ s.button_color }};
+           --sel-refs-color: {{ s.refs_color }};
+           --sel-title-font: {{ title_font_var }};
+           --sel-body-font: {{ body_font_var }};
+           --sel-title-size-d: {{ s.title_size_desktop }}px;
+           --sel-title-size-m: {{ s.title_size_mobile }}px;
+           --sel-text-size-d: {{ s.text_size_desktop }}px;
+           --sel-text-size-m: {{ s.text_size_mobile }}px;
+           --sel-seal-h-d: {{ s.seal_height_desktop }}px;
+           --sel-seal-h-m: {{ s.seal_height_mobile }}px;
+           --sel-seals-gap-d: {{ s.seals_gap_desktop }}px;
+           --sel-seals-gap-m: {{ s.seals_gap_mobile }}px;
+           --sel-refs-size: {{ s.refs_size }}px;
+           --sel-max-width: {{ s.content_max_width }}px;
+           --sel-gap-d: {{ s.block_gap_desktop }}px;
+           --sel-gap-m: {{ s.block_gap_mobile }}px;
+           --sel-pad-top-d: {{ s.padding_top_desktop }}px;
+           --sel-pad-bottom-d: {{ s.padding_bottom_desktop }}px;
+           --sel-pad-top-m: {{ s.padding_top_mobile }}px;
+           --sel-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+         ">
+
+  <div class="sel-inner">
+
+    {%- if s.title != blank -%}
+      <div class="sel-title">{{ s.title }}</div>
+    {%- endif -%}
+
+    {%- if s.text != blank -%}
+      <div class="sel-text">{{ s.text }}</div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="sel-seals">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.image != blank -%}
+            <div class="sel-seal" {{ block.shopify_attributes }}>
+              {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}">{%- endif -%}
+                <img src="{{ block.settings.image | image_url: width: 400 }}"
+                     alt="{{ block.settings.image.alt | escape }}" loading="lazy">
+              {%- if block.settings.link != blank -%}</a>{%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if s.show_button and s.button_text != blank -%}
+      <div class="sel-btn-wrap">
+        <a class="sel-btn" {% if s.button_link != blank %}href="{{ s.button_link }}"{% else %}href="#"{% endif %}>
+          {{ s.button_text }}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if s.references != blank -%}
+      <div class="sel-refs">{{ s.references }}</div>
+    {%- endif -%}
+
+  </div>
+
+</section>
+
+{% style %}
+.sel-{{ uid }} {
+  background-color: var(--sel-bg, #dfe9d3);
+  padding: var(--sel-pad-top-m, 40px) 20px var(--sel-pad-bottom-m, 40px);
+}
+
+.sel-{{ uid }} .sel-inner {
+  max-width: var(--sel-max-width, 620px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sel-gap-m, 28px);
+  text-align: center;
+}
+
+.sel-{{ uid }} .sel-title {
+  font-family: var(--sel-title-font);
+  font-size: var(--sel-title-size-m, 24px);
+  line-height: 1.2;
+  color: var(--sel-title-color, #1f5a2c);
+  font-weight: 700;
+}
+.sel-{{ uid }} .sel-title p { margin: 0; }
+
+.sel-{{ uid }} .sel-text {
+  font-family: var(--sel-title-font);
+  font-size: var(--sel-text-size-m, 20px);
+  line-height: 1.4;
+  color: var(--sel-text-color, #2d7a3e);
+  font-weight: 400;
+}
+.sel-{{ uid }} .sel-text strong,
+.sel-{{ uid }} .sel-text b { color: var(--sel-highlight-color, #1f5a2c); font-weight: 700; }
+.sel-{{ uid }} .sel-text p { margin: 0; }
+
+/* Fila de sellos: alineados por altura, centrados, se envuelven si no caben */
+.sel-{{ uid }} .sel-seals {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sel-seals-gap-m, 16px);
+  width: 100%;
+}
+.sel-{{ uid }} .sel-seal { flex: 0 0 auto; line-height: 0; }
+.sel-{{ uid }} .sel-seal img {
+  display: block;
+  height: var(--sel-seal-h-m, 60px);
+  width: auto;
+  object-fit: contain;
+}
+
+/* Botón contorneado tipo píldora */
+.sel-{{ uid }} .sel-btn-wrap { width: 100%; }
+.sel-{{ uid }} .sel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sel-title-font);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--sel-btn-color, #1f5a2c);
+  background: transparent;
+  border: 2px solid var(--sel-btn-color, #1f5a2c);
+  border-radius: 999px;
+  padding: 14px 44px;
+  text-decoration: none;
+  transition: background-color .2s ease, color .2s ease;
+}
+.sel-{{ uid }} .sel-btn:hover {
+  background: var(--sel-btn-hover-bg, #1f5a2c);
+  color: var(--sel-btn-text-color, #ffffff);
+}
+
+/* Referencias */
+.sel-{{ uid }} .sel-refs {
+  font-family: var(--sel-body-font);
+  font-size: var(--sel-refs-size, 11px);
+  line-height: 1.45;
+  color: var(--sel-refs-color, #5c6b52);
+  text-align: left;
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.sel-{{ uid }} .sel-refs p { margin: 0 0 6px; }
+.sel-{{ uid }} .sel-refs a { color: inherit; text-decoration: underline; }
+.sel-{{ uid }} .sel-refs ol { margin: 0; padding-left: 18px; }
+.sel-{{ uid }} .sel-refs li { margin: 0 0 6px; }
+
+@media (min-width: 768px) {
+  .sel-{{ uid }} { padding: var(--sel-pad-top-d, 64px) 40px var(--sel-pad-bottom-d, 64px); }
+  .sel-{{ uid }} .sel-inner { gap: var(--sel-gap-d, 36px); }
+  .sel-{{ uid }} .sel-title { font-size: var(--sel-title-size-d, 30px); }
+  .sel-{{ uid }} .sel-text { font-size: var(--sel-text-size-d, 24px); }
+  .sel-{{ uid }} .sel-seals { gap: var(--sel-seals-gap-d, 28px); }
+  .sel-{{ uid }} .sel-seal img { height: var(--sel-seal-h-d, 80px); }
+}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Sellos de orgánico",
+  "tag": "section",
+  "class": "sel-section",
+  "settings": [
+    { "type": "header", "content": "📝 Título y párrafo" },
+    { "type": "richtext", "id": "title", "label": "Título", "default": "<p>Sellos de Orgánico</p>" },
+    { "type": "richtext", "id": "text", "label": "Párrafo", "info": "Usa negrita para resaltar (ej. “empresa #1”, “más de 60 países”).", "default": "<p>Hoy nos hemos consolidado como la <strong>empresa #1</strong> a nivel mundial en alimentación orgánica infantil, con presencia en <strong>más de 60 países.</strong></p>" },
+
+    { "type": "header", "content": "🏅 Sellos (fila)" },
+    { "type": "paragraph", "content": "Cada sello es un bloque con su imagen (PNG/SVG). Se alinean por altura en una fila y se envuelven si no caben. Agrégalos con “Agregar sello”." },
+    { "type": "range", "id": "seal_height_desktop", "label": "Alto del sello — Escritorio", "min": 40, "max": 160, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "seal_height_mobile", "label": "Alto del sello — Móvil", "min": 32, "max": 120, "step": 2, "unit": "px", "default": 60 },
+    { "type": "range", "id": "seals_gap_desktop", "label": "Espacio entre sellos — Escritorio", "min": 8, "max": 64, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range", "id": "seals_gap_mobile", "label": "Espacio entre sellos — Móvil", "min": 6, "max": 40, "step": 2, "unit": "px", "default": 16 },
+
+    { "type": "header", "content": "🔘 Botón" },
+    { "type": "checkbox", "id": "show_button", "label": "Mostrar botón", "default": true },
+    { "type": "text", "id": "button_text", "label": "Texto del botón", "default": "Conoce más" },
+    { "type": "url", "id": "button_link", "label": "Enlace del botón" },
+
+    { "type": "header", "content": "📚 Referencias" },
+    { "type": "richtext", "id": "references", "label": "Referencias", "info": "Pega aquí tus referencias (usa lista numerada del editor). Los enlaces se cortan solos para no desbordar.", "default": "<p>Referencias:</p>" },
+    { "type": "range", "id": "refs_size", "label": "Tamaño del texto de referencias", "min": 9, "max": 15, "step": 1, "unit": "px", "default": 11 },
+
+    { "type": "header", "content": "🎨 Colores" },
+    { "type": "color", "id": "bg_color", "label": "Fondo de la sección", "default": "#dfe9d3" },
+    { "type": "color", "id": "title_color", "label": "Color del título", "default": "#1f5a2c" },
+    { "type": "color", "id": "text_color", "label": "Color del párrafo", "default": "#2d7a3e" },
+    { "type": "color", "id": "highlight_color", "label": "Color de texto resaltado (negritas)", "default": "#1f5a2c" },
+    { "type": "color", "id": "button_color", "label": "Color del botón (borde y texto)", "default": "#1f5a2c" },
+    { "type": "color", "id": "button_text_color", "label": "Color del texto al pasar el mouse", "default": "#ffffff" },
+    { "type": "color", "id": "refs_color", "label": "Color de las referencias", "default": "#5c6b52" },
+
+    { "type": "header", "content": "🔤 Tipografía" },
+    {
+      "type": "select", "id": "title_font", "label": "Fuente de títulos y botón",
+      "options": [
+        { "value": "secondary", "label": "Secundaria del tema (serif)" },
+        { "value": "primary", "label": "Primaria del tema (sans)" }
+      ],
+      "default": "secondary"
+    },
+    {
+      "type": "select", "id": "body_font", "label": "Fuente de referencias",
+      "options": [
+        { "value": "primary", "label": "Primaria del tema (sans)" },
+        { "value": "secondary", "label": "Secundaria del tema (serif)" }
+      ],
+      "default": "primary"
+    },
+    { "type": "range", "id": "title_size_desktop", "label": "Tamaño del título — Escritorio", "min": 20, "max": 48, "step": 1, "unit": "px", "default": 30 },
+    { "type": "range", "id": "title_size_mobile", "label": "Tamaño del título — Móvil", "min": 16, "max": 34, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "text_size_desktop", "label": "Tamaño del párrafo — Escritorio", "min": 16, "max": 34, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "text_size_mobile", "label": "Tamaño del párrafo — Móvil", "min": 14, "max": 26, "step": 1, "unit": "px", "default": 20 },
+
+    { "type": "header", "content": "📐 Espaciado" },
+    { "type": "range", "id": "content_max_width", "label": "Ancho máximo del contenido", "min": 400, "max": 900, "step": 20, "unit": "px", "default": 620 },
+    { "type": "range", "id": "block_gap_desktop", "label": "Espacio entre bloques — Escritorio", "min": 16, "max": 72, "step": 4, "unit": "px", "default": 36 },
+    { "type": "range", "id": "block_gap_mobile", "label": "Espacio entre bloques — Móvil", "min": 12, "max": 56, "step": 4, "unit": "px", "default": 28 },
+    { "type": "range", "id": "padding_top_desktop", "label": "Espaciado superior — Escritorio", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Espaciado inferior — Escritorio", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Espaciado superior — Móvil", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Espaciado inferior — Móvil", "min": 0, "max": 140, "step": 4, "unit": "px", "default": 40 }
+  ],
+  "blocks": [
+    {
+      "name": "Sello",
+      "type": "seal",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Imagen del sello" },
+        { "type": "url", "id": "link", "label": "Enlace (opcional)" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Sellos de orgánico",
+      "category": "Nuestra Familia",
+      "blocks": [
+        { "type": "seal" },
+        { "type": "seal" },
+        { "type": "seal" },
+        { "type": "seal" }
+      ]
+    }
+  ]
+}
+{% endschema %}

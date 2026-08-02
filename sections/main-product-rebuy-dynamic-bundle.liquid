@@ -1,0 +1,65 @@
+{%- comment -%}theme-check-disable LiquidTag{%- endcomment -%}
+{%- liquid 
+	assign title_1 = section.settings.title_1
+	assign title_2_original = section.settings.title_2
+	assign has_title = false
+
+	if title_1 != blank or title_2_original != blank
+		assign has_title = true
+	endif
+-%}
+
+{% capture title_2 %}
+  {% assign splitted_title = title_2_original | split: ' ' %}
+
+  {% for word in splitted_title %}
+    {% unless forloop.last %}
+      {{- word -}}
+    {% endunless %}
+    {% if forloop.last %}
+      {% if forloop.index > 1 %}
+        <strong>{{- word -}}</strong>
+      {% else %}
+        {{- word -}}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+<div class="fbt section" data-section-id="{{- section.id -}}" data-section-type="main-product-rebuy-dynamic-bundle">
+  {%- if has_title -%}
+    <header class="fbt-header text-center section-content color-green">
+      {%- unless title_1 == blank -%}
+        <p class="fbt-title-1">{{- title_1 -}}</p>
+      {%- endunless -%}
+      {%- unless title_2_original == blank -%}
+				<h2 class="fbt-title-2 section-title-richtext color-green">{{- title_2 -}}</h2>
+      {%- endunless -%}
+    </header>
+  {%- endif -%}
+  {%- render "rebuy-widget-dynamic-bundle" -%}
+</div>
+
+{%- schema -%}
+  {
+    "name": "Comprados juntos",
+    "class": "section-row",
+    "tag": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title_1",
+        "label": "Título 1"
+      },
+      {
+        "type": "text",
+        "id": "title_2",
+        "label": "Título 2"
+      }
+    ]
+  }
+{% endschema %}

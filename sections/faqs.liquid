@@ -1,0 +1,139 @@
+{{- 'css-faqs.css' | asset_url | stylesheet_tag -}}
+<script src="{{ 'js-faqs.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign valid_blocks = ''
+  for block in section.blocks
+    if block.settings.title != blank and block.settings.answer != blank
+      assign valid_blocks = valid_blocks | append: block.id | append: ','
+    endif
+  endfor
+  assign valid_count = 0
+  if valid_blocks != blank
+    assign valid_count = valid_blocks | split: ',' | size
+  endif
+-%}
+
+{%- if valid_count > 0 -%}
+  <div class="faqs-section page-content" data-section-id="{{- section.id -}}" data-section-type="faqs">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign title = block.settings.title
+        assign answer = block.settings.answer
+      -%}
+      {%- if title != blank and answer != blank -%}
+        <div class="faq-item" {{ block.shopify_attributes }}>
+          <div class="faq-item-header">
+            <p class="faq-item-title">{{- title -}}</p>
+            <span class="faq-item-icon"></span>
+          </div>
+          <div class="faq-item-content-wrapper">
+            <div class="faq-item-content page-text page-text-fit">{{- answer -}}</div>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {%- assign printed = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- if block.settings.title != blank and block.settings.answer != blank -%}
+          {%- if printed > 0 -%},{%- endif -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.title | strip_html | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.answer | strip_html | json }}
+            }
+          }
+          {%- assign printed = printed | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    ]
+  }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Preguntas frecuentes",
+  "blocks": [
+    {
+      "name": "Pregunta",
+      "type": "text",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Contenido"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Pregunta"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Page",
+      "name": "Preguntas frecuentes",
+      "blocks": [
+        {
+          "type": "text",
+          "settings": {
+            "title": "¿Por qué las fórmulas HiPP son las mejores?",
+            "answer": "<p>HiPP es la marca #1 de fórmulas orgánicas en Europa con más de 125 años de experiencia en nutrición infantil. Nuestras fórmulas combinan ingredientes 100% orgánicos con nuestro probiótico exclusivo L. fermentum y prebióticos GOS, respaldados por estudios científicos que demuestran todos los beneficios para el correcto desarrollo de tu bebé. Certificado por la Unión Europea, el estándar orgánico más estricto del mundo.</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "¿Cuál es la diferencia entre una fórmula orgánica HiPP y una convencional?",
+            "answer": "<p>Las fórmulas convencionales pueden contener pesticidas sintéticos, hormonas, colorantes artificiales, GMOs y azúcares añadidos. HiPP Combiotic es una fórmula orgánica, libre de todos estos ingredientes tóxicos y certificada por la Unión Europea, cuya norma orgánica es la más estricta del mundo. HiPP va más allá: realiza más controles de calidad que los establecidos por la normativa de la Unión Europea.</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "¿Por qué elegir las fórmulas HiPP Orgánico Combiotic?",
+            "answer": "<p>HiPP Orgánico Combiotic® combina lo mejor de la naturaleza con lo último de la ciencia. Es la única fórmula con la combinación exclusiva de probiótico L. fermentum y prebióticos GOS. Además contiene los niveles más altos de DHA, ARA y vitamina D. Sin azúcares añadidos, sin pesticidas, libre de GMOs. Producida en Alemania bajo los estándares orgánicos más estrictos de Europa.</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "¿Qué certificaciones tiene HiPP?",
+            "answer": "<p>HiPP es la marca N.1 de fórmulas orgánicas infantiles en Europa, avalada por la norma orgánica de la Unión Europea, más exigente que la del USDA. En México cuenta con validación orgánica de SAGARPA, sello Non-GMO que garantiza cero ingredientes modificados genéticamente, y el sello personal de Stefan HiPP: un compromiso familiar directo con la calidad y la seguridad del producto.</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "¿HiPP tiene azúcares añadidos?",
+            "answer": "<p>No. Las fórmulas HiPP no contienen azúcares añadidos que suelen encontrarse en otras marcas de fórmulas para bebé. Solo contiene lactosa, el azúcar natural propio de la leche.</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "title": "¿Dónde puedo comprar HiPP?",
+            "answer": "<p>HiPP Orgánico está disponible en más de 900 puntos de venta con presencia en todo México: farmacias, supermercados, en la tienda oficial dentro de Amazon y Mercado Libre, y más que puedes encontrar en nuestro mapa de tiendas. También puedes comprarlo en línea en hipp.mx con envío gratis en compras mayores a $635 MXN. Consulta el punto de venta más cercano aquí.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

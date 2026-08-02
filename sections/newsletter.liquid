@@ -1,0 +1,73 @@
+{{- 'css-newsletter.css' | asset_url | stylesheet_tag -}}
+
+{%- liquid 
+	assign image = section.settings.image
+	assign title = section.settings.title
+	assign text = section.settings.text
+-%}
+
+<div class="newsletter section" data-section-id="{{- section.id -}}" data-section-type="newsletter">
+	<div class="newsletter-content section-content">
+		<div class="newsletter-image-wrapper square-image">
+			{%- unless image == blank -%}
+				<img class="newsletter-image" src="{{- image | image_url: width: 800 -}}" alt="{{- image.alt -}}" loading="lazy" data-aos="fade-up">
+			{%- endunless -%}
+		</div>
+		<div class="newsletter-info" data-aos="fade-up">
+			<div class="newsletter-info-inner">
+				{%- unless title == blank -%}
+					<h2 class="newsletter-title section-title-richtext color-green">{{- title -}}</h2>
+				{%- endunless -%}
+				{%- unless text == blank -%}
+					<div class="newsletter-text-wrapper">
+						<p class="newsletter-text color-green">{{- text -}}</p>
+					</div>
+				{%- endunless -%}
+				<div class="newsletter-form-wrapper">
+					<div class="klaviyo-newsletter">
+						<div class="klaviyo-form-WjChZk"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Newsletter",
+	"tag": "section",
+	"class": "newsletter-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Imagen"
+		},
+		{
+			"type": "image_picker",
+			"id": "image",
+			"label": "Imagen"
+		},
+		{
+			"type": "header",
+			"content": "Contenido"
+		},
+		{
+			"type": "richtext",
+			"id": "title",
+			"label": "Título"
+		},
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Texto"
+		}
+	],
+	"presets": [
+		{
+			"category": "Homepage",
+			"name": "Newsletter"
+		}
+	]
+}
+{% endschema %}

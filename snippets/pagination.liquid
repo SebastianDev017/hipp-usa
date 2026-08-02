@@ -1,0 +1,91 @@
+{%- liquid 
+	assign current_page = paginate.current_page
+	assign max_limit_pages = current_page | plus: 1
+	assign min_limit_pages = current_page | minus: 2
+	
+	if current_page == 1
+		assign max_limit_pages = current_page | plus: 2
+	endif
+	
+	if current_page == paginate.pages
+		assign min_limit_pages = current_page | minus: 3
+	endif
+-%}
+
+<div class="pagination {{ custom_class }}">
+
+  {% if paginate.pages > 1 %}
+    <ul class="pagination-list list-menu">
+
+      <li class="pagination-button-wrapper previous">
+        {%- unless paginate.previous.is_link -%}
+
+          <div class="pagination-button swiper-button prev disabled no-touch">
+            {%- render 'icon', icon: 'arrow-prev-rounded' -%}
+            <span class="visually-hidden">{{- 'general.pagination.previous' | t -}}</span>
+          </div>
+
+        {%- else -%}
+
+          <a class="pagination-button swiper-button prev" href="{{- paginate.previous.url -}}{{- anchor -}}">
+            {%- render 'icon', icon: 'arrow-prev-rounded' -%}
+            <span class="visually-hidden">{{- 'general.pagination.previous' | t -}}</span>
+          </a>
+
+        {%- endunless -%}
+      </li>
+
+      {%- for i in (1..paginate.pages) -%}
+        {%- if i > 0 and i < current_page and i > min_limit_pages -%}
+
+          <li class="pagination-page previous">
+            <a class="pagination-link" href="?page={{- i -}}{{- anchor -}}" data-page="{{- i -}}">
+              {{- i -}}
+            </a>
+          </li>
+
+        {%- endif -%}
+
+        {%- if current_page == i -%}
+
+          <li class="pagination-page">
+            <a class="pagination-link current" data-page="{{- i -}}">
+              {{- i -}}
+            </a>
+          </li>
+
+        {%- endif -%}
+
+        {%- if i <= max_limit_pages and i > current_page -%}
+
+          <li class="pagination-page next">
+            <a class="pagination-link" href="?page={{- i -}}{{- anchor -}}" data-page="{{- i -}}">
+              {{- i -}}
+            </a>
+          </li>
+
+        {%- endif -%}
+      {%- endfor -%}
+
+      <li class="pagination-button-wrapper next">
+        {%- unless paginate.next.is_link -%}
+
+          <div class="pagination-button swiper-button next disabled no-touch">
+            {%- render 'icon', icon: 'arrow-next-rounded' -%}
+            <span class="visually-hidden">{{- 'general.pagination.next' | t -}}</span>
+          </div>
+
+        {%- else -%}
+
+          <a class="pagination-button swiper-button next" href="{{- paginate.next.url -}}{{- anchor -}}">
+            {%- render 'icon', icon: 'arrow-next-rounded' -%}
+            <span class="visually-hidden">{{- 'general.pagination.next' | t -}}</span>
+          </a>
+
+        {%- endunless -%}
+      </li>
+
+    </ul>
+  {% endif %}
+
+</div>

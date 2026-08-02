@@ -1,0 +1,1 @@
+body:not(.page-type-contact) .contact-form-section{padding:50px 0;}.form.contact-form{width:calc(100% - 300px);max-width:740px;margin-top:-3px;}@media (max-width:1024px){.form.contact-form{width:calc(100% - 100px * 2);max-width:724px;}}@media (max-width:834px){.form.contact-form{width:calc(100% - 20px * 2);max-width:634px;}}

@@ -1,0 +1,36 @@
+{% liquid
+  assign subscriptions_tab = nil
+  if request.path contains 'subscriptions'
+    assign subscriptions_tab = 'var(--account-active-tab-color)'
+  endif
+
+  assign schedule_tab = nil
+  if request.path contains 'schedule'
+    assign schedule_tab = 'var(--account-active-tab-color)'
+  endif
+
+  assign orders_tab = nil
+  if request.path contains 'orders'
+    assign orders_tab = 'var(--account-active-tab-color)'
+  endif
+
+  assign shipping_tab = nil
+  if request.path contains 'shipping'
+    assign shipping_tab = 'var(--account-active-tab-color)'
+  endif
+
+  assign payment_methods_tab = nil
+  if request.path contains 'payment_methods'
+    assign payment_methods_tab = 'var(--account-active-tab-color)'
+  endif
+%}
+
+<style>
+  :root {
+    --recharge-portal-tab-subscriptions: {{ subscriptions_tab }};
+    --recharge-portal-tab-schedule:  {{ schedule_tab }};
+    --recharge-portal-tab-orders:  {{ orders_tab }};
+    --recharge-portal-tab-shipping:  {{ shipping_tab }};
+    --recharge-portal-tab-payment_methods:  {{ payment_methods_tab }};
+  }
+</style>

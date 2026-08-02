@@ -1,0 +1,181 @@
+{%- liquid 
+	assign title_1 = section.settings.title_1
+	assign title_2 = section.settings.title_2
+	assign text = section.settings.text
+	assign text_2 = section.settings.text_2
+
+	assign block_1 = section.blocks | where: "type", "block_1" | map: "settings" | first
+	assign block_2 = section.blocks | where: "type", "block_2" | map: "settings" | first
+-%}
+
+{{- "css-images-with-texts.css" | asset_url | stylesheet_tag -}}
+
+
+<div class="iswts section" data-section-id="{{- section.id -}}" data-section-type="images-with-texts">
+  <div class="iswts-content section-content">
+
+    <header class="iswts-header text-center">
+      {%- unless title_1 == blank -%}
+        <h2 class="iswts-title-1 color-green" data-aos="fade-up">{{- title_1 -}}</h2>
+      {%- endunless -%}
+      {%- unless title_2 == blank -%}
+        <h3 class="iswts-title-2 section-title-richtext color-green" data-aos="fade-up">{{- title_2 -}}</h3>
+      {%- endunless -%}
+    </header>
+
+    <div class="iswts-blocks color-green">
+      <div class="iswts-block iswts-block-1" data-aos="fade-up">
+        <div class="iswts-block-info">
+          <div class="iswts-block-info-inner iswts-info-inner-1">
+            <div class="iswts-block-info-item text-right">
+              <p class="iswts-block-title">{{- block_1.title_1 -}}</p>
+              <p class="iswts-block-text">{{- block_1.text_1 -}}</p>
+            </div>
+          </div>
+        </div>
+				<div class="iswts-block-image-wrapper">
+					<div class="iswts-block-image square-image">
+						{%- unless block_1.image == blank -%}
+							<img src="{{- block_1.image | image_url: width: 400 -}}" alt="{{- block_1.image.alt -}}" loading="lazy">
+						{%- endunless -%}
+					</div>
+				</div>
+      </div>
+
+      <div class="iswts-block iswts-block-2" data-aos="fade-up">
+        <div class="iswts-block-info mobile">
+          <div class="iswts-block-info-inner">
+            <div class="iswts-block-info-item">
+              <p class="iswts-block-title">{{- block_2.title_1 -}}</p>
+              <div class="iswts-block-text iswts-info-text-3">{{- block_2.text_1 -}}</div>
+            </div>
+          </div>
+        </div>
+				<div class="iswts-block-image-wrapper">
+					<div class="iswts-block-image square-image">
+						{%- unless block_2.image == blank -%}
+							<img alt="{{- block_2.image.alt -}}" loading="lazy" src="{{- block_2.image | image_url: width: 400 -}}">
+						{%- endunless -%}
+					</div>
+				</div>
+        <div class="iswts-block-info">
+          <div class="iswts-block-info-inner iswts-info-inner-2">
+            <div class="iswts-block-info-item desktop">
+              <p class="iswts-block-title">{{- block_2.title_1 -}}</p>
+              <div class="iswts-block-text iswts-info-text-3">{{- block_2.text_1 -}}</div>
+            </div>
+            <div class="iswts-block-info-item">
+              <p class="iswts-block-title">{{- block_2.title_1 -}}</p>
+              <div class="iswts-block-text iswts-info-text-3">{{- block_2.text_2 -}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {%- unless text == blank -%}
+      <p class="iswts-text section-title-richtext color-green text-center" data-aos="fade-up"><strong>{{- text -}}</strong></p>
+    {%- endunless -%}
+
+    {%- unless text_2 == blank -%}
+      <p class="iswts-text-2 color-green text-center" data-aos="fade-up">{{- text_2 -}}</p>
+    {%- endunless -%}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Imágenes con textos",
+    "tag": "section",
+    "class": "iswts-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "text",
+        "id": "title_1",
+        "label": "Título 1"
+      },
+      {
+        "type": "richtext",
+        "id": "title_2",
+        "label": "Título 2"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      },
+      {
+        "type": "text",
+        "id": "text_2",
+        "label": "Texto 2"
+      }
+    ],
+    "max_blocks": 2,
+    "blocks": [
+      {
+        "name": "Bloque 1",
+        "type": "block_1",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Imagen"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Título"
+          },
+          {
+            "type": "text",
+            "id": "text_1",
+            "label": "Texto"
+          }
+        ]
+      },
+      {
+        "name": "Bloque 2",
+        "type": "block_2",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Imagen"
+          },
+          {
+            "type": "text",
+            "id": "title_1",
+            "label": "Título 1"
+          },
+          {
+            "type": "richtext",
+            "id": "text_1",
+            "label": "Texto 1"
+          },
+          {
+            "type": "text",
+            "id": "title_2",
+            "label": "Título 2"
+          },
+          {
+            "type": "richtext",
+            "id": "text_2",
+            "label": "Texto 2"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Homepage",
+        "name": "Imágenes con textos"
+      }
+    ]
+  }
+{% endschema %}

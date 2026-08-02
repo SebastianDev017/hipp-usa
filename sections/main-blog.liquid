@@ -1,0 +1,38 @@
+{{- "css-main-blog.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-main-blog.js' | asset_url -}}"></script>
+
+{%- paginate blog.articles by 12 -%}
+
+  <div class="main-blog" data-section-id="{{- section.id -}}" data-section-type="main-blog">
+    <div class="page">
+      <div class="page-content">
+        <header class="page-header">
+          <h1 class="page-title main-blog-title">{{- blog.title -}}</h1>
+        </header>
+      </div>
+    </div>
+
+    <div class="blog-articles-wrapper">
+      <div class="blog-articles">
+        <div class="blog-articles-grid section-content" id="{{- blog.handle -}}-ajaxinate-loop">
+          {%- render "article-card" for blog.articles as article -%}
+        </div>
+  
+        <div class="blog-articles-pagination" id="{{- blog.handle -}}-ajaxinate-pagination">
+          {%- if paginate.next -%}
+            <div class="blog-button-wrapper button-container center">
+              <a class="button" href="{{- paginate.next.url -}}">Leer más</a>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Blog",
+  "tag": "section"
+}
+{% endschema %}

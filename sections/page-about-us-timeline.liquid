@@ -1,0 +1,103 @@
+{%- liquid 
+  assign title = section.settings.title
+-%}
+
+{{- "css-page-about-us-timeline.css" | asset_url | stylesheet_tag -}}
+
+<div class="pau-timeline-container">
+
+  <div class="pau-timeline-content">
+
+    {%- if title != blank -%}
+      <div class="pau-timeline-header">
+        <header class="pau-timeline-header-title-wrapper">
+          <h2 class="pau-timeline-header-title section-title-richtext">{{ title }}</h2>
+        </header>
+      </div>
+    {%- endif -%}
+
+    <div class="pau-timeline-items">
+      <div class="pau-timeline-items-divisor"></div>
+      {%- for block in section.blocks -%}
+
+        {%- liquid 
+          assign block_image = block.settings.block_image
+          assign block_text = block.settings.block_text
+        -%}
+
+        <div class="pau-timeline-item{% if block_text == blank %} no-text{% endif %} {% cycle 'pau-timeline-item-odd', 'pau-timeline-item-even' %}">
+          <div class="pau-timeline-item-image-wrapper back-img-wrapper">
+            {%- if block_image != blank -%}
+              <picture class="picture-wrapper">
+                <img class="back-img pau-timeline-item-image" alt="{{ block_image.alt }}" loading="lazy" src="{{ block_image | image_url: width: 800 }}">
+              </picture>
+            {%- endif -%}
+          </div>
+
+          {%- if block_text != blank -%}
+            <div class="pau-timeline-item-text-wrapper">
+              <div class="pau-timeline-item-text section-title-richtext">{{ block_text }}</div>
+            </div>
+          {%- endif -%}
+
+        </div>
+
+      {%- endfor -%}
+
+    </div>
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - Linea Tiempo",
+    "tag": "section",
+    "class": "pau-timeline",
+    "max_blocks": 4,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Imagen con texto",
+        "type": "card",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Imagen"
+          },
+          {
+            "type": "image_picker",
+            "id": "block_image",
+            "label": "Imagen"
+          },
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "inline_richtext",
+            "id": "block_text",
+            "label": "Texto"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - Linea Tiempo",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,75 @@
+{%- comment -%}theme-check-disable UnknownFilter{%- endcomment -%}
+{%- liquid
+  assign metafields = product.metafields.custom
+  assign tab_1_title = metafields.pestana_1_titulo
+  assign tab_1_text = metafields.pestana_1_texto
+  assign tab_2_title = metafields.pestana_2_titulo
+  assign tab_2_text = metafields.pestana_2_texto
+  assign tab_3_title = metafields.pestana_3_titulo
+  assign tab_3_text = metafields.pestana_3_texto
+
+  assign has_tab_1 = false
+  assign has_tab_2 = false
+  assign has_tab_3 = false
+
+  if tab_1_title != blank and tab_1_text != blank
+    assign has_tab_1 = true
+  endif
+  if tab_2_title != blank and tab_2_text != blank
+    assign has_tab_2 = true
+  endif
+  if tab_3_title != blank and tab_3_text != blank
+    assign has_tab_3 = true
+  endif
+-%}
+
+{%- if has_tab_1 or has_tab_2 or has_tab_3 -%}
+  <div class="main-product-tabs color-green">
+    <div class="main-product-tabs-bar-wrapper">
+      <div class="main-product-tabs-bar swiper">
+        <div class="main-product-tabs-bar-inner swiper-wrapper" role="tablist">
+          {%- if has_tab_1 -%}
+            <button class="main-product-tab-title swiper-slide" aria-controls="tabpanel-1" aria-selected="true" data-tab="1" role="tab" type="button">
+              <p class="main-product-tab-title-text" data-title="{{- tab_1_title -}}">{{- tab_1_title -}}</p>
+            </button>
+          {%- endif -%}
+          {%- if has_tab_2 -%}
+            <button class="main-product-tab-title swiper-slide" aria-controls="tabpanel-2" aria-selected="{% if has_tab_1 %}false{% else %}true{% endif %}" data-tab="2" role="tab" {% if has_tab_1 == false %}tabindex="-1"{% endif %} type="button">
+              <p class="main-product-tab-title-text" data-title="{{- tab_2_title -}}">{{- tab_2_title -}}</p>
+            </button>
+          {%- endif -%}
+          {%- if has_tab_3 -%}
+            <button class="main-product-tab-title swiper-slide" aria-controls="tabpanel-3" aria-selected="{% if has_tab_1 or has_tab_2 %}false{% else %}true{% endif %}" data-tab="3" role="tab" {% if has_tab_1 == false and has_tab_2 == false %}tabindex="-1"{% endif %} type="button">
+              <p class="main-product-tab-title-text" data-title="{{- tab_3_title -}}">{{- tab_3_title -}}</p>
+            </button>
+          {%- endif -%}
+        </div>
+      </div>
+      <div class="main-product-tabs-scroll-arrow main-product-tabs-scroll-indicator left"></div>
+      <div class="main-product-tabs-scroll-button left swiper-button prev">
+        {%- render "icon", icon: "arrow-prev" -%}
+      </div>
+      <div class="main-product-tabs-scroll-arrow main-product-tabs-scroll-indicator right"></div>
+      <div class="main-product-tabs-scroll-button right swiper-button next">
+        {%- render "icon", icon: "arrow-next" -%}
+      </div>
+    </div>
+    <div class="main-product-tablist">
+      {%- if has_tab_1 -%}
+        <div class="main-product-tabpanel list-menu tabpanel-1" aria-labelledby="tab-1" id="tabpanel-1" role="tabpanel" tabindex="0">
+          {{- tab_1_text | prepend: "<li class='tabpanel-bullet'><span class='tabpanel-bullet-icon'></span><p class='tabpanel-bullet-text'>" | newline_to_br | replace: "<br />", "</p></li><li class='tabpanel-bullet'><span class='tabpanel-bullet-icon'></span><p class='tabpanel-bullet-text'>" -}}
+        </div>
+      {%- endif -%}
+      {%- if has_tab_2 -%}
+        <div class="main-product-tabpanel page-text tabpanel-2 {% if has_tab_1 %}is-hidden{% endif %}" aria-labelledby="tab-2" id="tabpanel-2" role="tabpanel" tabindex="0">
+          {{- tab_2_text | metafield_tag -}}
+        </div>
+      {%- endif -%}
+      {%- if has_tab_3 -%}
+        <div class="main-product-tabpanel page-text tabpanel-3 {% if has_tab_1 or has_tab_2 %}is-hidden{% endif %}" aria-labelledby="tab-3" id="tabpanel-3" role="tabpanel" tabindex="0">
+          {{- tab_3_text | metafield_tag -}}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}

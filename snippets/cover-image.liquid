@@ -1,0 +1,27 @@
+{% assign desktop_image = section.desktop_image %}
+{% assign mobile_image = section.mobile_image %}
+
+<div class="cover-media-container no-touch">
+
+  {% if desktop_image != blank or mobile_image != blank %}
+
+    <picture>
+
+      {% if mobile_image != blank %}
+        <source media="(max-width: 680px)" srcset="{{ mobile_image | image_url: width: 800 }}">
+      {% else %}
+        <source media="(max-width: 680px)" srcset="{{ desktop_image | image_url: width: 800 }}">
+      {% endif %}
+
+      <source media="(max-width: 834px)" srcset="{{ desktop_image | image_url: width: 1000 }}">
+      <source media="(max-width: 1024px)" srcset="{{ desktop_image | image_url: width: 1200 }}">
+
+      {% if desktop_image != blank %}
+        <img class="cover-image cover-media" src="{{ desktop_image | image_url: width: 1920 }}" alt="{{ desktop_image.alt }}" fetchpriority="high">
+      {% endif %}
+
+    </picture>
+
+  {% endif %}
+
+</div>

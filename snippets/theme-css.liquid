@@ -1,0 +1,9 @@
+{%- liquid 
+  echo 'theme.css' | asset_url | stylesheet_tag
+  echo 'css-base.css' | asset_url | stylesheet_tag
+  
+  if template contains "customer" or request_handle contains "customer"
+    echo 'theme-customer.css' | asset_url | stylesheet_tag
+    echo 'css-accounts.css' | asset_url | stylesheet_tag
+  endif
+-%}

@@ -1,0 +1,125 @@
+{%- liquid 
+  assign title = section.settings.title
+  assign text = section.settings.text
+  assign text_2 = section.settings.text_2
+-%}
+
+{{- "css-page-about-us-cards-with-texts.css" | asset_url | stylesheet_tag -}}
+<script defer src="{{- 'js-page-about-us-cards-with-texts.js' | asset_url -}}"></script>
+
+<div class="pau-cwt-container" data-section-id="{{- section.id -}}" data-section-type="pau-cards-with-texts">
+
+  <div class="pau-cwt-content">
+
+    {%- if title != blank or text != blank -%}
+      <div class="pau-cwt-header">
+        {%- if title != blank -%}
+          <header class="pau-cwt-header-title-wrapper">
+            <h2 class="pau-cwt-header-title section-title-richtext">{{ title }}</h2>
+          </header>
+        {%- endif -%}
+
+        {%- if text != blank -%}
+          <div class="pau-cwt-header-text-wrapper">
+            <p class="pau-cwt-header-text">{{ text }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pau-cwt-items-wrapper">
+      <div class="pau-cwt-items">
+  
+        {%- for block in section.blocks -%}
+  
+          {%- liquid 
+            assign card_title = block.settings.card_title
+            assign card_text = block.settings.card_text
+          -%}
+  
+          <div class="pau-cwt-item">
+  
+            <div class="pau-cwt-item-title-wrapper">
+              {%- if card_title != blank -%}
+                <h3 class="pau-cwt-item-title">{{ card_title }}</h3>
+              {%- endif -%}
+            </div>
+  
+            {%- if card_text != blank -%}
+              <div class="pau-cwt-item-text-wrapper">
+                <p class="pau-cwt-item-text">{{ card_text }}</p>
+              </div>
+            {%- endif -%}
+  
+          </div>
+  
+        {%- endfor -%}
+  
+      </div>
+      {%- if text_2 != blank -%}
+        <p class="pau-cwt-header-text-2">{{ text_2 }}</p>
+      {%- endif -%}
+    </div>
+
+
+  </div>
+
+</div>
+
+{%- schema -%}
+  {
+    "name": "Nosotros - T/Textos",
+    "tag": "section",
+    "class": "pau-cwt",
+    "max_blocks": 4,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contenido"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "title",
+        "label": "Título"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Texto"
+      },
+      {
+        "type": "text",
+        "id": "text_2",
+        "label": "Texto 2"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Tarjeta",
+        "type": "card",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Contenido"
+          },
+          {
+            "type": "text",
+            "id": "card_title",
+            "label": "Título"
+          },
+          {
+            "type": "text",
+            "id": "card_text",
+            "label": "Texto"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Nosotros - T/Textos",
+        "category": "About us"
+      }
+    ]
+  }
+{% endschema %}
