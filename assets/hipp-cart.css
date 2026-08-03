@@ -9,6 +9,9 @@
 .hipp-drawer {
   position: fixed;
   inset: 0;
+  /* En iOS Safari un fixed con inset:0 se dimensiona contra el viewport grande y
+     el pie queda tapado por la barra de URL. dvh sigue al viewport real. */
+  height: 100dvh;
   z-index: 1000;
   visibility: hidden;
   pointer-events: none;
@@ -29,6 +32,27 @@
 
 .hipp-drawer.is-open .hipp-drawer__overlay {
   opacity: 1;
+}
+
+/* La burbuja del contador: en css-base.css es un CORAZON verde
+   (background:url(icon-heart-green.svg) con border-radius:0) y trae display:flex,
+   que gana sobre el atributo hidden. Se reescribe entera y se apaga por clase. */
+.cart-count-bubble {
+  top: -6px;
+  right: -12px;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  background: var(--clay) none;
+  border-radius: var(--radius-pill);
+  color: var(--cream);
+  font-family: var(--font-body-semibold);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.cart-count-bubble.is-empty {
+  display: none;
 }
 
 .hipp-drawer__panel {
@@ -58,7 +82,12 @@
   transform: translateX(0);
 }
 
+/* iOS Safari ignora overflow:hidden en body: el fondo sigue haciendo scroll
+   detras del overlay. La unica forma fiable es fijar el body; hipp-cart.js
+   guarda y restituye el scrollY con la propiedad top. */
 body.hipp-drawer-open {
+  position: fixed;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -182,6 +211,8 @@ body.hipp-drawer-open {
   line-height: 1.2;
   color: var(--cream);
   text-decoration: none;
+  /* Un titulo largo sin espacios desbordaba la columna 1fr en 375px. */
+  overflow-wrap: anywhere;
 }
 
 .hipp-line__title:hover {
@@ -217,8 +248,9 @@ body.hipp-drawer-open {
   flex-wrap: wrap;
 }
 
+/* Padding vertical para llegar al minimo de area tactil sin agrandar el texto. */
 .hipp-line__remove {
-  padding: 0;
+  padding: 8px 2px;
   border: 0;
   background: none;
   color: rgba(249, 247, 239, 0.55);
@@ -240,9 +272,10 @@ body.hipp-drawer-open {
   white-space: nowrap;
 }
 
+/* 0.45 daba 3.99:1 sobre --ink y no llegaba al 4.5:1 de WCAG AA. 0.55 da 5.24:1. */
 .hipp-line__price-was {
   display: block;
-  color: rgba(249, 247, 239, 0.45);
+  color: rgba(249, 247, 239, 0.55);
   font-size: 12.5px;
 }
 

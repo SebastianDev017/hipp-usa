@@ -24,7 +24,19 @@
 
   <body class="template-{{ request_handle }} {% unless template.suffix == blank %}{{ request_handle }}-type-{{ template.suffix }}{% endunless %} {{ recharge_helpers_classes }}">
     <div class="main-wrapper">
-      <div class="header-main-wrapper with-overlay{%- if template != 'index' %} scroll{% endif -%}" id="header">
+      {%- comment -%}
+        La clase `scroll` venia DUPLICADA: hardcodeada y otra vez en el condicional,
+        asi que en la practica estaba siempre puesta y el estado transparente del
+        header (sin ella) era codigo muerto.
+
+        Se deja SIEMPRE puesta a proposito, no solo en las internas. Las 4 reglas
+        de .header-main-wrapper.scroll en css-base.css son las que dan fondo blanco
+        al header y pintan los iconos con --primary-color; sin ellas la home queda
+        con iconos claros sobre el hero y no hay forma de verificarlo hasta tener
+        acceso a la tienda. El estado transparente con blur del diseno aprobado
+        llega con el header nuevo (sections/header-usa.liquid), no antes.
+      {%- endcomment -%}
+      <div class="header-main-wrapper with-overlay scroll" id="header">
         {% section 'announcement-bar' %}
         {% section 'header' %}
       </div>

@@ -111,12 +111,16 @@ h1, h2, h3, .page-title, .secondary-font, .secondary-font-bold {
 }
 
 /* El pill es la senal de marca mas visible del diseno aprobado. Hoy el tema lo
-   resuelve con un parche local (border-radius:999px en image-with-form.liquid). */
+   resuelve con un parche local (border-radius:999px en image-with-form.liquid).
+
+   El !important no es opcional: css-base.css ya trae `.button{border-radius:50px
+   !important}`, asi que sin el esta declaracion queda muerta. El resto de las
+   propiedades no lo necesitan. */
 .button,
 .btn,
 button.button,
 a.button {
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-pill) !important;
   font-family: var(--font-body-semibold);
   letter-spacing: 0;
 }
