@@ -201,7 +201,29 @@
           {%- endunless -%}
 
           {%- comment -%} ---------- Paso 2: compra unica o suscripcion ---------- {%- endcomment -%}
-          {%- if has_plans -%}
+          {%- if section.settings.subscription_ui == 'app' -%}
+            {%- comment -%}
+              Widget de la app Shopify Subscriptions.
+
+              NO se renderiza junto con los tiles nativos: los dos escriben el
+              campo `selling_plan` del mismo form, asi que tener los dos daria
+              dos selectores compitiendo y el ultimo en pintar ganaria.
+
+              Va DENTRO del <form> a proposito: el script de la app busca este
+              div y monta ahi sus controles, que tienen que quedar en el mismo
+              form que el boton de compra.
+
+              Para que aparezca hace falta ademas tener activado el app embed de
+              Shopify Subscriptions en Ajustes del tema > Incrustaciones de apps.
+            {%- endcomment -%}
+            <div class="hp-step hp-step--app">
+              <div class="hp-step__label">
+                <span class="hp-step__n">{{ section.settings.step_2_number }}</span>
+                <span class="hp-step__title">{{ section.settings.step_2_title }}</span>
+              </div>
+              <div class="subscriptions_app_embed_block"></div>
+            </div>
+          {%- elsif has_plans -%}
             <fieldset class="hp-step">
               <legend class="hp-step__label">
                 <span class="hp-step__n">{{ section.settings.step_2_number }}</span>
@@ -410,6 +432,17 @@
     {
       "type": "header",
       "content": "Paso 2 · Suscripción"
+    },
+    {
+      "type": "select",
+      "id": "subscription_ui",
+      "label": "Selector de suscripción",
+      "info": "El diseño HiPP lee los planes de Shopify Subscriptions directamente. Usá el widget de la app solo si necesitás sus controles propios; requiere activar su app embed en Ajustes del tema.",
+      "options": [
+        { "value": "native", "label": "Diseño HiPP" },
+        { "value": "app", "label": "Widget de Shopify Subscriptions" }
+      ],
+      "default": "native"
     },
     {
       "type": "text",

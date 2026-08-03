@@ -1669,6 +1669,17 @@
   margin-top: 26px;
 }
 
+/* El widget de Shopify Subscriptions trae su propia maqueta. No se le pelea el
+   layout: solo se le da el ritmo vertical del resto de los pasos y se lo obliga
+   a respetar el ancho de la columna. */
+.hp-step--app .subscriptions_app_embed_block {
+  max-width: 100%;
+}
+
+.hp-step--app .subscriptions_app_embed_block:empty {
+  display: none;
+}
+
 .hp-tiles {
   display: grid;
   gap: 10px;
