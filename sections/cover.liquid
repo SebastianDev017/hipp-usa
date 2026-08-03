@@ -87,21 +87,39 @@
             <div class="cover-overlay"></div>
             {%- if block.settings.video_desktop != blank -%}
               {%- assign video = block.settings.video_desktop -%}
-              <video 
-  autoplay 
-  loop 
-  muted 
-  playsinline 
-  class="cover-video" 
-  preload="none"
-  poster="{{ block.settings.poster_image | image_url: width: 1500 }}"
->
-  {%- for source in video.sources -%}
-    <source src="{{ source.url }}" type="{{ source.mime_type }}">
-  {%- endfor -%}
-</video>
-            {%- else -%}
-              <p style="color: red;">No se ha proporcionado un video.</p>
+              {%- comment -%}
+                preload="none" con autoplay se contradice: varios navegadores no arrancan
+                la reproduccion si no hay nada precargado. metadata es el punto medio.
+              {%- endcomment -%}
+              <video
+                autoplay
+                loop
+                muted
+                playsinline
+                class="cover-video"
+                preload="metadata"
+                poster="{{ block.settings.poster_image | image_url: width: 1500 }}"
+              >
+                {%- for source in video.sources -%}
+                  <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                {%- endfor -%}
+              </video>
+            {%- elsif block.settings.poster_image != blank -%}
+              {%- comment -%}
+                Sin video, se cae a la imagen poster. Antes esta rama imprimia
+                <p style="color:red">No se ha proporcionado un video.</p> DIRECTO AL
+                CLIENTE en el storefront.
+              {%- endcomment -%}
+              <img
+                class="cover-video"
+                src="{{ block.settings.poster_image | image_url: width: 1500 }}"
+                srcset="{{ block.settings.poster_image | image_url: width: 750 }} 750w, {{ block.settings.poster_image | image_url: width: 1500 }} 1500w"
+                sizes="100vw"
+                alt="{{ block.settings.poster_image.alt | escape }}"
+                width="{{ block.settings.poster_image.width }}"
+                height="{{ block.settings.poster_image.height }}"
+                fetchpriority="high"
+              >
             {%- endif -%}
           </div>
       {%- endcase -%}
