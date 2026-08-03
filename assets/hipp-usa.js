@@ -39,6 +39,32 @@
   /* ---------------------------------------------------------------------
      Reveals
      --------------------------------------------------------------------- */
+  // Red de seguridad de los reveals. Un elemento .hp-reveal arranca en
+  // opacity:0, asi que si el IntersectionObserver se pierde un callback ese
+  // contenido queda INVISIBLE para siempre. Pasa de verdad: con scroll
+  // programatico rapido el navegador agrupa o descarta entregas y quedan ~8 de
+  // 48 sin revelar, distintos en cada corrida.
+  //
+  // El umbral (60% del alto del viewport) es a proposito MAS TARDIO que el del
+  // observer (threshold 0.12 + rootMargin -8%, que dispara cuando el elemento
+  // recien asoma por abajo). Asi en operacion normal siempre gana el observer y
+  // el escalonado se conserva; esto solo entra cuando el observer ya deberia
+  // haber disparado y no lo hizo.
+  var pendingReveals = [];
+
+  function sweepReveals() {
+    if (!pendingReveals.length) return;
+    var limit = window.innerHeight * 0.6;
+    var rest = [];
+    for (var i = 0; i < pendingReveals.length; i++) {
+      var el = pendingReveals[i];
+      if (!el.isConnected || el.classList.contains('is-in')) continue;
+      if (el.getBoundingClientRect().top < limit) el.classList.add('is-in');
+      else rest.push(el);
+    }
+    pendingReveals = rest;
+  }
+
   function initReveals() {
     // El escalonado NO va como transition-delay inline. Un transition-delay
     // inline le gana al stylesheet, se aplica a TODAS las transiciones del
@@ -61,8 +87,11 @@
       targets.forEach(function (el) {
         el.classList.add('is-in');
       });
+      pendingReveals = [];
       return;
     }
+
+    pendingReveals = Array.prototype.slice.call(targets);
 
     var io = new IntersectionObserver(
       function (entries) {
@@ -137,6 +166,10 @@
         pair[0].setAttribute('transform', 'translate(0,' + y * pair[1] + ')');
       });
     }
+
+    // Va al final y se apaga sola: la lista se vacia a medida que los elementos
+    // se revelan, y cuando queda en cero esta funcion es un return inmediato.
+    sweepReveals();
   }
 
   function initScroll() {
