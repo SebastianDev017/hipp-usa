@@ -38,8 +38,14 @@
   afecta a los demas (lo que no se puede tocar es el chunk `commons`).
 {%- endcomment -%}
 
+{%- comment -%}
+  js-main-product.js definia el custom element <variant-radios> del PDP viejo.
+  La seccion nueva (main-product-usa) no lo usa: los radios se llaman name="id"
+  y su value ES el id de la variante, asi que el form nativo ya manda lo
+  correcto y hipp-product.js solo refresca precio, imagen y disponibilidad.
+{%- endcomment -%}
 {%- if template.name == 'product' -%}
-  <script src="{{ 'js-main-product.js' | asset_url }}" defer></script>
+  <script src="{{ 'hipp-product.js' | asset_url }}" defer></script>
 {%- endif -%}
 
 {%- comment -%}

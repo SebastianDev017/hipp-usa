@@ -43,8 +43,7 @@ CSS
 {%- endcomment -%}
 
 {% if template.name == "product" %}
-  <link rel="preload" href="{{ 'css-main-product.css' | asset_url }}" as="style">
-  <link rel="preload" href="{{ 'js-main-product.js' | asset_url }}" as="script">
+  <link rel="preload" href="{{ 'hipp-product.js' | asset_url }}" as="script">
 {% endif %}
 
 {% if template.name == "cart" %}

@@ -1,1 +1,146 @@
-{"sections":{"main":{"type":"main-product","custom_css":["label.product-variant.contenido[data-title=\"4 Suscripción\"] {display: none !important;}"],"settings":{"gift_label":"Selecciona tu regalo","show_trust":true,"payment_1":"shopify:\/\/shop_images\/paypal.png","payment_2":"shopify:\/\/shop_images\/google.png","payment_3":"shopify:\/\/shop_images\/visa_53f24962-e4dc-498f-a6eb-e77ef1118657.png","payment_4":"shopify:\/\/shop_images\/mastercard.png","payment_5":"shopify:\/\/shop_images\/AME.png","payment_size":28,"badge_1_icon":"shopify:\/\/shop_images\/envio-seguro.png","badge_1_text":"Empaque seguro","badge_2_icon":"shopify:\/\/shop_images\/envio-gratis.png","badge_2_text":"Envío estándar gratis*","badge_3_text":"","badge_4_icon":"shopify:\/\/shop_images\/productos-originales.png","badge_4_text":"Productos 100% originales","badge_5_icon":"shopify:\/\/shop_images\/atencion-personalizada.png","badge_5_text":"Atención 100% personalizada","badge_icon_size":56,"badges_footnote":"*Consulta términos y condiciones en nuestras políticas de envío."}},"reviews":{"type":"main-product-reviews","blocks":{"judge_me_reviews_review_widget_7Ynk6h":{"type":"shopify:\/\/apps\/judge-me-reviews\/blocks\/review_widget\/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8","settings":{"review_data":"sample_data","max_width":1200,"show_shop_reviews":false,"empty_state":"empty_widget"}}},"block_order":["judge_me_reviews_review_widget_7Ynk6h"],"custom_css":[".hipp-reviews-toggle__label,.hipp-reviews-toggle__chevron {color: white;}"],"settings":{}},"info":{"type":"main-product-info","settings":{"title":"Más Información"}},"fbt":{"type":"main-product-rebuy-dynamic-bundle","settings":{"title_1":"AGREGA A TU ORDEN","title_2":"Comprados juntos frecuentemente"}},"related-products":{"type":"main-product-recommended-products","settings":{"title":"Productos relacionados"}},"product_faqs_Q49LBf":{"type":"product-faqs","custom_css":["h2{text-align: center;}"],"name":"FAQ producto","settings":{"heading":"Preguntas frecuentes","heading_font":"Advert Bold","heading_color":"#1f5a2c","heading_align":"left","heading_size_desktop":40,"heading_size_mobile":26,"heading_margin":24,"mf_namespace":"custom","mf_key":"faq_productos","question_key":"question","answer_key":"answer","show_schema":true,"q_min_font":16,"q_max_font":20,"answer_pad_d":20,"answer_pad_m":16,"q_pad_m":24}},"ca5b649f-5065-4784-a242-3b1e68aeb5cb":{"type":"logos-carousel","blocks":{"bab41bee-7517-422d-8664-cf089eb378fe":{"type":"image","settings":{}},"8c4ba9fa-e45a-4a60-a724-72400da0adc2":{"type":"image","settings":{}},"fbb98c8e-3dee-4ed9-bcb2-e29847ab4dfc":{"type":"image","settings":{"image":"shopify:\/\/shop_images\/sello-BIO_dfaf497e-9559-4ef0-bcae-2da5e8e789b1.png"}}},"block_order":["bab41bee-7517-422d-8664-cf089eb378fe","8c4ba9fa-e45a-4a60-a724-72400da0adc2","fbb98c8e-3dee-4ed9-bcb2-e29847ab4dfc"],"settings":{"icon_1":"shopify:\/\/shop_images\/logos-icono-1_3x_5dc98049-860c-451f-8801-f67e4835aa1d.png","icon_2":"shopify:\/\/shop_images\/Asset-vaca.png","title":"<p>Lo hicimos bien desde <br\/>el <strong>principio<\/strong><\/p>","text":"HiPP es una empresa familiar alemana con más de 70 años de experiencia en alimentación orgánica e innovación nutricional. Dale a tus hijos lo mejor de la naturaleza.","button_label":"Conoce más","button_link":"shopify:\/\/pages\/nuestra-historia"}}},"order":["main","reviews","info","fbt","related-products","product_faqs_Q49LBf","ca5b649f-5065-4784-a242-3b1e68aeb5cb"]}
+{
+  "sections": {
+    "main": {
+      "type": "main-product-usa",
+      "blocks": {
+        "trust-1": {
+          "type": "trust",
+          "settings": { "title": "2 day shipping", "text": "free on every order" }
+        },
+        "trust-2": {
+          "type": "trust",
+          "settings": { "title": "Direct from HiPP", "text": "EU organic, Germany" }
+        },
+        "trust-3": {
+          "type": "trust",
+          "settings": { "title": "Always fresh", "text": "6+ months shelf life" }
+        },
+        "accordion-prepare": {
+          "type": "accordion",
+          "settings": {
+            "title": "How to prepare",
+            "content": "<p>Always follow the preparation instructions printed on the box. Boil fresh drinking water and let it cool to about 40 to 50 degrees Celsius, add the water to a sterilised bottle first, then add the scoops of powder, close and shake until fully dissolved. Check the temperature on the inside of your wrist before feeding.</p><p>Never reuse a prepared bottle that has been standing for more than two hours, and never dilute or concentrate the recommended measure.</p>"
+          }
+        },
+        "accordion-shipping": {
+          "type": "accordion",
+          "settings": {
+            "title": "Shipping and returns",
+            "content": "<p>Free 2 day shipping across the USA on every order, with no minimum. Order before noon and the clock starts the same day; orders placed after noon ship the following day.</p><p>Every box is sourced directly from HiPP in Germany and arrives with at least 6 months of shelf life. If something is not right when it reaches you, write to us and we will make it right.</p>"
+          }
+        }
+      },
+      "block_order": ["trust-1", "trust-2", "trust-3", "accordion-prepare", "accordion-shipping"],
+      "settings": {
+        "fallback_subtitle": "Sourced direct from HiPP in Germany",
+        "shipping_note": "Free 2 day shipping across the USA, on every order.",
+        "step_1_number": "Step 1",
+        "step_1_title": "Choose your bundle",
+        "unit_label": "boxes",
+        "unit_price_note": "$29 per box on every bundle.",
+        "step_2_number": "Step 2",
+        "step_2_title": "How would you like it?",
+        "onetime_title": "One time",
+        "onetime_text": "A single delivery, free, at your door in 2 days.",
+        "subscribe_text": "Delivered on your rhythm. Skip, switch or cancel anytime.",
+        "subscription_pending_note": "",
+        "summary_title": "Your bundle",
+        "shipping_row_label": "2 day shipping",
+        "shipping_row_value": "Free",
+        "total_label": "Total",
+        "add_label": "Checkout, at your door in 2 days",
+        "summary_note": "Order by noon and it arrives within 2 days.",
+        "description_title": "About this formula"
+      }
+    },
+    "shipping": {
+      "type": "ship-timeline",
+      "blocks": {
+        "step-1": {
+          "type": "step",
+          "settings": {
+            "time": "Day 1",
+            "title": "You place your order",
+            "text": "Two minutes on your phone, one hand free for the baby. Order by noon and the clock starts today."
+          }
+        },
+        "step-2": {
+          "type": "step",
+          "settings": {
+            "time": "In transit",
+            "title": "We pack and fly it",
+            "text": "Sourced direct from HiPP in Germany, your bundle leaves our fulfillment hub in Mexico City the same day and flies north."
+          }
+        },
+        "step-3": {
+          "type": "step",
+          "settings": {
+            "time": "Day 2",
+            "title": "It is at your door",
+            "text": "Your formula is home. No signature chasing, no waiting windows."
+          }
+        }
+      },
+      "block_order": ["step-1", "step-2", "step-3"],
+      "settings": {
+        "kicker": "The 2 day promise",
+        "heading": "Order today. Feed in two days.",
+        "lead": "<p>Every order, every size, every time: free 2 day shipping across the USA. Every box is sourced directly from HiPP in Germany and arrives with at least 6 months of shelf life.</p>",
+        "anchor_id": "shipping",
+        "show_hill": true,
+        "hill_above": "#F9F7EF"
+      }
+    },
+    "subscription": {
+      "type": "subscription-cadence",
+      "blocks": {
+        "cadence-7": { "type": "cadence", "settings": { "number": "7", "unit": "weeks", "caption": "Growing appetite" } },
+        "cadence-8": { "type": "cadence", "settings": { "number": "8", "unit": "weeks", "caption": "The classic rhythm" } },
+        "cadence-9": { "type": "cadence", "settings": { "number": "9", "unit": "weeks", "caption": "Combination feeding" } }
+      },
+      "block_order": ["cadence-7", "cadence-8", "cadence-9"],
+      "settings": {
+        "kicker": "Subscription",
+        "heading": "Your rhythm, not ours.",
+        "lead": "<p>Every baby feeds differently, so the 8 pack subscription lets you pick the cadence that matches yours. An 8 pack lasts about two months; change your rhythm whenever your baby changes.</p>",
+        "note": "Skip a delivery, switch cadence or cancel in one tap. No calls, no guilt.",
+        "anchor_id": "subscription",
+        "button_label": "",
+        "button_link": ""
+      }
+    },
+    "faq": {
+      "type": "faq-usa",
+      "blocks": {
+        "q-1": {
+          "type": "question",
+          "settings": {
+            "question": "How long does a bundle last?",
+            "answer": "<p>It depends on your baby's age and appetite. As a rough guide, a box lasts most formula fed babies about a week, so an 8 pack covers roughly two months.</p>"
+          }
+        },
+        "q-2": {
+          "type": "question",
+          "settings": {
+            "question": "Where does my formula come from?",
+            "answer": "<p>Every box is sourced directly from HiPP in Germany, never through gray market resellers. We fulfill orders from our hub in Mexico City, which is what lets us ship across the USA in 2 days, and we guarantee at least 6 months of shelf life on every box that reaches your door.</p>"
+          }
+        },
+        "q-3": {
+          "type": "question",
+          "settings": {
+            "question": "What if my baby does not take to it?",
+            "answer": "<p>Talk to us. If HiPP is not working for your baby, our support team will help you switch between our formulas or make it right. We are parents too, and we keep it human.</p>"
+          }
+        }
+      },
+      "block_order": ["q-1", "q-2", "q-3"],
+      "settings": {
+        "kicker": "Questions, answered",
+        "heading": "Before you order.",
+        "anchor_id": "faq"
+      }
+    }
+  },
+  "order": ["main", "shipping", "subscription", "faq"]
+}
