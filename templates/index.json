@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -17,14 +26,51 @@
     "marquee": {
       "type": "claims-marquee",
       "blocks": {
-        "claim-1": { "type": "claim", "settings": { "text": "EU certified organic" } },
-        "claim-2": { "type": "claim", "settings": { "text": "Direct from HiPP Germany" } },
-        "claim-3": { "type": "claim", "settings": { "text": "From Bavarian family farms" } },
-        "claim-4": { "type": "claim", "settings": { "text": "No corn syrup" } },
-        "claim-5": { "type": "claim", "settings": { "text": "6+ months shelf life, always" } },
-        "claim-6": { "type": "claim", "settings": { "text": "Free 2 day shipping" } }
+        "claim-1": {
+          "type": "claim",
+          "settings": {
+            "text": "EU certified organic"
+          }
+        },
+        "claim-2": {
+          "type": "claim",
+          "settings": {
+            "text": "Direct from HiPP Germany"
+          }
+        },
+        "claim-3": {
+          "type": "claim",
+          "settings": {
+            "text": "From Bavarian family farms"
+          }
+        },
+        "claim-4": {
+          "type": "claim",
+          "settings": {
+            "text": "No corn syrup"
+          }
+        },
+        "claim-5": {
+          "type": "claim",
+          "settings": {
+            "text": "6+ months shelf life, always"
+          }
+        },
+        "claim-6": {
+          "type": "claim",
+          "settings": {
+            "text": "Free 2 day shipping"
+          }
+        }
       },
-      "block_order": ["claim-1", "claim-2", "claim-3", "claim-4", "claim-5", "claim-6"],
+      "block_order": [
+        "claim-1",
+        "claim-2",
+        "claim-3",
+        "claim-4",
+        "claim-5",
+        "claim-6"
+      ],
       "settings": {
         "speed": 30
       }
@@ -57,7 +103,11 @@
           }
         }
       },
-      "block_order": ["promise-1", "promise-2", "promise-3"],
+      "block_order": [
+        "promise-1",
+        "promise-2",
+        "promise-3"
+      ],
       "settings": {
         "kicker": "The 3am promise",
         "heading": "We built this for the feeding you do half asleep.",
@@ -91,7 +141,11 @@
           }
         }
       },
-      "block_order": ["stat-1", "stat-2", "stat-3"],
+      "block_order": [
+        "stat-1",
+        "stat-2",
+        "stat-3"
+      ],
       "settings": {
         "kicker": "About HiPP",
         "heading": "Organic is not our marketing. It is a farm in Bavaria.",
@@ -105,6 +159,7 @@
         "formula-combiotik": {
           "type": "formula",
           "settings": {
+            "product": "",
             "title": "Combiotik",
             "tag": "Most popular",
             "tag_accent": true,
@@ -113,12 +168,13 @@
             "image_asset": "hipp-formula-combiotik.png",
             "price": "$29",
             "button_label": "Shop Combiotik",
-            "link": "shopify://collections/all"
+            "link": "shopify://products/hipp-combiotik-organic-infant-formula"
           }
         },
         "formula-comfort": {
           "type": "formula",
           "settings": {
+            "product": "",
             "title": "Comfort",
             "tag": "Sensitive tummies",
             "tag_accent": false,
@@ -127,12 +183,13 @@
             "image_asset": "hipp-formula-comfort.png",
             "price": "$29",
             "button_label": "Shop Comfort",
-            "link": "shopify://collections/all"
+            "link": "shopify://products/hipp-comfort-infant-formula"
           }
         },
         "formula-ar": {
           "type": "formula",
           "settings": {
+            "product": "",
             "title": "AR",
             "tag": "Reflux",
             "tag_accent": false,
@@ -141,11 +198,15 @@
             "image_asset": "hipp-formula-ar.png",
             "price": "$29",
             "button_label": "Shop AR",
-            "link": "shopify://collections/all"
+            "link": "shopify://products/hipp-ar-anti-reflux-infant-formula"
           }
         }
       },
-      "block_order": ["formula-combiotik", "formula-comfort", "formula-ar"],
+      "block_order": [
+        "formula-combiotik",
+        "formula-comfort",
+        "formula-ar"
+      ],
       "settings": {
         "kicker": "Our formulas",
         "heading": "Three formulas. Every baby covered.",
@@ -164,6 +225,8 @@
             "count": "4",
             "unit": "boxes",
             "text": "About a month of feeding. Perfect for trying HiPP or topping up between deliveries.",
+            "badge": "",
+            "note": "",
             "featured": false
           }
         },
@@ -172,8 +235,8 @@
           "settings": {
             "count": "8",
             "unit": "boxes",
-            "badge": "Subscribe and save",
             "text": "About two months of feeding. The only bundle available as a subscription, delivered every 7, 8 or 9 weeks on your schedule.",
+            "badge": "Subscribe and save",
             "note": "Subscription available on this bundle",
             "featured": true
           }
@@ -184,11 +247,17 @@
             "count": "16",
             "unit": "boxes",
             "text": "Around four months of peace of mind in one delivery. The stock up choice for families who never want to think about it.",
+            "badge": "",
+            "note": "",
             "featured": false
           }
         }
       },
-      "block_order": ["bundle-4", "bundle-8", "bundle-16"],
+      "block_order": [
+        "bundle-4",
+        "bundle-8",
+        "bundle-16"
+      ],
       "settings": {
         "kicker": "Bundles",
         "heading": "Sized for real life, not for warehouses.",
@@ -226,24 +295,53 @@
           }
         }
       },
-      "block_order": ["step-1", "step-2", "step-3"],
+      "block_order": [
+        "step-1",
+        "step-2",
+        "step-3"
+      ],
       "settings": {
         "kicker": "The 2 day promise",
         "heading": "Order today. Feed in two days.",
         "lead": "<p>Every order, every size, every time: free 2 day shipping across the USA. Place your order before noon and it is at your door within two days. Every box is sourced directly from HiPP in Germany and arrives with at least 6 months of shelf life. This is not a promotion. It is how we work.</p>",
         "anchor_id": "shipping",
         "show_hill": true,
-        "hill_above": "#F9F7EF"
+        "hill_above": "#f9f7ef"
       }
     },
     "subscription": {
       "type": "subscription-cadence",
       "blocks": {
-        "cadence-7": { "type": "cadence", "settings": { "number": "7", "unit": "weeks", "caption": "Growing appetite" } },
-        "cadence-8": { "type": "cadence", "settings": { "number": "8", "unit": "weeks", "caption": "The classic rhythm" } },
-        "cadence-9": { "type": "cadence", "settings": { "number": "9", "unit": "weeks", "caption": "Combination feeding" } }
+        "cadence-7": {
+          "type": "cadence",
+          "settings": {
+            "number": "7",
+            "unit": "weeks",
+            "caption": "Growing appetite"
+          }
+        },
+        "cadence-8": {
+          "type": "cadence",
+          "settings": {
+            "number": "8",
+            "unit": "weeks",
+            "caption": "The classic rhythm"
+          }
+        },
+        "cadence-9": {
+          "type": "cadence",
+          "settings": {
+            "number": "9",
+            "unit": "weeks",
+            "caption": "Combination feeding"
+          }
+        }
       },
-      "block_order": ["cadence-7", "cadence-8", "cadence-9"],
+      "block_order": [
+        "cadence-7",
+        "cadence-8",
+        "cadence-9"
+      ],
       "settings": {
         "kicker": "Subscription",
         "heading": "Your rhythm, not ours.",
@@ -307,7 +405,15 @@
           }
         }
       },
-      "block_order": ["q-1", "q-2", "q-3", "q-4", "q-5", "q-6", "q-7"],
+      "block_order": [
+        "q-1",
+        "q-2",
+        "q-3",
+        "q-4",
+        "q-5",
+        "q-6",
+        "q-7"
+      ],
       "settings": {
         "kicker": "Questions, answered",
         "heading": "Everything mothers ask us.",
