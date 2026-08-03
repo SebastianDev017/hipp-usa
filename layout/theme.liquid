@@ -9,8 +9,21 @@
     {{ content_for_header }}
     {%- render 'theme-css' -%}
     {%- render 'theme-customer-js' -%}
-    {% render 'judgeme_core' %}
-    <script async src="https://cdn.rebuyengine.com/onsite/js/rebuy.js?shop={{ shop.permanent_domain }}"></script>
+    {%- comment -%}
+      Los dos scripts de apps que venian del tema MX quedaron condicionados o
+      fuera, porque en esta tienda ninguna de las dos apps esta instalada:
+
+      - Rebuy: era un <script> fijo a cdn.rebuyengine.com/onsite/js/rebuy.js?shop=...
+        Sin la app, ese endpoint devuelve 404 y era el UNICO error de consola
+        del sitio. Eliminado; si se instala Rebuy, la app inyecta su propio
+        script sola.
+      - Judge.me: judgeme_core carga cdn.judge.me sin condicion. Ahora solo se
+        renderiza si la app dejo sus metafields, que es como se sabe que esta
+        instalada.
+    {%- endcomment -%}
+    {%- if shop.metafields.judgeme.settings != blank -%}
+      {% render 'judgeme_core' %}
+    {%- endif -%}
 
     {%- liquid
       assign recharge_helpers_classes = nil
@@ -23,36 +36,41 @@
   </head>
 
   <body class="template-{{ request_handle }} {% unless template.suffix == blank %}{{ request_handle }}-type-{{ template.suffix }}{% endunless %} {{ recharge_helpers_classes }}">
+    {%- comment -%}
+      La barra de progreso va aca y no dentro del header: el header aplica
+      backdrop-filter, y un ancestro con backdrop-filter convierte a sus hijos
+      position:fixed en posicionados respecto de EL, no del viewport.
+    {%- endcomment -%}
+    <div class="hp-progress" data-hp-progress></div>
+
+    <a class="hp-skip" href="#MainContent">{{ 'accessibility.skip_to_text' | t }}</a>
+
     <div class="main-wrapper">
       {%- comment -%}
-        La clase `scroll` venia DUPLICADA: hardcodeada y otra vez en el condicional,
-        asi que en la practica estaba siempre puesta y el estado transparente del
-        header (sin ella) era codigo muerto.
-
-        Se deja SIEMPRE puesta a proposito, no solo en las internas. Las 4 reglas
-        de .header-main-wrapper.scroll en css-base.css son las que dan fondo blanco
-        al header y pintan los iconos con --primary-color; sin ellas la home queda
-        con iconos claros sobre el hero y no hay forma de verificarlo hasta tener
-        acceso a la tienda. El estado transparente con blur del diseno aprobado
-        llega con el header nuevo (sections/header-usa.liquid), no antes.
+        Ya no se usa el wrapper .header-main-wrapper del tema base: sus 8 reglas
+        en css-base.css estan escritas contra el markup viejo (hamburguesa en
+        todos los breakpoints, logo centrado, iconos pintados con
+        --primary-color). El header nuevo se pega solo, por la clase de seccion
+        hp-header-section, que es hija directa de .main-wrapper y por lo tanto
+        el unico elemento con recorrido real para el sticky.
       {%- endcomment -%}
-      <div class="header-main-wrapper with-overlay scroll" id="header">
-        {% section 'announcement-bar' %}
-        {% section 'header' %}
-      </div>
+      {% section 'announcement-usa' %}
+      {% section 'header-usa' %}
 
-      <main class="main-content content-for-layout focus-none with-overlay" id="MainContent" role="main" tabindex="-1">
+      <main class="main-content content-for-layout focus-none" id="MainContent" role="main" tabindex="-1">
         {{ content_for_layout }}
       </main>
 
-      {% section 'footer' %}
+      {% section 'footer-usa' %}
     </div>
 
     {%- comment -%}
-      Va fuera de .main-wrapper: es position:fixed y no debe heredar ningun
-      containing block (backdrop-filter/transform en un ancestro lo romperia).
+      Estas dos van fuera de .main-wrapper: son position:fixed y no deben
+      heredar ningun containing block (backdrop-filter/transform en un ancestro
+      lo romperia).
     {%- endcomment -%}
     {% section 'cart-drawer' %}
+    {% section 'sticky-cta' %}
 
     <ul hidden>
       <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>

@@ -1,0 +1,146 @@
+{%- comment -%}
+  HiPP USA — la promesa de las 3am (sección oscura).
+
+  Las estrellas y la luna son elementos vacios y no pseudo-elementos: en el
+  diseno original iban en ::before/::after de la seccion, pero ahi no se pueden
+  ocultar por setting ni excluir del arbol de accesibilidad de forma limpia.
+{%- endcomment -%}
+
+{%- liquid
+  assign items = section.blocks | where: 'type', 'promise'
+-%}
+
+<section class="hp-night hp-section" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
+  {%- if section.settings.show_stars -%}
+    <span class="hp-night__stars" aria-hidden="true"></span>
+    <span class="hp-night__moon" aria-hidden="true"></span>
+  {%- endif -%}
+
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker hp-reveal">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hp-h2 hp-reveal">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.lead != blank -%}
+      <div class="hp-lead hp-reveal">{{ section.settings.lead }}</div>
+    {%- endif -%}
+
+    {%- if items.size > 0 -%}
+      <div class="hp-night__grid" data-hp-stagger>
+        {%- for block in items -%}
+          <div class="hp-night__item" {{ block.shopify_attributes }}>
+            {%- if block.settings.number != blank -%}
+              <span class="hp-night__num">{{ block.settings.number }}</span>
+            {%- endif -%}
+            {%- if block.settings.title != blank -%}
+              <h3>{{ block.settings.title }}</h3>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <p>{{ block.settings.text }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promesa 3am",
+  "tag": "div",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "The 3am promise"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "We built this for the feeding you do half asleep."
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Texto",
+      "default": "<p>Everything about this store exists so that the hardest moments of caring for your baby feel a little lighter.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stars",
+      "label": "Estrellas y luna",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Ancla",
+      "info": "Para enlazar desde el menú, por ejemplo: why",
+      "default": "why"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promise",
+      "name": "Promesa",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Numeral",
+          "default": "No. 1"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "You will never run out"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto",
+          "default": "Running low? Order before noon and a fresh bundle is on your doorstep within two days."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promesa 3am",
+      "blocks": [
+        {
+          "type": "promise",
+          "settings": {
+            "number": "No. 1",
+            "title": "You will never run out",
+            "text": "Running low? Order before noon and a fresh bundle is on your doorstep within two days. Shipping is free on every single order, no minimum, no membership."
+          }
+        },
+        {
+          "type": "promise",
+          "settings": {
+            "number": "No. 2",
+            "title": "One decision, not twenty",
+            "text": "Three formulas. Three bundle sizes. That is the whole store. We removed everything that makes buying formula online feel like homework."
+          }
+        },
+        {
+          "type": "promise",
+          "settings": {
+            "number": "No. 3",
+            "title": "Set it and rest",
+            "text": "Subscribe on the 8 pack and choose your rhythm: every 7, 8 or 9 weeks. Pause, adjust or cancel anytime. One less thing living in your head."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,123 @@
+{%- comment -%}
+  HiPP USA — hero de la home.
+
+  El fondo son dos gradientes CSS y la ilustracion es SVG inline: cero requests
+  de imagen y cero LCP de red. El titulo entra por animacion CSS, no por JS, asi
+  que no depende de que cargue nada.
+
+  data-hp-hero marca el limite del parallax y el punto donde aparece el CTA fijo.
+{%- endcomment -%}
+
+<section class="hp-hero" data-hp-hero>
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-hero__kicker">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h1 class="hp-h1">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.lead != blank -%}
+      <div class="hp-hero__lead">{{ section.settings.lead }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.button_1_label != blank or section.settings.button_2_label != blank -%}
+      <div class="hp-hero__ctas">
+        {%- if section.settings.button_1_label != blank -%}
+          <a class="hp-btn hp-btn--clay" href="{{ section.settings.button_1_link | default: routes.all_products_collection_url }}">
+            {{- section.settings.button_1_label -}}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.button_2_label != blank -%}
+          <a class="hp-btn hp-btn--ghost" href="{{ section.settings.button_2_link | default: routes.root_url }}">
+            {{- section.settings.button_2_label -}}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.note != blank -%}
+      <p class="hp-hero__note">{{ section.settings.note }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.show_art -%}
+    {%- render 'hipp-hero-art' -%}
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "German organic formula, now in the USA"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "info": "Lo que pongas en cursiva sale en verde.",
+      "default": "Grown organic. Delivered <em>in two days.</em>"
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Texto",
+      "default": "<p>HiPP organic formula starts on family farms in the Bavarian countryside, where the milk comes from pasture raised cows and the land has been farmed organically for generations. Order by noon and it is at your door anywhere in the USA within two days, shipping free, every time.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Botones"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Botón principal",
+      "default": "Shop bundles"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Enlace principal"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Botón secundario",
+      "default": "Why mothers choose HiPP"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Enlace secundario"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Nota al pie",
+      "default": "Bundles of 4, 8 or 16 boxes. Subscribe on the 8 pack and never run out."
+    },
+    {
+      "type": "header",
+      "content": "Ilustración"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_art",
+      "label": "Mostrar las colinas",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
+}
+{% endschema %}

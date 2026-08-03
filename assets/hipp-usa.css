@@ -1,0 +1,1354 @@
+/* ==========================================================================
+   HiPP USA — capa de componentes (diseno aprobado)
+   --------------------------------------------------------------------------
+   ORDEN DE CARGA (snippets/theme-css.liquid):
+     theme.css -> css-base.css -> hipp-fonts -> hipp-tokens.css -> hipp-usa.css
+   Este archivo va ULTIMO a proposito: es el unico que puede ganarle a las 850
+   reglas de css-base.css sin tocarlas.
+
+   PREFIJO `hp-`: ninguna clase de aca existe en css-base.css ni en theme.css,
+   asi que no hay colisiones y no hace falta escalar especificidad. Lo que SI
+   depende de la instancia (colores por seccion) sale de un {% style %} scopeado
+   a #shopify-section-{{ section.id }} dentro de cada seccion.
+
+   OJO CON LAS UNIDADES: theme.css declara `html{font-size:62.5%}`, o sea que
+   1rem = 10px, no 16px. Todo este archivo va en px a proposito.
+   ========================================================================== */
+
+:root {
+  /* css-base.css usa estas dos en `html{scroll-padding-top:calc(...)}` pero NO
+     las declara en ningun lado: la calc quedaba invalida y el scroll-padding se
+     descartaba, asi que los anchors quedaban tapados por el header sticky.
+     hipp-usa.js sobreescribe --header-height con la altura real medida. */
+  --header-height: 64px;
+  --announcement-bar-height: 0px;
+
+  --hp-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --hp-wrap: 1100px;
+  --hp-gutter: 22px;
+}
+
+/* ==========================================================================
+   1. Primitivas
+   ========================================================================== */
+
+.hp-wrap {
+  max-width: var(--hp-wrap);
+  margin: 0 auto;
+  padding: 0 var(--hp-gutter);
+}
+
+.hp-wrap--narrow {
+  --hp-wrap: 760px;
+}
+
+.hp-section {
+  padding: 84px 0;
+}
+
+.hp-section--tight {
+  padding: 48px 0 84px;
+}
+
+.hp-kicker {
+  font-family: var(--font-body-semibold);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 16px;
+}
+
+.hp-h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(32px, 6vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  max-width: 20ch;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+
+.hp-h2 em,
+.hp-h1 em {
+  font-style: italic;
+  color: var(--clay);
+}
+
+.hp-h2 strong {
+  font-weight: 600;
+}
+
+.hp-lead {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 56ch;
+}
+
+/* Los <p> que Shopify emite desde un setting richtext no deben heredar el
+   margin de css-base; el bloque contenedor ya aporta el ritmo. */
+.hp-h2 > p,
+.hp-lead > p:first-child,
+.hp-announce__text > p {
+  margin: 0;
+}
+
+.hp-lead > p + p {
+  margin-top: 12px;
+}
+
+/* ---- Boton ---- */
+.hp-btn {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-body-semibold);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  padding: 13px 26px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s var(--hp-ease), background 0.2s ease, color 0.2s ease;
+}
+
+.hp-btn:hover {
+  background: var(--clay-deep);
+  color: var(--cream);
+  transform: translateY(-1px);
+}
+
+.hp-btn--clay {
+  background: var(--clay);
+}
+
+.hp-btn--clay:hover {
+  background: var(--clay-deep);
+}
+
+.hp-btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  padding: 11.5px 24.5px; /* compensa el borde para igualar la altura del solido */
+}
+
+.hp-btn--ghost:hover {
+  background: var(--ink);
+  color: var(--cream);
+  transform: none;
+}
+
+.hp-btn--sm {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.hp-btn--block {
+  display: block;
+  width: 100%;
+}
+
+/* ---- Reveal ---- */
+.hp-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  filter: blur(4px);
+  transition: opacity 0.8s var(--hp-ease), transform 0.8s var(--hp-ease), filter 0.8s ease;
+}
+
+.hp-reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ---- Barra de progreso de scroll ---- */
+.hp-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: var(--clay);
+  z-index: 100;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+/* ---- Colinas ---- */
+.hp-hill {
+  display: block;
+  line-height: 0;
+}
+
+.hp-hill svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ==========================================================================
+   2. Announcement
+   ========================================================================== */
+
+.hp-announce {
+  background: var(--ink);
+  color: var(--cream);
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  padding: 9px 16px;
+  text-transform: uppercase;
+}
+
+.hp-announce a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hp-announce a:hover {
+  text-decoration: underline;
+}
+
+.hp-announce strong,
+.hp-announce b {
+  color: var(--accent-light);
+  font-family: var(--font-body-semibold);
+  font-weight: 600;
+}
+
+.hp-announce__slides {
+  position: relative;
+}
+
+.hp-announce__text {
+  margin: 0;
+}
+
+/* Con mas de un mensaje: solo el activo ocupa el flujo. Sin JS queda el primero
+   visible, que es el estado por defecto del markup. */
+.hp-announce__slides[data-count]:not([data-count="1"]) .hp-announce__text {
+  display: none;
+}
+
+.hp-announce__slides[data-count]:not([data-count="1"]) .hp-announce__text.is-active {
+  display: block;
+  animation: hp-fade-in 0.5s ease both;
+}
+
+@keyframes hp-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   3. Header
+   ========================================================================== */
+
+.hp-header-section {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.hp-nav {
+  background: rgba(249, 247, 239, 0.92);
+  border-bottom: 1px solid rgba(43, 33, 26, 0.08);
+}
+
+@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+  .hp-nav {
+    background: rgba(249, 247, 239, 0.82);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+.hp-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px var(--hp-gutter);
+  max-width: var(--hp-wrap);
+  margin: 0 auto;
+}
+
+.hp-nav__side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.hp-wordmark {
+  font-family: var(--font-display-semibold);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.hp-wordmark__dot {
+  color: var(--clay);
+}
+
+.hp-wordmark__img {
+  display: block;
+  width: auto;
+  height: 34px;
+}
+
+.hp-nav__links {
+  display: none;
+  gap: 28px;
+  font-family: var(--font-body-medium);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.hp-nav__links a:hover {
+  color: var(--ink);
+}
+
+.hp-nav__links a[aria-current="page"] {
+  color: var(--ink);
+}
+
+/* ---- Iconos (hamburguesa, cuenta, carrito) ---- */
+.hp-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 40px;
+  height: 40px; /* WCAG 2.5.8: area tactil >= 24x24 */
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.hp-iconbtn svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hp-iconbtn:hover {
+  color: var(--clay);
+}
+
+.hp-nav__burger {
+  display: inline-flex;
+}
+
+/* El contador del carrito. .cart-count-bubble ya viene estilada (y con un
+   background-image de corazon verde) desde css-base.css; hipp-cart.css la
+   reescribe. Aca solo se la posiciona dentro del boton nuevo. */
+.hp-iconbtn .cart-count-bubble {
+  position: absolute;
+  top: 2px;
+  right: 0;
+}
+
+/* ---- Panel movil ---- */
+.hp-mobilenav {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hp-mobilenav.is-open {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.hp-mobilenav__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(35, 42, 30, 0.42);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hp-mobilenav.is-open .hp-mobilenav__scrim {
+  opacity: 1;
+}
+
+.hp-mobilenav__panel {
+  position: absolute;
+  inset: 0 0 auto 0;
+  background: var(--cream);
+  padding: 18px var(--hp-gutter) 30px;
+  transform: translateY(-100%);
+  transition: transform 0.35s var(--hp-ease);
+  max-height: 100dvh;
+  overflow-y: auto;
+}
+
+.hp-mobilenav.is-open .hp-mobilenav__panel {
+  transform: none;
+}
+
+.hp-mobilenav__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hp-mobilenav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hp-mobilenav__list a {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--ink);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(43, 33, 26, 0.1);
+}
+
+.hp-mobilenav__cta {
+  margin-top: 22px;
+}
+
+/* ==========================================================================
+   4. Hero
+   ========================================================================== */
+
+.hp-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 64px 0 0;
+  background:
+    radial-gradient(420px 300px at 78% 12%, rgba(242, 211, 150, 0.55), transparent 70%),
+    linear-gradient(180deg, #fdfaf0 0%, #f7f1de 78%, #f1edda 100%);
+}
+
+.hp-hero__kicker {
+  font-family: var(--font-body-semibold);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 20px;
+}
+
+.hp-h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(42px, 9vw, 84px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  max-width: 11ch;
+  color: var(--ink);
+}
+
+.hp-h1 > p {
+  margin: 0;
+}
+
+.hp-hero__lead {
+  margin: 26px 0 34px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 44ch;
+}
+
+.hp-hero__lead > p {
+  margin: 0;
+}
+
+.hp-hero__ctas {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hp-hero__note {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 18px;
+}
+
+.hp-hero__art {
+  display: block;
+  width: 100%;
+  margin-top: 34px;
+}
+
+.hp-hero__art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Entrada escalonada. Sin `both` el contenido parpadea antes del primer frame. */
+@keyframes hp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hp-hero__kicker {
+  animation: hp-rise 0.7s 0.1s var(--hp-ease) both;
+}
+
+.hp-hero .hp-h1 {
+  animation: hp-rise 0.8s 0.25s var(--hp-ease) both;
+}
+
+.hp-hero__lead {
+  animation: hp-rise 0.8s 0.45s var(--hp-ease) both;
+}
+
+.hp-hero__ctas {
+  animation: hp-rise 0.8s 0.6s var(--hp-ease) both;
+}
+
+.hp-hero__note {
+  animation: hp-rise 0.8s 0.75s var(--hp-ease) both;
+}
+
+@keyframes hp-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.hp-hero__art [data-hp-sun] circle {
+  animation: hp-drift 9s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   5. Marquesina
+   ========================================================================== */
+
+.hp-marquee {
+  border-top: 1px solid rgba(43, 33, 26, 0.1);
+  border-bottom: 1px solid rgba(43, 33, 26, 0.1);
+  overflow: hidden;
+  background: var(--cream-2);
+  padding: 14px 0;
+  white-space: nowrap;
+}
+
+.hp-marquee__track {
+  display: inline-block;
+  animation: hp-marquee-scroll var(--hp-marquee-speed, 30s) linear infinite;
+}
+
+.hp-marquee:hover .hp-marquee__track {
+  animation-play-state: paused;
+}
+
+.hp-marquee__item {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 0 34px;
+}
+
+@keyframes hp-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ==========================================================================
+   6. Promesa 3am (seccion oscura)
+   ========================================================================== */
+
+.hp-night {
+  background: var(--ink);
+  color: var(--cream);
+  position: relative;
+  overflow: hidden;
+}
+
+.hp-night > .hp-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.hp-night__stars {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.75;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(250, 246, 239, 0.8), transparent 60%),
+    radial-gradient(1px 1px at 28% 8%, rgba(250, 246, 239, 0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 44% 22%, rgba(250, 246, 239, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 62% 12%, rgba(250, 246, 239, 0.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 78% 20%, rgba(250, 246, 239, 0.6), transparent 60%),
+    radial-gradient(1px 1px at 90% 9%, rgba(250, 246, 239, 0.8), transparent 60%),
+    radial-gradient(1px 1px at 70% 32%, rgba(250, 246, 239, 0.4), transparent 60%),
+    radial-gradient(1.5px 1.5px at 8% 40%, rgba(250, 246, 239, 0.4), transparent 60%);
+}
+
+.hp-night__moon {
+  position: absolute;
+  top: 44px;
+  right: 8%;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 38%, #f4e9cf, #d9cba6);
+  box-shadow: 0 0 60px 18px rgba(244, 233, 207, 0.22);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.hp-night .hp-kicker {
+  color: var(--accent-light);
+}
+
+.hp-night .hp-h2 {
+  color: var(--cream);
+}
+
+.hp-night .hp-lead {
+  color: rgba(250, 246, 239, 0.72);
+}
+
+.hp-night__grid {
+  display: grid;
+  gap: 36px;
+  margin-top: 48px;
+}
+
+.hp-night__item {
+  border-top: 1px solid rgba(250, 246, 239, 0.18);
+  padding-top: 22px;
+}
+
+.hp-night__num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--accent-light);
+}
+
+.hp-night__item h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 23px;
+  line-height: 1.15;
+  color: var(--cream);
+  margin: 8px 0;
+}
+
+.hp-night__item p {
+  font-size: 15px;
+  line-height: 1.6;
+  /* 0.68 sobre #232A1E daba 3.9:1, por debajo de AA. 0.78 da 4.6:1. */
+  color: rgba(250, 246, 239, 0.78);
+}
+
+/* ==========================================================================
+   7. Herencia / datos
+   ========================================================================== */
+
+.hp-stats {
+  display: grid;
+  gap: 40px;
+  margin-top: 48px;
+}
+
+.hp-stat {
+  border-top: 1.5px solid var(--ink);
+  padding-top: 16px;
+}
+
+.hp-stat__big {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 46px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.hp-stat p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   8. Formulas
+   ========================================================================== */
+
+.hp-products {
+  background: var(--cream-2);
+}
+
+.hp-prod-grid {
+  display: grid;
+  gap: 20px;
+  margin-top: 44px;
+}
+
+.hp-prod {
+  background: var(--cream);
+  border-radius: var(--radius-card);
+  padding: 34px 28px 30px;
+  border: 1px solid rgba(43, 33, 26, 0.07);
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hp-prod:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+.hp-prod__tag {
+  align-self: flex-start;
+  font-family: var(--font-body-semibold);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--sand);
+  color: var(--ink-soft);
+  margin-bottom: 22px;
+}
+
+.hp-prod__tag--clay {
+  background: rgba(79, 112, 66, 0.14);
+  color: var(--clay-deep);
+}
+
+/* Sin tag el card tiene que conservar el mismo ritmo vertical. */
+.hp-prod__tag--empty {
+  visibility: hidden;
+}
+
+.hp-prod__photo {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-media);
+  margin-bottom: 22px;
+  background: radial-gradient(120% 120% at 50% 0%, #fdfbf2, #e9ebd8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hp-prod__photo img {
+  width: 72%;
+  height: 86%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 18px rgba(35, 42, 30, 0.18));
+  transition: transform 0.5s var(--hp-ease);
+}
+
+.hp-prod:hover .hp-prod__photo img {
+  transform: scale(1.06) translateY(-3px);
+}
+
+.hp-prod h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.hp-prod__for {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--clay);
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+.hp-prod__text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  flex: 1;
+}
+
+.hp-prod__from {
+  margin: 22px 0 14px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.hp-prod__from strong {
+  font-family: var(--font-display-semibold);
+  font-size: 24px;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.hp-prod .hp-btn {
+  align-self: flex-start;
+}
+
+/* ==========================================================================
+   9. Bundles
+   ========================================================================== */
+
+.hp-bundles {
+  display: grid;
+  gap: 16px;
+  margin-top: 44px;
+}
+
+.hp-bundle {
+  border: 1.5px solid var(--hairline-color);
+  border-radius: var(--radius-card);
+  padding: 28px 26px;
+  position: relative;
+  background: var(--cream);
+}
+
+.hp-bundle--featured {
+  border-color: var(--clay);
+  background: linear-gradient(180deg, rgba(79, 112, 66, 0.05), transparent);
+}
+
+.hp-bundle__badge {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  background: var(--clay);
+  color: var(--cream);
+  font-family: var(--font-body-semibold);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.hp-bundle__count {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.hp-bundle__count small {
+  font-size: 17px;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.hp-bundle p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-top: 10px;
+}
+
+.hp-bundle__note {
+  margin-top: 14px;
+  font-family: var(--font-body-semibold);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clay-deep);
+}
+
+.hp-after-cta {
+  margin-top: 36px;
+}
+
+/* ==========================================================================
+   10. Envio en 2 dias
+   ========================================================================== */
+
+.hp-ship {
+  background: var(--clay);
+  color: var(--cream);
+}
+
+.hp-ship .hp-kicker {
+  color: rgba(250, 246, 239, 0.9);
+}
+
+.hp-ship .hp-h2 {
+  color: var(--cream);
+}
+
+.hp-ship .hp-lead {
+  color: rgba(250, 246, 239, 0.9);
+}
+
+.hp-timeline {
+  display: grid;
+  gap: 0;
+  margin-top: 48px;
+}
+
+.hp-tl {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 18px;
+  padding: 22px 0;
+  border-top: 1px solid rgba(250, 246, 239, 0.25);
+}
+
+.hp-tl__time {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  padding-top: 2px;
+}
+
+.hp-tl h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.2;
+  margin-bottom: 4px;
+  color: var(--cream);
+}
+
+.hp-tl p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(250, 246, 239, 0.88);
+}
+
+/* ==========================================================================
+   11. Suscripcion
+   ========================================================================== */
+
+.hp-cadence {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.hp-cadence__card {
+  border: 1.5px solid var(--hairline-color);
+  border-radius: 16px;
+  padding: 18px 22px;
+  min-width: 110px;
+  background: var(--cream);
+}
+
+.hp-cadence__wk {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.hp-cadence__card p {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+.hp-note {
+  margin-top: 28px;
+  font-size: 15px;
+  color: var(--ink-soft);
+  max-width: 56ch;
+}
+
+/* ==========================================================================
+   12. FAQ
+   ========================================================================== */
+
+.hp-faq {
+  background: var(--cream-2);
+}
+
+.hp-faq__list {
+  margin-top: 40px;
+}
+
+.hp-faq__item {
+  border-top: 1px solid var(--hairline-color);
+  padding: 20px 0;
+}
+
+.hp-faq__item:last-child {
+  border-bottom: 1px solid var(--hairline-color);
+}
+
+.hp-faq__q {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.hp-faq__q::-webkit-details-marker {
+  display: none;
+}
+
+.hp-faq__q::after {
+  content: "+";
+  font-size: 24px;
+  line-height: 1;
+  color: var(--clay);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.hp-faq__item[open] .hp-faq__q::after {
+  transform: rotate(45deg);
+}
+
+.hp-faq__a {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 64ch;
+}
+
+.hp-faq__a > p + p {
+  margin-top: 10px;
+}
+
+/* ==========================================================================
+   13. CTA final
+   ========================================================================== */
+
+.hp-final {
+  text-align: center;
+  padding: 100px 0;
+}
+
+.hp-final .hp-h2 {
+  margin: 0 auto 18px;
+}
+
+.hp-final__quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0 auto 12px;
+  max-width: 44ch;
+}
+
+.hp-final__text {
+  margin: 0 auto 34px;
+  max-width: 40ch;
+  color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   14. Footer
+   ========================================================================== */
+
+.hp-footer {
+  background: var(--ink);
+  color: rgba(250, 246, 239, 0.78);
+  padding: 56px 0 110px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.hp-footer .hp-wordmark {
+  color: var(--cream);
+  margin-bottom: 14px;
+  display: inline-block;
+}
+
+.hp-footer a:hover {
+  color: var(--cream);
+}
+
+.hp-footer__tagline {
+  max-width: 46ch;
+}
+
+.hp-footlinks {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  list-style: none;
+  padding: 0;
+}
+
+.hp-footer__legal {
+  margin-top: 28px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(250, 246, 239, 0.6);
+  max-width: 70ch;
+}
+
+.hp-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(250, 246, 239, 0.16);
+  font-size: 12px;
+  color: rgba(250, 246, 239, 0.6);
+}
+
+.hp-footer__social {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.hp-footer__social a {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  color: rgba(250, 246, 239, 0.78);
+}
+
+.hp-footer__social svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.hp-footer__payments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.hp-payment-icon {
+  display: block;
+  width: 38px;
+  height: 24px;
+  border-radius: 3px;
+}
+
+/* ==========================================================================
+   15. CTA fijo movil
+   ========================================================================== */
+
+/* z-index 40, por debajo del header (50), NO por encima.
+   El header es sticky con z-index:50, o sea que abre un contexto de apilado:
+   el panel de navegacion movil que vive adentro nunca puede superar ese 50
+   frente al resto de la pagina, por mas que declare 70. Si este CTA quedara en
+   60 taparia el panel abierto. El cart drawer (z-index 1000, fuera de
+   .main-wrapper y sin ancestro que apile) sigue ganandole a los dos. */
+.hp-sticky {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(249, 247, 239, 0.95);
+  border-top: 1px solid rgba(43, 33, 26, 0.1);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateY(110%);
+  transition: transform 0.35s ease;
+}
+
+@supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+  .hp-sticky {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+.hp-sticky.is-shown {
+  transform: translateY(0);
+}
+
+.hp-sticky__msg {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+
+.hp-sticky__msg strong {
+  color: var(--ink);
+  display: block;
+  font-family: var(--font-display-semibold);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hp-sticky .hp-btn {
+  white-space: nowrap;
+  padding: 12px 22px;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   16. Utilidades
+   ========================================================================== */
+
+/* Skip link: fuera de pantalla hasta que recibe foco por teclado. */
+.hp-skip {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 200;
+  transform: translateY(-200%);
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-body-semibold);
+  font-size: 14px;
+  padding: 12px 18px;
+  border-radius: var(--radius-pill);
+  transition: transform 0.15s ease;
+}
+
+.hp-skip:focus {
+  transform: none;
+}
+
+.hp-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hp-scroll-lock {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   17. Movimiento reducido
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .hp-marquee__track {
+    animation: none;
+    transform: none;
+  }
+
+  .hp-progress {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   18. Desktop
+   ========================================================================== */
+
+@media (min-width: 760px) {
+  .hp-nav__links {
+    display: flex;
+  }
+
+  .hp-nav__burger {
+    display: none;
+  }
+
+  .hp-hero {
+    padding: 110px 0 120px;
+  }
+
+  /* El diseno aprobado traia un `.moon{width:340px}` para desktop, pero esa
+     clase no existe en el markup: la luna siempre se renderizo a 72px. Se
+     mantiene lo que efectivamente se aprobo, solo baja un poco. */
+  .hp-night__moon {
+    top: 72px;
+  }
+
+  .hp-night__grid,
+  .hp-stats,
+  .hp-prod-grid,
+  .hp-bundles {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hp-tl {
+    grid-template-columns: 120px 1fr;
+  }
+
+  .hp-sticky {
+    display: none;
+  }
+
+  .hp-footer {
+    padding-bottom: 56px;
+  }
+}

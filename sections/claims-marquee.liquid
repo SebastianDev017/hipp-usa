@@ -1,0 +1,78 @@
+{%- comment -%}
+  HiPP USA — marquesina de claims.
+
+  La lista se imprime DOS veces dentro del mismo track. La animacion desplaza
+  -50%, o sea exactamente el largo de una copia: al terminar el ciclo el track
+  vuelve a 0 y la segunda copia queda justo donde estaba la primera, sin salto.
+  La copia duplicada va aria-hidden para no repetirle el texto a un lector de
+  pantalla (el bloque entero ya es decorativo).
+{%- endcomment -%}
+
+{%- liquid
+  assign claims = section.blocks | where: 'type', 'claim'
+-%}
+
+{%- if claims.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} .hp-marquee__track { --hp-marquee-speed: {{ section.settings.speed }}s; }
+  {%- endstyle -%}
+
+  <div class="hp-marquee" aria-hidden="true">
+    <div class="hp-marquee__track">
+      {%- for block in claims -%}
+        <span class="hp-marquee__item" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+      {%- endfor -%}
+      {%- for block in claims -%}
+        <span class="hp-marquee__item">{{ block.settings.text }}</span>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Marquesina de claims",
+  "tag": "div",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Duración de una vuelta",
+      "info": "Más segundos = más lento.",
+      "unit": "s",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "claim",
+      "name": "Claim",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto",
+          "default": "EU certified organic"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquesina de claims",
+      "blocks": [
+        { "type": "claim", "settings": { "text": "EU certified organic" } },
+        { "type": "claim", "settings": { "text": "Direct from HiPP Germany" } },
+        { "type": "claim", "settings": { "text": "From Bavarian family farms" } },
+        { "type": "claim", "settings": { "text": "No corn syrup" } },
+        { "type": "claim", "settings": { "text": "6+ months shelf life, always" } },
+        { "type": "claim", "settings": { "text": "Free 2 day shipping" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

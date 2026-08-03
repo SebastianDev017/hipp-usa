@@ -1,0 +1,32 @@
+{%- comment -%}
+  HiPP USA — divisor de colinas.
+
+  Parametros:
+    fill  (string)  color de la colina. Requerido.
+    above (string)  color del bloque que queda ARRIBA del divisor. El divisor
+                    ocupa una franja rectangular: sin esto, el area libre sobre
+                    la curva se ve del color del <body> y aparece una banda
+                    clara entre dos secciones de color.
+    double (bool)   dibuja una segunda colina por detras, mas clara.
+
+  Uso:
+    {% render 'hipp-hill', fill: '#4F7042', above: '#F9F7EF' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign hill_fill = fill | default: '#4F7042'
+  assign hill_above = above | default: 'transparent'
+-%}
+
+<div class="hp-hill" aria-hidden="true" style="background:{{ hill_above }}">
+  {%- if double -%}
+    <svg viewBox="0 0 1440 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" focusable="false">
+      <path d="M0,52 C240,22 480,58 720,40 C960,22 1200,54 1440,34 L1440,70 L0,70 Z" fill="#DDE3C6"/>
+      <path d="M0,62 C280,42 560,66 840,54 C1100,44 1300,62 1440,52 L1440,70 L0,70 Z" fill="{{ hill_fill }}"/>
+    </svg>
+  {%- else -%}
+    <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" focusable="false">
+      <path d="M0,64 C280,18 560,80 840,44 C1080,14 1280,56 1440,34 L1440,90 L0,90 Z" fill="{{ hill_fill }}"/>
+    </svg>
+  {%- endif -%}
+</div>

@@ -1,0 +1,118 @@
+{%- comment -%}
+  HiPP USA — historia de marca y datos duros.
+{%- endcomment -%}
+
+{%- liquid
+  assign stats = section.blocks | where: 'type', 'stat'
+-%}
+
+<section class="hp-section" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker hp-reveal">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hp-h2 hp-reveal">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.lead != blank -%}
+      <div class="hp-lead hp-reveal">{{ section.settings.lead }}</div>
+    {%- endif -%}
+
+    {%- if stats.size > 0 -%}
+      <div class="hp-stats" data-hp-stagger>
+        {%- for block in stats -%}
+          <div class="hp-stat" {{ block.shopify_attributes }}>
+            {%- if block.settings.big != blank -%}
+              <div class="hp-stat__big">{{ block.settings.big }}</div>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <p>{{ block.settings.text }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Herencia y datos",
+  "tag": "div",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "About HiPP"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Organic is not our marketing. It is a farm in Bavaria."
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Texto",
+      "default": "<p>HiPP began in 1899 when Joseph Hipp made rusk flour for his own children. Today the family farms land in the Bavarian countryside that has been worked organically for decades: pasture raised cows, living soil, no synthetic pesticides. The formula is held to EU organic standards, among the strictest food regulations in the world. No corn syrup, no unnecessary additives, just carefully sourced organic milk and the nutrients growing babies need.</p>"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Ancla",
+      "default": "about"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Dato",
+      "settings": [
+        {
+          "type": "text",
+          "id": "big",
+          "label": "Cifra",
+          "default": "1899"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto",
+          "default": "Family owned since the very first batch."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Herencia y datos",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": {
+            "big": "1899",
+            "text": "Family owned since the very first batch, now in its fourth generation."
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "big": "EU Organic",
+            "text": "Certified to European Union organic standards, with strict limits on pesticides and additives."
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "big": "No. 1",
+            "text": "Among the most recommended formula brands by parents across Europe."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

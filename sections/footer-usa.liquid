@@ -1,0 +1,166 @@
+{%- comment -%}
+  HiPP USA — pie de página.
+
+  Reemplaza a sections/footer.liquid, que era verde claro con una colina SVG,
+  dos logos MX hardcodeados en assets/, un form de Klaviyo por id y el bloque
+  "©HiPP México" tambien hardcodeado. El diseno aprobado lo quiere oscuro
+  (--ink) y con el aviso legal de lactancia como pieza central.
+
+  Los iconos de pago salen de shop.enabled_payment_types, no del SVG estatico
+  del tema base: ese archivo dibuja OXXO, que no existe en Estados Unidos.
+{%- endcomment -%}
+
+{%- liquid
+  assign links = section.blocks | where: 'type', 'link'
+  assign has_social = false
+  if settings.social_facebook_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank
+    assign has_social = true
+  endif
+-%}
+
+<footer class="hp-footer">
+  <div class="hp-wrap">
+    <a class="hp-wordmark" href="{{ routes.root_url }}">
+      {{- section.settings.wordmark_text -}}
+      <span class="hp-wordmark__dot">{{- section.settings.wordmark_accent -}}</span>
+    </a>
+
+    {%- if section.settings.tagline != blank -%}
+      <p class="hp-footer__tagline">{{ section.settings.tagline }}</p>
+    {%- endif -%}
+
+    {%- if links.size > 0 -%}
+      <ul class="hp-footlinks">
+        {%- for block in links -%}
+          <li {{ block.shopify_attributes }}>
+            <a href="{{ block.settings.url }}">{{ block.settings.label }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if section.settings.legal != blank -%}
+      <div class="hp-footer__legal">{{ section.settings.legal }}</div>
+    {%- endif -%}
+
+    <div class="hp-footer__bottom">
+      <p>
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}.
+        {%- if section.settings.trademark_note != blank %} {{ section.settings.trademark_note }}{% endif -%}
+      </p>
+
+      {%- if has_social -%}
+        <div class="hp-footer__social">
+          {%- if settings.social_instagram_link != blank -%}
+            <a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4Zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3Zm6.9-11.1a1.55 1.55 0 1 1-1.55-1.55A1.55 1.55 0 0 1 18.9 5.2Z"/></svg>
+              <span class="hp-visually-hidden">{{ 'general.social.links.instagram' | t }}</span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <a href="{{ settings.social_facebook_link }}" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H16.7V3.6A21 21 0 0 0 14.3 3.5c-2.4 0-4 1.45-4 4.1v2.3H7.6V13h2.7v8Z"/></svg>
+              <span class="hp-visually-hidden">{{ 'general.social.links.facebook' | t }}</span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_youtube_link != blank -%}
+            <a href="{{ settings.social_youtube_link }}" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.75-1.77C18.3 5 12 5 12 5s-6.3 0-7.85.43A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.75 1.77C5.7 19 12 19 12 19s6.3 0 7.85-.43a2.5 2.5 0 0 0 1.75-1.77A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5.2 3Z"/></svg>
+              <span class="hp-visually-hidden">{{ 'general.social.links.youtube' | t }}</span>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        {%- comment -%}
+          payment_type_svg_tag opera sobre UN tipo, no sobre la lista: pasarle
+          shop.enabled_payment_types entero no emite nada.
+        {%- endcomment -%}
+        <div class="hp-footer__payments">
+          <span class="hp-visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'hp-payment-icon' }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Pie de página USA",
+  "class": "hp-footer-section",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Marca"
+    },
+    {
+      "type": "text",
+      "id": "wordmark_text",
+      "label": "Wordmark",
+      "default": "hipp"
+    },
+    {
+      "type": "text",
+      "id": "wordmark_accent",
+      "label": "Remate del wordmark",
+      "default": "."
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Bajada",
+      "default": "European organic formula, delivered across the USA in 2 days."
+    },
+    {
+      "type": "header",
+      "content": "Legales"
+    },
+    {
+      "type": "richtext",
+      "id": "legal",
+      "label": "Aviso legal",
+      "default": "<p>Important notice: breastfeeding is best for your baby. Infant formula is suitable from birth when babies are not breastfed. Please consult your pediatrician or healthcare professional before introducing infant formula.</p>"
+    },
+    {
+      "type": "text",
+      "id": "trademark_note",
+      "label": "Nota de marca registrada",
+      "default": "HiPP is a trademark of HiPP GmbH & Co. Vertrieb KG."
+    },
+    {
+      "type": "header",
+      "content": "Pagos"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Mostrar métodos de pago",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Texto",
+          "default": "Link"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Enlace"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

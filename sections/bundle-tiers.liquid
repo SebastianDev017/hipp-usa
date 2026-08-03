@@ -1,0 +1,174 @@
+{%- comment -%}
+  HiPP USA — los tres bundles (4 / 8 / 16 cajas).
+
+  Es una seccion explicativa, no un selector: la eleccion real ocurre en la
+  pagina de producto, sobre la opcion de variante. Por eso las tarjetas no son
+  botones ni tienen estado seleccionado.
+{%- endcomment -%}
+
+{%- liquid
+  assign tiers = section.blocks | where: 'type', 'bundle'
+-%}
+
+<section class="hp-section" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker hp-reveal">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hp-h2 hp-reveal">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.lead != blank -%}
+      <div class="hp-lead hp-reveal">{{ section.settings.lead }}</div>
+    {%- endif -%}
+
+    {%- if tiers.size > 0 -%}
+      <div class="hp-bundles" data-hp-stagger>
+        {%- for block in tiers -%}
+          <div class="hp-bundle{% if block.settings.featured %} hp-bundle--featured{% endif %}" {{ block.shopify_attributes }}>
+            {%- if block.settings.badge != blank -%}
+              <span class="hp-bundle__badge">{{ block.settings.badge }}</span>
+            {%- endif -%}
+            <div class="hp-bundle__count">
+              {{- block.settings.count }} <small>{{ block.settings.unit }}</small>
+            </div>
+            {%- if block.settings.text != blank -%}
+              <p>{{ block.settings.text }}</p>
+            {%- endif -%}
+            {%- if block.settings.note != blank -%}
+              <p class="hp-bundle__note">{{ block.settings.note }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <div class="hp-after-cta hp-reveal">
+        <a class="hp-btn hp-btn--clay" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+          {{- section.settings.button_label -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bundles",
+  "tag": "div",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "Bundles"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Sized for real life, not for warehouses."
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Texto",
+      "default": "<p>Formula is something you use every single day, so we only sell it in bundles that actually last. Every bundle ships free, at your door within 2 days.</p>"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Ancla",
+      "default": "bundles"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Choose your bundle"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bundle",
+      "name": "Bundle",
+      "settings": [
+        {
+          "type": "text",
+          "id": "count",
+          "label": "Cantidad",
+          "default": "4"
+        },
+        {
+          "type": "text",
+          "id": "unit",
+          "label": "Unidad",
+          "default": "boxes"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Insignia"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Nota destacada"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Destacado",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bundles",
+      "blocks": [
+        {
+          "type": "bundle",
+          "settings": {
+            "count": "4",
+            "unit": "boxes",
+            "text": "About a month of feeding. Perfect for trying HiPP or topping up between deliveries."
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "count": "8",
+            "unit": "boxes",
+            "badge": "Subscribe and save",
+            "featured": true,
+            "text": "About two months of feeding. The only bundle available as a subscription, delivered every 7, 8 or 9 weeks on your schedule.",
+            "note": "Subscription available on this bundle"
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "count": "16",
+            "unit": "boxes",
+            "text": "Around four months of peace of mind in one delivery. The stock up choice for families who never want to think about it."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

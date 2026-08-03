@@ -28,6 +28,7 @@
   Los dos son defer, asi que se ejecutan en orden de documento.
 {%- endcomment -%}
 <script src="{{ 'hipp-cart.js' | asset_url }}" defer></script>
+<script src="{{ 'hipp-usa.js' | asset_url }}" defer></script>
 
 {%- if template.name == 'collection' -%}
   <script src="{{ 'js-main-collection.js' | asset_url }}" defer></script>

@@ -1,0 +1,74 @@
+{%- comment -%}
+  HiPP USA — cierre de la home.
+{%- endcomment -%}
+
+<section class="hp-final">
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker hp-reveal">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hp-h2 hp-reveal">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.quote != blank -%}
+      <p class="hp-final__quote hp-reveal">{{ section.settings.quote }}</p>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      <p class="hp-final__text hp-reveal">{{ section.settings.text }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a class="hp-btn hp-btn--clay hp-reveal" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+        {{- section.settings.button_label -}}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CTA final",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "Ready when you are"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "The best of European formula, two days away."
+    },
+    {
+      "type": "text",
+      "id": "quote",
+      "label": "Frase en cursiva",
+      "default": "From our family's meadows to your family's kitchen."
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Texto",
+      "default": "Choose your formula, pick a bundle, and consider it handled."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Shop HiPP"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CTA final"
+    }
+  ]
+}
+{% endschema %}

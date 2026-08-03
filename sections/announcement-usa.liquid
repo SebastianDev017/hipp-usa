@@ -1,0 +1,120 @@
+{%- comment -%}
+  HiPP USA — barra de anuncios.
+
+  Reemplaza a sections/announcement-bar.liquid, que dependia de Swiper (dentro
+  de js-commons.js, 813 KB) para rotar 3 mensajes. Aca la rotacion son 6 lineas
+  en hipp-usa.js y sin JS queda visible el primer mensaje, que es el estado por
+  defecto del markup.
+
+  No es sticky a proposito: en el diseno aprobado solo se pega la barra de
+  navegacion, y el anuncio se va con el scroll.
+{%- endcomment -%}
+
+{%- liquid
+  assign messages = section.blocks | where: 'type', 'message'
+  assign speed = section.settings.speed | times: 1000
+-%}
+
+{%- if messages.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} .hp-announce {
+      background: {{ section.settings.background_color }};
+      color: {{ section.settings.text_color }};
+    }
+    #shopify-section-{{ section.id }} .hp-announce strong,
+    #shopify-section-{{ section.id }} .hp-announce b {
+      color: {{ section.settings.highlight_color }};
+    }
+  {%- endstyle -%}
+
+  <div class="hp-announce" data-hp-announce>
+    <div
+      class="hp-announce__slides"
+      data-hp-announce-slides
+      data-count="{{ messages.size }}"
+      data-speed="{{ speed }}"
+      {% if messages.size > 1 %}role="status" aria-live="polite"{% endif %}
+    >
+      {%- for block in messages -%}
+        <p
+          class="hp-announce__text{% if forloop.first %} is-active{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+          {%- else -%}
+            {{ block.settings.text }}
+          {%- endif -%}
+        </p>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Barra de anuncios USA",
+  "class": "hp-announce-section",
+  "tag": "aside",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo",
+      "default": "#232A1E"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#F9F7EF"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Texto en negrita",
+      "info": "Se aplica a lo que esté en negrita dentro del mensaje.",
+      "default": "#CFE0B8"
+    },
+    {
+      "type": "header",
+      "content": "Rotación"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Cambiar de mensaje cada",
+      "info": "Solo aplica si hay más de un mensaje.",
+      "unit": "s",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Mensaje",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Texto",
+          "default": "Order by noon: <strong>free 2 day shipping</strong> on every order, always."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

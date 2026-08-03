@@ -1,0 +1,57 @@
+{%- comment -%}
+  HiPP USA — CTA fijo en móvil.
+
+  Se renderiza desde layout/theme.liquid FUERA de .main-wrapper: es
+  position:fixed y cualquier ancestro con transform, filter o backdrop-filter
+  lo convertiria en un elemento posicionado respecto de ese ancestro en vez de
+  respecto del viewport.
+
+  Aparece recien cuando el hero sale de pantalla (hipp-usa.js) y en desktop no
+  se muestra: ahi el CTA del header siempre esta a la vista.
+{%- endcomment -%}
+
+{%- if section.settings.label != blank -%}
+  <div class="hp-sticky" data-hp-sticky>
+    <div class="hp-sticky__msg">
+      {%- if section.settings.title != blank -%}
+        <strong>{{ section.settings.title }}</strong>
+      {%- endif -%}
+      {{ section.settings.text }}
+    </div>
+    <a class="hp-btn hp-btn--clay" href="{{ section.settings.link | default: routes.all_products_collection_url }}">
+      {{- section.settings.label -}}
+    </a>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "CTA fijo móvil",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Free 2 day shipping"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Texto",
+      "default": "Bundles of 4, 8 or 16"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Texto del botón",
+      "info": "Vacío = no se muestra la barra.",
+      "default": "Shop"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Enlace del botón"
+    }
+  ]
+}
+{% endschema %}

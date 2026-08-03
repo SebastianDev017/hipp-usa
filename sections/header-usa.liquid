@@ -1,0 +1,270 @@
+{%- comment -%}
+  HiPP USA — encabezado.
+
+  Reemplaza a sections/header.liquid, que mostraba hamburguesa en TODOS los
+  breakpoints y no tenia CTA. El diseno aprobado pide wordmark serif, links
+  inline en desktop y un pill "Shop" a la derecha.
+
+  DOS CONTRATOS QUE NO SE PUEDEN ROMPER:
+  1. El carrito tiene que conservar id="cart-icon-bubble" y las clases
+     .cart-count-bubble / .cart-count-counter: assets/hipp-cart.js abre el
+     drawer por delegacion sobre ese id y actualiza el contador por esas clases.
+  2. El sticky sale de la clase de seccion (hp-header-section en el schema), no
+     de un div interno: el wrapper #shopify-section-* es hijo directo de
+     .main-wrapper, asi que es el unico elemento con recorrido para pegarse.
+
+  El diseno no lleva navegacion en movil (solo wordmark + Shop). Eso deja al
+  usuario de telefono sin forma de llegar a nada, asi que se agrega un panel
+  desplegable — opcional desde el editor — que expone exactamente los mismos
+  links. El resto queda igual al diseno.
+{%- endcomment -%}
+
+{%- liquid
+  assign links = section.blocks | where: 'type', 'link'
+  assign logo = section.settings.logo
+  assign cta_label = section.settings.cta_label
+  assign cta_link = section.settings.cta_link | default: routes.all_products_collection_url
+-%}
+
+{%- capture wordmark -%}
+  {%- if logo != blank -%}
+    {%- comment -%}
+      El width sale de la relacion de aspecto real de la imagen, no de un factor
+      fijo: con un ancho inventado el navegador reserva mal el espacio y el
+      header salta al cargar (CLS).
+    {%- endcomment -%}
+    {%- liquid
+      assign logo_h = section.settings.logo_height
+      assign logo_w = logo.width | times: logo_h | divided_by: logo.height
+    -%}
+    <img
+      class="hp-wordmark__img"
+      src="{{ logo | image_url: height: 120 }}"
+      srcset="{{ logo | image_url: height: 120 }} 1x, {{ logo | image_url: height: 240 }} 2x"
+      alt="{{ shop.name | escape }}"
+      width="{{ logo_w }}"
+      height="{{ logo_h }}"
+      style="height:{{ logo_h }}px"
+    >
+  {%- else -%}
+    {{- section.settings.wordmark_text -}}
+    <span class="hp-wordmark__dot">{{- section.settings.wordmark_accent -}}</span>
+  {%- endif -%}
+{%- endcapture -%}
+
+<nav class="hp-nav" data-hp-header aria-label="{{ 'sections.header.menu' | t | escape }}">
+  <div class="hp-nav__inner">
+    <div class="hp-nav__side">
+      {%- if section.settings.show_mobile_menu and links.size > 0 -%}
+        <button
+          type="button"
+          class="hp-iconbtn hp-nav__burger"
+          data-hp-mobilenav-open
+          aria-expanded="false"
+          aria-controls="hp-mobilenav"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+          <span class="hp-visually-hidden">{{ 'sections.header.menu' | t }}</span>
+        </button>
+      {%- endif -%}
+
+      <a class="hp-wordmark" href="{{ routes.root_url }}">{{ wordmark }}</a>
+    </div>
+
+    {%- if links.size > 0 -%}
+      <div class="hp-nav__links">
+        {%- for block in links -%}
+          <a
+            href="{{ block.settings.url }}"
+            {% if block.settings.url == request.path %}aria-current="page"{% endif %}
+            {{ block.shopify_attributes }}
+          >{{ block.settings.label }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="hp-nav__side">
+      {%- if shop.customer_accounts_enabled -%}
+        <a
+          class="hp-iconbtn"
+          href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/>
+          </svg>
+          <span class="hp-visually-hidden">
+            {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
+          </span>
+        </a>
+      {%- endif -%}
+
+      <a class="hp-iconbtn" href="{{ routes.cart_url }}" id="cart-icon-bubble">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 8h12l-1.2 11.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8Z"/>
+          <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+        </svg>
+        <span class="hp-visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+        <div class="cart-count-bubble{% if cart.item_count == 0 %} is-empty{% endif %}">
+          <span class="cart-count-counter" aria-hidden="true">{{- cart.item_count -}}</span>
+          <span class="hp-visually-hidden">{{- 'sections.header.cart_count' | t: count: cart.item_count -}}</span>
+        </div>
+      </a>
+
+      {%- if cta_label != blank -%}
+        <a class="hp-btn hp-btn--clay hp-btn--sm" href="{{ cta_link }}">{{ cta_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</nav>
+
+{%- if section.settings.show_mobile_menu and links.size > 0 -%}
+  <div class="hp-mobilenav" id="hp-mobilenav" data-hp-mobilenav aria-hidden="true">
+    <div class="hp-mobilenav__scrim" data-hp-mobilenav-close></div>
+    <div class="hp-mobilenav__panel" role="dialog" aria-modal="true" aria-label="{{ 'sections.header.menu' | t | escape }}">
+      <div class="hp-mobilenav__head">
+        <span class="hp-wordmark">{{ wordmark }}</span>
+        <button type="button" class="hp-iconbtn" data-hp-mobilenav-close>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+          <span class="hp-visually-hidden">{{ 'accessibility.close' | t }}</span>
+        </button>
+      </div>
+      <ul class="hp-mobilenav__list">
+        {%- for block in links -%}
+          <li><a href="{{ block.settings.url }}">{{ block.settings.label }}</a></li>
+        {%- endfor -%}
+      </ul>
+      {%- if cta_label != blank -%}
+        <a class="hp-btn hp-btn--clay hp-btn--block hp-mobilenav__cta" href="{{ cta_link }}">{{ cta_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "url": {{ shop.url | json }},
+    "foundingDate": "1899",
+    "areaServed": "US",
+    "parentOrganization": {
+      "@type": "Organization",
+      "name": "HiPP",
+      "sameAs": "https://www.hipp.de"
+    }
+    {%- if logo != blank -%}
+      ,"logo": {{ logo | image_url: width: 512 | prepend: 'https:' | json }}
+    {%- endif -%}
+  }
+</script>
+
+{%- if request.page_type == 'index' -%}
+  {%- assign search_target = shop.url | append: routes.search_url | append: '?q={search_term_string}' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ search_target | json }},
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Encabezado USA",
+  "class": "hp-header-section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Marca"
+    },
+    {
+      "type": "text",
+      "id": "wordmark_text",
+      "label": "Wordmark",
+      "info": "Se usa si no cargás un logo.",
+      "default": "hipp"
+    },
+    {
+      "type": "text",
+      "id": "wordmark_accent",
+      "label": "Remate del wordmark",
+      "info": "Se pinta con el verde de marca.",
+      "default": "."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "label": "Alto del logo",
+      "unit": "px",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "default": 34
+    },
+    {
+      "type": "header",
+      "content": "Botón principal"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Texto",
+      "default": "Shop"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Enlace"
+    },
+    {
+      "type": "header",
+      "content": "Móvil"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile_menu",
+      "label": "Menú desplegable en móvil",
+      "info": "Sin esto los links del menú no se ven en teléfono.",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Texto",
+          "default": "Link"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Enlace"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

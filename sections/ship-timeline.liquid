@@ -1,0 +1,153 @@
+{%- comment -%}
+  HiPP USA — la promesa de 2 días.
+
+  El divisor de colinas se dibuja ARRIBA de la seccion y con el color del fondo
+  anterior detras, no del <body>: si la seccion previa tiene fondo propio y el
+  divisor no lo replica, aparece una franja crema entre las dos.
+{%- endcomment -%}
+
+{%- liquid
+  assign steps = section.blocks | where: 'type', 'step'
+-%}
+
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: '#4F7042', above: section.settings.hill_above -%}
+{%- endif -%}
+
+<section class="hp-ship hp-section{% if section.settings.show_hill %} hp-section--tight{% endif %}" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker hp-reveal">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hp-h2 hp-reveal">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.lead != blank -%}
+      <div class="hp-lead hp-reveal">{{ section.settings.lead }}</div>
+    {%- endif -%}
+
+    {%- if steps.size > 0 -%}
+      <div class="hp-timeline" data-hp-stagger>
+        {%- for block in steps -%}
+          <div class="hp-tl" {{ block.shopify_attributes }}>
+            <div class="hp-tl__time">{{ block.settings.time }}</div>
+            <div>
+              {%- if block.settings.title != blank -%}
+                <h3>{{ block.settings.title }}</h3>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <p>{{ block.settings.text }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Envío en 2 días",
+  "tag": "div",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "The 2 day promise"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Order today. Feed in two days."
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Texto",
+      "default": "<p>Every order, every size, every time: free 2 day shipping across the USA. Place your order before noon and it is at your door within two days. Every box is sourced directly from HiPP in Germany and arrives with at least 6 months of shelf life. This is not a promotion. It is how we work.</p>"
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Ancla",
+      "default": "shipping"
+    },
+    {
+      "type": "header",
+      "content": "Divisor"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hill",
+      "label": "Colina arriba",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "hill_above",
+      "label": "Fondo de la sección anterior",
+      "default": "#F9F7EF"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Paso",
+      "settings": [
+        {
+          "type": "text",
+          "id": "time",
+          "label": "Momento",
+          "default": "Day 1"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "You place your order"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Envío en 2 días",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "time": "Day 1",
+            "title": "You place your order",
+            "text": "Two minutes on your phone, one hand free for the baby. Order by noon and the clock starts today."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "time": "In transit",
+            "title": "We pack and fly it",
+            "text": "Sourced direct from HiPP in Germany, your bundle leaves our fulfillment hub in Mexico City the same day and flies north."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "time": "Day 2",
+            "title": "It is at your door",
+            "text": "Your formula is home. No signature chasing, no waiting windows."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

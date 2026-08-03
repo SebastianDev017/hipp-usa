@@ -1,0 +1,135 @@
+{%- comment -%}
+  HiPP USA — cadencia de la suscripción (7 / 8 / 9 semanas).
+
+  Solo comunica: la cadencia real la elige el cliente en el checkout de
+  suscripcion (ReCharge o Shopify Subscriptions, decision pendiente). Cuando eso
+  se defina, estas tarjetas pasan a ser el selling plan group del PDP.
+{%- endcomment -%}
+
+{%- liquid
+  assign options = section.blocks | where: 'type', 'cadence'
+-%}
+
+<section class="hp-section" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker hp-reveal">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hp-h2 hp-reveal">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.lead != blank -%}
+      <div class="hp-lead hp-reveal">{{ section.settings.lead }}</div>
+    {%- endif -%}
+
+    {%- if options.size > 0 -%}
+      <div class="hp-cadence hp-reveal">
+        {%- for block in options -%}
+          <div class="hp-cadence__card" {{ block.shopify_attributes }}>
+            <div class="hp-cadence__wk">{{ block.settings.number }}</div>
+            <p>{{ block.settings.unit }}<br>{{ block.settings.caption }}</p>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.note != blank -%}
+      <p class="hp-note hp-reveal">{{ section.settings.note }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <div class="hp-after-cta hp-reveal">
+        <a class="hp-btn hp-btn--clay" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+          {{- section.settings.button_label -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Suscripción",
+  "tag": "div",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "Subscription"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Your rhythm, not ours."
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Texto",
+      "default": "<p>Every baby feeds differently, so the 8 pack subscription lets you pick the cadence that matches yours. An 8 pack lasts about two months; change your rhythm whenever your baby changes.</p>"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Nota",
+      "default": "Skip a delivery, switch cadence or cancel in one tap. No calls, no guilt."
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Ancla",
+      "default": "subscription"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Start a subscription"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del botón"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "cadence",
+      "name": "Cadencia",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Número",
+          "default": "8"
+        },
+        {
+          "type": "text",
+          "id": "unit",
+          "label": "Unidad",
+          "default": "weeks"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Descripción",
+          "default": "The classic rhythm"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Suscripción",
+      "blocks": [
+        { "type": "cadence", "settings": { "number": "7", "unit": "weeks", "caption": "Growing appetite" } },
+        { "type": "cadence", "settings": { "number": "8", "unit": "weeks", "caption": "The classic rhythm" } },
+        { "type": "cadence", "settings": { "number": "9", "unit": "weeks", "caption": "Combination feeding" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

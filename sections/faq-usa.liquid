@@ -1,0 +1,159 @@
+{%- comment -%}
+  HiPP USA — preguntas frecuentes.
+
+  <details>/<summary> nativos: se abren sin JS y el buscador los indexa igual.
+  Ademas se emite FAQPage en JSON-LD, que es lo que habilita el rich result de
+  preguntas en Google. La respuesta va por strip_html: el schema de Google pide
+  texto, y un richtext con <p> anidado dentro del JSON rompe el parseo.
+{%- endcomment -%}
+
+{%- liquid
+  assign questions = section.blocks | where: 'type', 'question'
+-%}
+
+<section class="hp-faq hp-section" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
+  <div class="hp-wrap">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker hp-reveal">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hp-h2 hp-reveal">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if questions.size > 0 -%}
+      <div class="hp-faq__list hp-reveal">
+        {%- for block in questions -%}
+          <details class="hp-faq__item" {{ block.shopify_attributes }}>
+            <summary class="hp-faq__q">{{ block.settings.question }}</summary>
+            <div class="hp-faq__a">{{ block.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{%- if questions.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in questions -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.question | strip_html | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.answer | strip_html | strip_newlines | json }}
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Preguntas frecuentes",
+  "tag": "div",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "Questions, answered"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Everything mothers ask us."
+    },
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "Ancla",
+      "default": "faq"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Pregunta",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Pregunta",
+          "default": "Is 2 day shipping really always free?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta",
+          "default": "<p>Yes. Every order ships at no cost and arrives within two days.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Preguntas frecuentes",
+      "blocks": [
+        {
+          "type": "question",
+          "settings": {
+            "question": "Is 2 day shipping really always free?",
+            "answer": "<p>Yes. Every order ships at no cost, whether you buy 4 boxes once or stock up on 16, and arrives within two days. Order before noon and the clock starts the same day; orders placed after noon ship the following day. There is no minimum and no membership fee.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Which formula should I start with?",
+            "answer": "<p>Most families start with Combiotik, HiPP's everyday organic formula for 0 to 12 months. If your baby struggles with gas, colic or constipation, Comfort is designed for sensitive digestion. For frequent spit up, AR is naturally thickened to help feeds stay down. Always talk to your pediatrician about what is right for your baby.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "How does the subscription work?",
+            "answer": "<p>Subscriptions are available on the 8 pack. Choose a delivery every 7, 8 or 9 weeks, and each shipment arrives within two days, free. You can skip, change cadence, switch formula or cancel anytime from your account.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "How long does a bundle last?",
+            "answer": "<p>It depends on your baby's age and appetite. As a rough guide, a box lasts most formula fed babies about a week, so an 8 pack covers roughly two months. The 7, 8 or 9 week cadence options let you match deliveries to your actual usage.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Where does my formula come from?",
+            "answer": "<p>Every box is sourced directly from HiPP in Germany, never through gray market resellers. We fulfill orders from our hub in Mexico City, which is what lets us ship across the USA in 2 days, hassle free, and we guarantee at least 6 months of shelf life on every box that reaches your door.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Is HiPP formula safe to use in the USA?",
+            "answer": "<p>HiPP is manufactured in Germany under EU organic and infant nutrition regulations, which are among the strictest in the world. Preparation instructions are in English on our included guide, and our team is available to help with any preparation questions.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "What if my baby does not take to it?",
+            "answer": "<p>Talk to us. If HiPP is not working for your baby, our support team will help you switch between our formulas or make it right. We are parents too, and we keep it human.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
