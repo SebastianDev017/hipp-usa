@@ -1,0 +1,191 @@
+{%- comment -%}
+  HiPP USA — página de colección.
+
+  Reemplaza a sections/main-collection.liquid, que cargaba css-main-collection.css
+  (estilos MX), partia el titulo por palabras para meterle un <span> a la ultima,
+  y montaba la grilla con snippets/product-card.liquid (Judge.me + metafields
+  custom.etapa/custom.etiqueta + textos en español).
+
+  Toma la cabecera y el divisor de colinas de la pagina shop del diseño aprobado.
+
+  El orden se resuelve con un <select> dentro de un <form> que hace submit
+  nativo: sin JS igual funciona, que es como debe comportarse un control de
+  catalogo.
+{%- endcomment -%}
+
+{%- liquid
+  assign per_page = section.settings.products_per_page
+  assign has_products = false
+  if collection.products.size > 0
+    assign has_products = true
+  endif
+-%}
+
+<div class="hp-pagehead">
+  <div class="hp-wrap hp-wrap--narrow">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    <h1 class="hp-h1 hp-pagehead__title">{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="hp-pagehead__text">{{ collection.description }}</div>
+    {%- elsif section.settings.fallback_text != blank -%}
+      <p class="hp-pagehead__text">{{ section.settings.fallback_text }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: '#C2D0A4', above: '#F9F7EF', double: true -%}
+{%- endif -%}
+
+{%- paginate collection.products by per_page -%}
+  <section class="hp-section hp-section--tight" data-section-id="{{ section.id }}">
+    <div class="hp-wrap">
+      {%- if has_products -%}
+        <div class="hp-toolbar">
+          <p class="hp-toolbar__count">
+            {{- 'sections.collection_template.product_count' | t: product_count: collection.products.size, count: collection.products_count -}}
+          </p>
+
+          {%- if section.settings.show_sort -%}
+            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+            <form method="get" class="hp-toolbar__sort" id="hp-sort-form">
+              {%- comment -%}
+                Los parametros que ya estaban en la URL (filtros, q) se re-emiten
+                como hidden: un <form method="get"> descarta todo lo que no sea
+                un campo suyo, asi que sin esto ordenar borraria los filtros.
+              {%- endcomment -%}
+              {%- for param in request.url_params -%}
+                {%- unless param.first == 'sort_by' or param.first == 'page' -%}
+                  <input type="hidden" name="{{ param.first | escape }}" value="{{ param.last | escape }}">
+                {%- endunless -%}
+              {%- endfor -%}
+
+              <label for="hp-sort">{{ 'sections.collection_template.sort_by_label' | t }}</label>
+              <select name="sort_by" id="hp-sort" onchange="this.form.submit()">
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>
+                    {{- option.name -}}
+                  </option>
+                {%- endfor -%}
+              </select>
+              <noscript><button type="submit" class="hp-btn hp-btn--sm">{{ 'sections.collection_template.sort_button' | t }}</button></noscript>
+            </form>
+          {%- endif -%}
+        </div>
+
+        <div class="hp-grid" id="ProductGridContainer">
+          {%- for product in collection.products -%}
+            {%- liquid
+              assign badge = ''
+              if product.tags contains 'bestseller'
+                assign badge = section.settings.badge_bestseller
+              endif
+            -%}
+            {%- render 'product-card-usa', product: product, badge: badge -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="hp-pagination" aria-label="{{ 'general.pagination.label' | t | escape }}">
+            {%- if paginate.previous -%}
+              <a class="hp-pagination__link" href="{{ paginate.previous.url }}" rel="prev">
+                {{- 'general.pagination.previous' | t -}}
+              </a>
+            {%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a class="hp-pagination__link" href="{{ part.url }}">{{ part.title }}</a>
+              {%- else -%}
+                <span class="hp-pagination__link is-current" aria-current="page">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a class="hp-pagination__link" href="{{ paginate.next.url }}" rel="next">
+                {{- 'general.pagination.next' | t -}}
+              </a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="hp-empty">
+          <p class="hp-lead">{{ 'sections.collection_template.empty' | t }}</p>
+          <a class="hp-btn hp-btn--clay" href="{{ routes.all_products_collection_url }}">
+            {{- 'general.continue_shopping' | t -}}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endpaginate -%}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ shop.url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ collection.title | json }},
+        "item": {{ shop.url | append: collection.url | json }}
+      }
+    ]
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Colección",
+  "class": "hp-collection-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo",
+      "default": "The whole store, one page"
+    },
+    {
+      "type": "text",
+      "id": "fallback_text",
+      "label": "Texto si la colección no tiene descripción",
+      "default": "Pick a formula, pick a bundle, pick how you want it delivered. Sourced direct from HiPP in Germany, free 2 day shipping, whatever you choose."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hill",
+      "label": "Colina bajo la cabecera",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Selector de orden",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Productos por página",
+      "min": 6,
+      "max": 48,
+      "step": 6,
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "badge_bestseller",
+      "label": "Insignia para la etiqueta bestseller",
+      "info": "Se muestra en los productos con la etiqueta bestseller.",
+      "default": "Most popular"
+    }
+  ]
+}
+{% endschema %}

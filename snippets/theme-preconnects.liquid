@@ -36,10 +36,11 @@ CSS
 <link rel="preload" href="{{ 'js-base.js' | asset_url }}" as="script">
 
 
-{% if template.name == "collection" %}
-  <link rel="preload" href="{{ 'css-main-collection.css' | asset_url }}" as="style">
-  <link rel="preload" href="{{ 'js-main-collection.js' | asset_url }}" as="script">
-{% endif %}
+{%- comment -%}
+  La coleccion ya no precarga css-main-collection.css ni js-main-collection.js:
+  la seccion nueva no los usa y precargar un asset que nadie consume tira el
+  warning "preloaded but not used" y compite por ancho de banda con el LCP.
+{%- endcomment -%}
 
 {% if template.name == "product" %}
   <link rel="preload" href="{{ 'css-main-product.css' | asset_url }}" as="style">

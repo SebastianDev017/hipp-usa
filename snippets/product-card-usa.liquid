@@ -1,0 +1,88 @@
+{%- comment -%}
+  HiPP USA — tarjeta de producto.
+
+  Reemplaza a snippets/product-card.liquid, que estaba atada a la tienda MX:
+  widget de Judge.me, metafields custom.etapa / custom.etiqueta, y los textos
+  "Agotado" y "Detalles del producto" hardcodeados en español.
+
+  Toma la forma de la .f-card del diseño aprobado (shop hipp-usa.html): borde
+  fino, foto 5:3 sobre degradado, titulo serif, linea en cursiva y precio.
+
+  Acepta:
+    product  (producto)  requerido
+    badge    (string)    opcional, insignia arriba a la izquierda
+
+  Uso:
+    {% render 'product-card-usa', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign image = product.featured_image
+  assign hover = product.images[1]
+  assign has_range = false
+  if product.price_varies
+    assign has_range = true
+  endif
+
+  assign subtitle = product.metafields.custom.subtitle.value
+  if subtitle == blank
+    assign subtitle = product.type
+  endif
+-%}
+
+<article class="hp-card">
+  <a class="hp-card__link" href="{{ product.url }}">
+    {%- if badge != blank -%}
+      <span class="hp-card__badge">{{ badge }}</span>
+    {%- endif -%}
+
+    <div class="hp-card__photo">
+      {%- if image != blank -%}
+        <img
+          class="hp-card__img"
+          src="{{ image | image_url: width: 600 }}"
+          srcset="{{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 600 }} 600w, {{ image | image_url: width: 900 }} 900w"
+          sizes="(min-width: 990px) 320px, (min-width: 760px) 45vw, 80vw"
+          alt="{{ image.alt | default: product.title | escape }}"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+          loading="lazy"
+        >
+        {%- if hover != blank -%}
+          <img
+            class="hp-card__img hp-card__img--hover"
+            src="{{ hover | image_url: width: 600 }}"
+            alt=""
+            width="{{ hover.width }}"
+            height="{{ hover.height }}"
+            loading="lazy"
+            aria-hidden="true"
+          >
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'hp-card__img hp-card__img--placeholder' }}
+      {%- endif -%}
+    </div>
+
+    <h3 class="hp-card__title">{{ product.title }}</h3>
+
+    {%- if subtitle != blank -%}
+      <p class="hp-card__for">{{ subtitle }}</p>
+    {%- endif -%}
+
+    <p class="hp-card__price">
+      {%- if product.available -%}
+        {%- if has_range -%}
+          {{ 'sections.collection_template.from' | t }} {{ product.price_min | money }}
+        {%- else -%}
+          {{ product.price | money }}
+        {%- endif -%}
+        {%- if product.compare_at_price_max > product.price_min -%}
+          <s class="hp-card__was">{{ product.compare_at_price_max | money }}</s>
+        {%- endif -%}
+      {%- else -%}
+        <span class="hp-card__soldout">{{ 'products.product.sold_out' | t }}</span>
+      {%- endif -%}
+    </p>
+  </a>
+</article>

@@ -1251,7 +1251,228 @@
 }
 
 /* ==========================================================================
-   16. Utilidades
+   16. Colección / catálogo
+   ========================================================================== */
+
+.hp-pagehead {
+  padding: 44px 0 8px;
+}
+
+.hp-pagehead__title {
+  font-size: clamp(34px, 8vw, 54px);
+  max-width: 18ch;
+}
+
+.hp-pagehead__text {
+  color: var(--ink-soft);
+  margin-top: 14px;
+  max-width: 46ch;
+}
+
+.hp-pagehead__text > p {
+  margin: 0;
+}
+
+.hp-pagehead__text > p + p {
+  margin-top: 10px;
+}
+
+.hp-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding-bottom: 22px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--hairline-color);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.hp-toolbar__sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hp-toolbar__sort select {
+  font-family: var(--font-body-medium);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--cream);
+  border: 1.5px solid var(--hairline-color);
+  border-radius: var(--radius-pill);
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
+.hp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.hp-card {
+  border: 1.5px solid var(--hairline-color);
+  border-radius: var(--radius-card);
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.hp-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--clay);
+  box-shadow: var(--shadow-card);
+}
+
+.hp-card__link {
+  display: block;
+  padding: 18px;
+  position: relative;
+  color: var(--ink);
+}
+
+.hp-card__badge {
+  position: absolute;
+  top: -10px;
+  left: 18px;
+  background: var(--clay);
+  color: var(--cream);
+  font-family: var(--font-body-semibold);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.hp-card__photo {
+  position: relative;
+  aspect-ratio: 5 / 3;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  background: radial-gradient(120% 120% at 50% 0%, #fdfbf2, #e9ebd8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hp-card__img {
+  width: auto;
+  height: 92%;
+  max-width: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 14px rgba(35, 42, 30, 0.16));
+  transition: transform 0.5s var(--hp-ease), opacity 0.35s ease;
+}
+
+.hp-card:hover .hp-card__img {
+  transform: scale(1.06);
+}
+
+/* Segunda imagen: se apila encima y aparece en hover. Solo entra al DOM si el
+   producto tiene una segunda imagen, asi que no hay caso vacio. */
+.hp-card__img--hover {
+  position: absolute;
+  inset: 4% 5%;
+  width: 90%;
+  height: 92%;
+  margin: auto;
+  opacity: 0;
+}
+
+.hp-card:hover .hp-card__img--hover {
+  opacity: 1;
+}
+
+.hp-card__img--placeholder {
+  width: 70%;
+  height: auto;
+  fill: rgba(35, 42, 30, 0.16);
+  filter: none;
+}
+
+.hp-card__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.hp-card__for {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--clay);
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+.hp-card__price {
+  font-family: var(--font-body-semibold);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 10px;
+}
+
+.hp-card__was {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.hp-card__soldout {
+  color: var(--sold-out-color);
+}
+
+.hp-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 44px;
+}
+
+.hp-pagination__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--hairline-color);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.hp-pagination__link:hover {
+  border-color: var(--clay);
+  color: var(--ink);
+}
+
+.hp-pagination__link.is-current {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--cream);
+}
+
+.hp-empty {
+  padding: 60px 0 80px;
+  text-align: center;
+}
+
+.hp-empty .hp-lead {
+  margin: 0 auto 24px;
+}
+
+/* ==========================================================================
+   17. Utilidades
    ========================================================================== */
 
 /* Skip link: fuera de pantalla hasta que recibe foco por teclado. */
@@ -1289,7 +1510,7 @@
 }
 
 /* ==========================================================================
-   17. Movimiento reducido
+   18. Movimiento reducido
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1310,7 +1531,7 @@
 }
 
 /* ==========================================================================
-   18. Desktop
+   19. Desktop
    ========================================================================== */
 
 @media (min-width: 760px) {
@@ -1342,6 +1563,15 @@
 
   .hp-tl {
     grid-template-columns: 120px 1fr;
+  }
+
+  .hp-pagehead {
+    padding: 64px 0 12px;
+  }
+
+  .hp-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 
   .hp-sticky {

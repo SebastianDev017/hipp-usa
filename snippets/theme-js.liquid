@@ -30,9 +30,13 @@
 <script src="{{ 'hipp-cart.js' | asset_url }}" defer></script>
 <script src="{{ 'hipp-usa.js' | asset_url }}" defer></script>
 
-{%- if template.name == 'collection' -%}
-  <script src="{{ 'js-main-collection.js' | asset_url }}" defer></script>
-{%- endif -%}
+{%- comment -%}
+  js-main-collection.js quedo fuera: su unico trabajo era el sort custom de
+  snippets/main-collection-custom-sort.liquid, que ya no se renderiza. La
+  seccion nueva (main-collection-usa) ordena con un <form method="get"> nativo,
+  asi que tambien funciona sin JS. Es un entry chunk de webpack: no cargarlo no
+  afecta a los demas (lo que no se puede tocar es el chunk `commons`).
+{%- endcomment -%}
 
 {%- if template.name == 'product' -%}
   <script src="{{ 'js-main-product.js' | asset_url }}" defer></script>
