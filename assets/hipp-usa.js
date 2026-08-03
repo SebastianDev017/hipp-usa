@@ -40,15 +40,21 @@
      Reveals
      --------------------------------------------------------------------- */
   function initReveals() {
+    // El escalonado NO va como transition-delay inline. Un transition-delay
+    // inline le gana al stylesheet, se aplica a TODAS las transiciones del
+    // elemento (no solo a las del reveal) y no se limpia nunca: la tercera
+    // tarjeta de una grilla quedaba con 220 ms de retardo tambien en el hover,
+    // para siempre. Se guarda el retardo como dato y se escalona el momento en
+    // que se agrega la clase.
     var groups = document.querySelectorAll('[data-hp-stagger]');
     groups.forEach(function (group) {
       Array.prototype.forEach.call(group.children, function (child, i) {
         child.classList.add('hp-reveal');
-        child.style.transitionDelay = i * 110 + 'ms';
+        child.dataset.hpDelay = i * 110;
       });
     });
 
-    var targets = document.querySelectorAll('.hp-reveal');
+    var targets = document.querySelectorAll('.hp-reveal:not(.is-in)');
     if (!targets.length) return;
 
     if (!('IntersectionObserver' in window) || reduceMotion) {
@@ -62,8 +68,14 @@
       function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-in');
-          io.unobserve(entry.target);
+          var el = entry.target;
+          io.unobserve(el);
+          var delay = parseInt(el.dataset.hpDelay || 0, 10);
+          if (delay > 0) {
+            setTimeout(function () { el.classList.add('is-in'); }, delay);
+          } else {
+            el.classList.add('is-in');
+          }
         });
       },
       { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
@@ -99,6 +111,13 @@
 
   function onScroll() {
     scroll.ticking = false;
+
+    // Si en el editor se borra u oculta el hero, no llega ningun
+    // shopify:section:load posterior y scroll.hero queda apuntando a un nodo
+    // desconectado: offsetTop y offsetHeight dan 0 y el CTA fijo aparecia desde
+    // el primer pixel de scroll. Se re-resuelve y cae al umbral sin hero.
+    if (scroll.hero && !document.contains(scroll.hero)) refreshScrollRefs();
+
     var y = window.scrollY || window.pageYOffset;
 
     if (scroll.progress) {
@@ -143,6 +162,14 @@
      Navegacion movil
      --------------------------------------------------------------------- */
   function initMobileNav() {
+    // Reconciliacion ANTES del early-return: si el editor reinyecta el header
+    // con el panel abierto, el nodo viejo se va y con el su close(), asi que el
+    // bloqueo de scroll quedaria colgado en <html> y la pagina no scrollearia
+    // mas. El panel nuevo siempre llega cerrado.
+    if (!document.querySelector('[data-hp-mobilenav].is-open')) {
+      document.documentElement.classList.remove('hp-scroll-lock');
+    }
+
     var panel = document.querySelector('[data-hp-mobilenav]');
     var opener = document.querySelector('[data-hp-mobilenav-open]');
     if (!panel || !opener || panel.dataset.hpBound) return;
@@ -220,19 +247,29 @@
   /* ---------------------------------------------------------------------
      Rotacion del announcement
      --------------------------------------------------------------------- */
+  // El guard no puede ser un dataset sobre el nodo: shopify:section:load
+  // devuelve markup fresco del servidor, sin el atributo, asi que cada
+  // reinyeccion arrancaba un timer nuevo encima del anterior y los mensajes
+  // empezaban a saltar cada vez mas rapido. El id vive en el modulo.
+  var announceTimer = null;
+
   function initAnnounce() {
+    if (announceTimer) {
+      clearInterval(announceTimer);
+      announceTimer = null;
+    }
+
     var slides = document.querySelector('[data-hp-announce-slides]');
-    if (!slides || reduceMotion || slides.dataset.hpBound) return;
+    if (!slides || reduceMotion) return;
 
     var items = slides.querySelectorAll('.hp-announce__text');
     if (items.length < 2) return;
-    slides.dataset.hpBound = '1';
 
     var speed = parseInt(slides.getAttribute('data-speed'), 10);
     if (!speed || speed < 2000) speed = 6000;
 
     var index = 0;
-    setInterval(function () {
+    announceTimer = setInterval(function () {
       items[index].classList.remove('is-active');
       index = (index + 1) % items.length;
       items[index].classList.add('is-active');

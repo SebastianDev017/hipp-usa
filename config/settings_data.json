@@ -112,13 +112,21 @@
               "label": "FAQ",
               "url": "/#faq"
             }
+          },
+          "foot-contact": {
+            "type": "link",
+            "settings": {
+              "label": "Contact",
+              "url": "mailto:hello@thisishipp.com"
+            }
           }
         },
         "block_order": [
           "foot-shop",
           "foot-about",
           "foot-subscription",
-          "foot-faq"
+          "foot-faq",
+          "foot-contact"
         ],
         "settings": {
           "wordmark_text": "hipp",

@@ -1,10 +1,12 @@
 {%- comment -%}
   HiPP USA — las tres fórmulas.
 
-  Cada bloque puede apuntar a un producto real. Si lo hace, la imagen, el precio
-  y el enlace salen del producto; si no, de los settings del bloque. Esa doble
-  via es a proposito: la tienda todavia no tiene productos cargados y la home
-  tiene que verse terminada igual, sin referencias rotas.
+  Cada bloque puede apuntar a un producto real. La precedencia es BLOCK-FIRST:
+  lo que escribas en el bloque manda, y el producto solo rellena los campos que
+  dejes vacios (imagen, precio, enlace, titulo). Es a proposito: la tienda
+  todavia no tiene productos cargados y la home tiene que verse terminada igual,
+  sin referencias rotas, pero el cliente tambien tiene que poder pisar un texto
+  puntual sin desconectar el producto.
 
   ORDEN DE RESOLUCION DE LA IMAGEN
     1. imagen del bloque (image_picker)
@@ -52,7 +54,31 @@
 
             assign price = block.settings.price
             if price == blank and product != blank
-              assign price = product.price_min | money_without_trailing_zeros
+              comment
+                La tarjeta dice "From $X / box", pero product.price_min es el
+                precio del BUNDLE mas barato: con el catalogo real (4 cajas a
+                $116) imprimiria "From $116 / box". Se deriva el precio POR CAJA
+                dividiendo el precio de cada variante por su cantidad de cajas,
+                que es el valor de option1 ("4", "8", "16"). Si esa opcion no es
+                numerica (producto sin bundles), boxes queda en 0, no se toma
+                ninguna variante y cae al comportamiento anterior.
+              endcomment
+              assign per_box = 0
+              for variant in product.variants
+                assign boxes = variant.option1 | times: 1
+                if boxes > 0
+                  assign unit = variant.price | divided_by: boxes
+                  if per_box == 0 or unit < per_box
+                    assign per_box = unit
+                  endif
+                endif
+              endfor
+
+              if per_box > 0
+                assign price = per_box | money_without_trailing_zeros
+              else
+                assign price = product.price_min | money_without_trailing_zeros
+              endif
             endif
           -%}
 
@@ -171,7 +197,7 @@
           "type": "product",
           "id": "product",
           "label": "Producto",
-          "info": "Si lo elegís, la imagen, el precio y el enlace salen de acá."
+          "info": "Rellena solo los campos que dejes vacíos: imagen, precio, enlace y título."
         },
         {
           "type": "text",
@@ -224,7 +250,7 @@
           "type": "text",
           "id": "price",
           "label": "Precio manual",
-          "info": "Se ignora si elegiste un producto."
+          "info": "Si lo dejás vacío, se calcula el precio por caja del producto elegido."
         },
         {
           "type": "text",

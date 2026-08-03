@@ -23,7 +23,7 @@
     {%- endif -%}
 
     {%- if options.size > 0 -%}
-      <div class="hp-cadence hp-reveal">
+      <div class="hp-cadence hp-reveal" data-hp-stagger>
         {%- for block in options -%}
           <div class="hp-cadence__card" {{ block.shopify_attributes }}>
             <div class="hp-cadence__wk">{{ block.settings.number }}</div>

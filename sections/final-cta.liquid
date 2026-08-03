@@ -16,10 +16,17 @@
     {%- if section.settings.text != blank -%}
       <p class="hp-final__text hp-reveal">{{ section.settings.text }}</p>
     {%- endif -%}
+    {%- comment -%}
+      El hp-reveal va en un wrapper y NO en el propio boton: .hp-reveal.is-in
+      declara transform:none y le ganaria al translateY(-1px) del hover, dejando
+      el boton sin respuesta al pasar el mouse.
+    {%- endcomment -%}
     {%- if section.settings.button_label != blank -%}
-      <a class="hp-btn hp-btn--clay hp-reveal" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
-        {{- section.settings.button_label -}}
-      </a>
+      <div class="hp-reveal">
+        <a class="hp-btn hp-btn--clay" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+          {{- section.settings.button_label -}}
+        </a>
+      </div>
     {%- endif -%}
   </div>
 </section>

@@ -23,9 +23,33 @@
   --header-height: 64px;
   --announcement-bar-height: 0px;
 
+  /* theme.css declara scroll-behavior:smooth dentro de `body`, pero el CSSOM
+     View Module dice explicitamente que scroll-behavior del body NO se propaga
+     al viewport (a diferencia de overflow) y tampoco se hereda. Sin esta linea
+     el scroll suave de los anchors del menu nunca se activaba. */
+  scroll-behavior: smooth;
+
+  /* .hp-sticky es fixed abajo y mide ~60px en movil: sin esto, cuando el
+     navegador desplaza para mostrar el elemento que acaba de recibir foco, lo
+     deja pegado al borde inferior y la barra lo tapa entero (WCAG 2.4.11). */
+  scroll-padding-bottom: calc(72px + env(safe-area-inset-bottom));
+
   --hp-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --hp-wrap: 1100px;
   --hp-gutter: 22px;
+}
+
+/* El diseno aprobado apoya TODO su texto en `body{line-height:1.6}`. Aca no se
+   puede declarar en body: css-base.css son ~850 reglas escritas asumiendo
+   `normal` y se filtraria a todo el tema viejo. Se declara en los contenedores
+   raiz de la capa nueva, que es exactamente el mismo alcance. Los line-height
+   propios (titulos en 1.08, etc.) siguen ganando por especificidad de elemento. */
+.hp-wrap,
+.hp-nav__inner,
+.hp-mobilenav__panel,
+.hp-sticky,
+.hp-announce {
+  line-height: 1.6;
 }
 
 /* ==========================================================================
@@ -76,6 +100,15 @@
 .hp-h1 em {
   font-style: italic;
   color: var(--clay);
+}
+
+/* La regla de arriba apunta al <em>, no al <h2>, asi que los overrides de
+   seccion oscura (.hp-night .hp-h2 / .hp-ship .hp-h2) no la alcanzan: el
+   italico se quedaba en --clay, que sobre --ink da 2.62:1 y sobre el propio
+   --clay da 1:1 (invisible). --accent-light da 10.56:1 y 4.02:1. */
+.hp-night .hp-h2 em,
+.hp-ship .hp-h2 em {
+  color: var(--accent-light);
 }
 
 .hp-h2 strong {
@@ -156,15 +189,25 @@
   width: 100%;
 }
 
-/* ---- Reveal ---- */
-.hp-reveal {
+/* ---- Reveal ----
+   La clase va DUPLICADA a proposito. Con una sola clase, cualquier componente
+   que declare su propio `transition` shorthand y aparezca despues en el archivo
+   gana por orden de cascada y anula el fade: .hp-prod (transform + box-shadow)
+   dejaba a las tres tarjetas de formula entrando de golpe, sin fundido.
+   Duplicar sube la especificidad a (0,2,0) y ninguna regla de componente de una
+   sola clase puede pisarla.
+
+   Corolario: NUNCA poner hp-reveal sobre un .hp-btn. El `transform:none` del
+   estado final le gana al translateY(-1px) del hover y el boton queda muerto.
+   Va sobre un wrapper, que es como lo resuelven bundle-tiers y final-cta. */
+.hp-reveal.hp-reveal {
   opacity: 0;
   transform: translateY(30px);
   filter: blur(4px);
   transition: opacity 0.8s var(--hp-ease), transform 0.8s var(--hp-ease), filter 0.8s ease;
 }
 
-.hp-reveal.is-in {
+.hp-reveal.hp-reveal.is-in {
   opacity: 1;
   transform: none;
   filter: none;
@@ -272,7 +315,10 @@
 
 @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
   .hp-nav {
-    background: rgba(249, 247, 239, 0.82);
+    /* 0.92, no 0.82: el header es sticky y se superpone a .hp-night y al
+       footer. Con 0.82 el compuesto sobre --ink dejaba los links en 4.35:1,
+       debajo de AA. Con 0.92 quedan en 5.31:1 y el blur sigue leyendose. */
+    background: rgba(249, 247, 239, 0.92);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
@@ -489,8 +535,12 @@
   max-width: 44ch;
 }
 
-.hp-hero__lead > p {
+.hp-hero__lead > p:first-child {
   margin: 0;
+}
+
+.hp-hero__lead > p + p {
+  margin-top: 12px;
 }
 
 .hp-hero__ctas {
@@ -966,7 +1016,9 @@
 .hp-tl p {
   font-size: 14px;
   line-height: 1.6;
-  color: rgba(250, 246, 239, 0.88);
+  /* 0.88 daba 4.47:1 sobre --clay, apenas debajo de AA. 0.9 da 4.59:1 y
+     ademas iguala a .hp-ship .hp-kicker y .hp-ship .hp-lead. */
+  color: rgba(250, 246, 239, 0.9);
 }
 
 /* ==========================================================================
@@ -1089,10 +1141,10 @@
   font-family: var(--font-display);
   font-style: italic;
   font-size: 19px;
-  line-height: 1.5;
-  color: var(--ink);
-  margin: 0 auto 12px;
-  max-width: 44ch;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 auto 34px;
+  max-width: 40ch;
 }
 
 .hp-final__text {
@@ -1142,6 +1194,10 @@
   line-height: 1.7;
   color: rgba(250, 246, 239, 0.6);
   max-width: 70ch;
+}
+
+.hp-footer__legal > p + p {
+  margin-top: 10px;
 }
 
 .hp-footer__bottom {
@@ -1845,6 +1901,19 @@
 
 .hp-rte a {
   text-decoration: underline;
+}
+
+/* El anillo de foco global (hipp-tokens.css) es --clay, que sobre --ink da
+   2.62:1 y sobre el propio --clay 1:1: por debajo del 3:1 que pide WCAG 1.4.11
+   para indicadores no textuales. Sobre --ink, --cream da 13.8:1; sobre --clay,
+   5.25:1. La especificidad (0,2,0) le gana a la (0,1,0) de hipp-tokens.css. */
+.hp-footer :where(a, button, [role="button"], summary):focus-visible,
+.hp-announce :where(a, button):focus-visible,
+.hp-night :where(a, button, summary):focus-visible,
+.hp-ship :where(a, button, summary):focus-visible,
+.hp-summary :where(a, button):focus-visible,
+.hp-mobilenav :where(a, button):focus-visible {
+  outline-color: var(--cream);
 }
 
 /* ==========================================================================
