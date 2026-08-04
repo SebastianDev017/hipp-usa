@@ -182,7 +182,29 @@ Whale, Judge.me). Eso es limpieza deseable, no hay que revertirlo.
 
 ---
 
-## 5. `templates/customers/*.liquid` es código muerto
+## 5. La tienda todavía no puede vender en Estados Unidos
+
+Medido en el checkout real (2026-08-03): el selector de país tiene **una sola
+opción, México**, los estados son los mexicanos, la moneda es **MXN** y el
+locale de la URL es `en-mx`. Un cliente en Estados Unidos **no puede terminar
+una compra**.
+
+No es del tema: el checkout lo sirve Shopify. Se arregla en el admin
+(Configuración → Envíos y entregas, y Mercados). Es el bloqueante más grande que
+queda para lanzar.
+
+Nota sobre el error *"There was a problem with our checkout"*: se reprodujo una
+vez y no se pudo volver a reproducir en cinco escenarios distintos
+(suscripción ×1, ×2, ×3, compra única ×3, y dos planes distintos del mismo
+producto en el mismo carrito). El mensaje de Shopify dice *"Refresh this page or
+try again in a few minutes"* y trae un Request ID: es su banner de fallo
+transitorio, y apareció justo en una ventana en la que la tienda estaba
+devolviendo 429 por rate limit. Si vuelve a pasar, **el Request ID es lo que
+pide el soporte de Shopify**.
+
+---
+
+## 6. `templates/customers/*.liquid` es código muerto
 
 La tienda usa las **cuentas de cliente nuevas** de Shopify: el ícono de cuenta
 del header lleva a `shopify.com/authentication/<id>/login`, hospedado por
@@ -195,7 +217,7 @@ el admin (Configuración → Cuentas de clientes), no desde el tema.
 
 ---
 
-## 6. Modelo de datos de la tienda
+## 7. Modelo de datos de la tienda
 
 - Opción de variante: **`Boxes`** con valores `4` / `8` / `16` (en hipp.mx es
   `Número de cajas`). El PDP es agnóstico al nombre: con una sola opción los
