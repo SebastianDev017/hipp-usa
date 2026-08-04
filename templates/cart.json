@@ -1,1 +1,48 @@
-{"sections":{"cart":{"type":"main-cart","settings":{"note_enabled":false}}},"order":["cart"]}
+{
+  "sections": {
+    "main-cart": {
+      "type": "main-cart-usa",
+      "blocks": {
+        "trust-1": {
+          "type": "trust",
+          "settings": {
+            "title": "Free 2 day shipping",
+            "text": "on every order, no minimum"
+          }
+        },
+        "trust-2": {
+          "type": "trust",
+          "settings": {
+            "title": "Direct from HiPP",
+            "text": "EU organic, made in Germany"
+          }
+        },
+        "trust-3": {
+          "type": "trust",
+          "settings": {
+            "title": "Always fresh",
+            "text": "6+ months of shelf life on every box"
+          }
+        }
+      },
+      "block_order": ["trust-1", "trust-2", "trust-3"],
+      "settings": {
+        "kicker": "Your bag",
+        "heading": "Almost there.",
+        "each_label": "each",
+        "summary_title": "Order summary",
+        "shipping_label": "2 day shipping",
+        "shipping_value": "Free",
+        "total_label": "Total",
+        "checkout_label": "Checkout, at your door in 2 days",
+        "summary_note": "Order by noon and it arrives within 2 days.",
+        "continue_label": "Keep shopping",
+        "show_note": false,
+        "note_label": "Anything we should know?",
+        "empty_heading": "Your bag is empty.",
+        "empty_text": "<p>Pick a formula and a bundle size, and we will have it at your door in 2 days.</p>"
+      }
+    }
+  },
+  "order": ["main-cart"]
+}

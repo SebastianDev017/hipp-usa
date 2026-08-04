@@ -2061,3 +2061,447 @@
     top: calc(var(--header-height) + 24px);
   }
 }
+
+/* ==========================================================================
+   22. Carrito (pagina /cart)
+   --------------------------------------------------------------------------
+   Las lineas del drawer (.hipp-line, en hipp-cart.css) estan escritas para
+   fondo oscuro: texto en --cream y hairlines en rgba(cream,.12). Aca el fondo
+   es --cream, asi que se usan clases propias (.hp-cline) en vez de sobreescribir
+   una docena de colores. Lo unico que SI se reusa es el stepper .hipp-qty, que
+   solo necesita tres overrides de color.
+   ========================================================================== */
+
+.hp-cart {
+  background: var(--cream);
+  padding: 36px 0 84px;
+  line-height: 1.6;
+}
+
+.hp-cart__head {
+  margin-bottom: 28px;
+}
+
+.hp-cart__title {
+  margin-bottom: 0;
+}
+
+/* ---- grilla ---- */
+
+.hp-cart__grid {
+  display: grid;
+  gap: 32px;
+}
+
+.hp-cart__items {
+  list-style: none;
+  margin: 0;
+  padding: 0 22px;
+  background: #fff;
+  border: var(--hairline);
+  border-radius: var(--radius-card);
+}
+
+/* ---- linea ---- */
+
+.hp-cline {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  gap: 4px 16px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--hairline-color);
+}
+
+.hp-cline:last-child {
+  border-bottom: 0;
+}
+
+.hp-cline__media {
+  grid-row: span 2;
+  display: block;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  background: radial-gradient(120% 120% at 50% 0%, #fdfbf2, #e9ebd8);
+}
+
+.hp-cline__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+}
+
+.hp-cline__info {
+  min-width: 0;
+}
+
+.hp-cline__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 19px;
+  line-height: 1.2;
+  color: var(--ink);
+  text-decoration: none;
+  /* Un titulo largo sin espacios desborda la columna 1fr en 375px. */
+  overflow-wrap: anywhere;
+}
+
+.hp-cline__title:hover {
+  color: var(--clay);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hp-cline__meta,
+.hp-cline__props {
+  margin: 5px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.hp-cline__plan {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--clay);
+}
+
+.hp-cline__discounts {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body-semibold);
+  font-size: 13px;
+  color: var(--clay);
+}
+
+.hp-cline__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+/* Padding vertical para llegar al minimo de area tactil sin agrandar el texto. */
+.hp-cline__remove {
+  padding: 8px 2px;
+  background: none;
+  border: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.hp-cline__remove:hover {
+  color: var(--ink);
+}
+
+.hp-cline__price {
+  grid-column: 3;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.hp-cline__price-was {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.hp-cline__price-now {
+  font-family: var(--font-body-semibold);
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.hp-cline__price-unit {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+/* ---- stepper reusado del drawer ---- */
+
+.hp-cart .hipp-qty {
+  border-color: var(--hairline-color);
+  background: var(--cream);
+}
+
+.hp-cart .hipp-qty__btn,
+.hp-cart .hipp-qty__input {
+  color: var(--ink);
+}
+
+.hp-cart .hipp-qty__btn:hover {
+  background: var(--cream-2);
+}
+
+/* ---- fila de acciones bajo la lista ---- */
+
+.hp-cart__under {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+/* El boton Update solo existe para navegadores sin JS: con JS el stepper aplica
+   el cambio solo. El swap no-js -> js pasa en el <head> del layout, asi que no
+   hay parpadeo. */
+html.js .hp-cart__update {
+  display: none;
+}
+
+.hp-cart__update {
+  padding: 10px 20px;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-body-semibold);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.hp-cart__continue {
+  color: var(--ink-soft);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hp-cart__continue:hover {
+  color: var(--ink);
+}
+
+/* ---- nota ---- */
+
+.hp-cart__note {
+  margin-top: 26px;
+}
+
+.hp-cart__note-label {
+  display: block;
+  font-family: var(--font-body-semibold);
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.hp-cart__note-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: var(--hairline);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.hp-cart__note-input:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}
+
+/* ---- resumen ---- */
+
+.hp-csum {
+  background: #fff;
+  border: var(--hairline);
+  border-radius: var(--radius-card);
+  padding: 24px 22px;
+  box-shadow: var(--shadow-card);
+}
+
+.hp-csum__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+.hp-csum__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 15px;
+  color: var(--ink-soft);
+  padding: 7px 0;
+}
+
+.hp-csum__free {
+  font-family: var(--font-body-semibold);
+  color: var(--clay);
+}
+
+.hp-csum__row--save span:last-child {
+  font-family: var(--font-body-semibold);
+  color: var(--clay);
+}
+
+.hp-csum__row--total {
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: var(--hairline);
+  font-family: var(--font-body-semibold);
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.hp-csum__taxes {
+  margin: 10px 0 18px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.hp-csum__taxes a {
+  color: var(--clay);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.hp-csum__note {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.hp-csum__trust {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 18px 0 0;
+  border-top: var(--hairline);
+  display: grid;
+  gap: 10px;
+}
+
+.hp-csum__trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.hp-csum__trust-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--clay);
+}
+
+.hp-csum__trust-item strong {
+  font-family: var(--font-body-semibold);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.hp-csum__trust-item em {
+  font-style: normal;
+}
+
+.hp-csum__trust-item strong + em::before {
+  content: " - ";
+}
+
+/* El error reusa la clase del drawer, que esta pintada para fondo oscuro
+   (color: --cream). Sobre el cream de la pagina quedaba texto blanco sobre
+   blanco. */
+.hp-cart .hipp-drawer__error {
+  margin: 0 0 24px;
+  background: rgba(168, 82, 56, 0.12);
+  color: #7a3a25;
+}
+
+/* ---- vacio ---- */
+
+.hp-cart__empty {
+  padding: 40px 0 20px;
+  text-align: center;
+}
+
+.hp-cart__empty .hp-kicker {
+  margin-bottom: 12px;
+}
+
+.hp-cart__empty-title,
+.hp-cart__empty-text {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hp-cart__empty-text {
+  max-width: 46ch;
+}
+
+.hp-cart__empty-cta {
+  margin-top: 26px;
+}
+
+/* ---- movil angosto ---- */
+
+@media (max-width: 520px) {
+  .hp-cline {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .hp-cline__media {
+    grid-row: span 1;
+  }
+
+  /* El precio pasa a la fila de abajo, alineado con el texto, para que el
+     titulo no quede aplastado en una columna de ~120px. */
+  .hp-cline__price {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .hp-cline__price-unit {
+    display: inline;
+    margin-left: 8px;
+  }
+}
+
+/* ---- desktop ---- */
+
+@media (min-width: 900px) {
+  .hp-cart {
+    padding: 48px 0 96px;
+  }
+
+  .hp-cart__grid {
+    grid-template-columns: minmax(0, 1fr) 348px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* El resumen acompana el scroll de una lista larga. top compensa el header
+     sticky, cuya altura real la mide hipp-usa.js. */
+  .hp-cart__aside {
+    position: sticky;
+    top: calc(var(--header-height) + 24px);
+  }
+
+  .hp-cart__items {
+    padding: 0 28px;
+  }
+}

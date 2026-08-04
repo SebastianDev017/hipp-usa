@@ -1,0 +1,418 @@
+{%- comment -%}
+  HiPP USA — pagina de carrito.
+
+  Reemplaza a sections/main-cart.liquid, que arrastraba css-main-cart.css y
+  js-main-cart.js (dos bundles de webpack en modo desarrollo) y una tabla de tres
+  columnas escrita contra el markup del tema mexicano.
+
+  DOS CAMINOS, A PROPOSITO:
+
+  1. SIN JAVASCRIPT la pagina sigue siendo funcional. Las cantidades son
+     `updates[]` posicionales dentro del form que apunta a {{ routes.cart_url }},
+     el boton "Update" aplica los cambios y "Remove" es un <a> a
+     /cart/change?line=N&quantity=0. `updates[]` va por POSICION, no por id de
+     variante: dos lineas de la misma variante con planes de suscripcion
+     distintos son lineas distintas y por id se pisarian.
+
+  2. CON JAVASCRIPT, hipp-cart.js intercepta los mismos data-attributes que usa
+     el drawer ([data-key], [data-hipp-qty-*], [data-hipp-remove]) y re-renderiza
+     ESTA seccion por la Section Rendering API. Por eso el contenedor lleva
+     data-hipp-cart-page y data-section-id: el JS necesita el id para pedirla.
+
+  El boton "Update" se esconde con `html.js`, que ya existe en el tema base
+  (layout/theme.liquid linea 8 hace el swap no-js -> js en el <head>), asi que no
+  hay parpadeo.
+{%- endcomment -%}
+
+{%- liquid
+  assign continue_label = section.settings.continue_label
+  if continue_label == blank
+    assign continue_label = settings.continue_shopping_button_label
+  endif
+
+  assign continue_link = section.settings.continue_link
+  if continue_link == blank
+    assign continue_link = settings.continue_shopping_button_link
+  endif
+  if continue_link == blank
+    assign continue_link = routes.all_products_collection_url
+  endif
+-%}
+
+<div
+  class="hp-cart"
+  data-hipp-cart-page
+  data-section-id="{{ section.id }}"
+  data-item-count="{{ cart.item_count }}"
+>
+  <div class="hp-wrap">
+    {%- if cart.item_count == 0 -%}
+      <div class="hp-cart__empty">
+        <p class="hp-kicker">{{ section.settings.kicker }}</p>
+        <h1 class="hp-h2 hp-cart__empty-title">{{ section.settings.empty_heading }}</h1>
+        {%- if section.settings.empty_text != blank -%}
+          <div class="hp-lead hp-cart__empty-text">{{ section.settings.empty_text }}</div>
+        {%- endif -%}
+        <div class="hp-cart__empty-cta">
+          <a class="hp-btn" href="{{ continue_link }}">{{ continue_label }}</a>
+        </div>
+      </div>
+
+    {%- else -%}
+      <header class="hp-cart__head">
+        <p class="hp-kicker">{{ section.settings.kicker }}</p>
+        <h1 class="hp-h2 hp-cart__title">{{ section.settings.heading }}</h1>
+      </header>
+
+      <form
+        action="{{ routes.cart_url }}"
+        method="post"
+        novalidate
+        class="hp-cart__form"
+        id="HippCartForm"
+      >
+        <div class="hp-cart__grid">
+          <div class="hp-cart__main">
+            <ul class="hp-cart__items" role="list">
+              {%- for item in cart.items -%}
+                <li class="hp-cline" data-key="{{ item.key }}">
+                  <a class="hp-cline__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                    {%- if item.image -%}
+                      <img
+                        src="{{ item.image | image_url: width: 240 }}"
+                        srcset="{{ item.image | image_url: width: 240 }} 240w, {{ item.image | image_url: width: 480 }} 480w"
+                        sizes="112px"
+                        alt=""
+                        width="240"
+                        height="240"
+                        loading="lazy"
+                      >
+                    {%- endif -%}
+                  </a>
+
+                  <div class="hp-cline__info">
+                    <a class="hp-cline__title" href="{{ item.url }}">{{ item.product.title }}</a>
+
+                    {%- unless item.variant.title contains 'Default' -%}
+                      <p class="hp-cline__meta">
+                        {%- for option in item.options_with_values -%}
+                          {{ option.name }}: {{ option.value }}{% unless forloop.last %} · {% endunless %}
+                        {%- endfor -%}
+                      </p>
+                    {%- endunless -%}
+
+                    {%- if item.selling_plan_allocation -%}
+                      <p class="hp-cline__plan">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                    {%- endif -%}
+
+                    {%- assign has_props = false -%}
+                    {%- for prop in item.properties -%}
+                      {%- assign first_char = prop.first | slice: 0 -%}
+                      {%- unless first_char == '_' or prop.last == blank -%}
+                        {%- assign has_props = true -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
+                    {%- if has_props -%}
+                      <ul class="hp-cline__props" role="list">
+                        {%- for prop in item.properties -%}
+                          {%- assign first_char = prop.first | slice: 0 -%}
+                          {%- unless first_char == '_' or prop.last == blank -%}
+                            <li>{{ prop.first }}: {{ prop.last }}</li>
+                          {%- endunless -%}
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+
+                    {%- if item.line_level_discount_allocations.size > 0 -%}
+                      <ul class="hp-cline__discounts" role="list">
+                        {%- for allocation in item.line_level_discount_allocations -%}
+                          <li>{{ allocation.discount_application.title }} (&minus;{{ allocation.amount | money }})</li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+
+                    <div class="hp-cline__controls">
+                      <div class="hipp-qty" data-hipp-qty>
+                        <button
+                          type="button"
+                          class="hipp-qty__btn"
+                          data-hipp-qty-down
+                          aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
+                        >&minus;</button>
+                        <input
+                          class="hipp-qty__input"
+                          type="number"
+                          inputmode="numeric"
+                          min="0"
+                          step="1"
+                          name="updates[]"
+                          value="{{ item.quantity }}"
+                          data-hipp-qty-input
+                          aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
+                        >
+                        <button
+                          type="button"
+                          class="hipp-qty__btn"
+                          data-hipp-qty-up
+                          aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
+                        >+</button>
+                      </div>
+
+                      <a
+                        class="hp-cline__remove"
+                        href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0"
+                        data-hipp-remove
+                        aria-label="{{ 'sections.cart.remove_title' | t: title: item.title }}"
+                      >{{ 'sections.cart.remove' | t }}</a>
+                    </div>
+                  </div>
+
+                  <div class="hp-cline__price">
+                    {%- if item.original_line_price > item.final_line_price -%}
+                      <s class="hp-cline__price-was">{{ item.original_line_price | money }}</s>
+                    {%- endif -%}
+                    <span class="hp-cline__price-now">{{ item.final_line_price | money }}</span>
+                    {%- if item.quantity > 1 -%}
+                      <span class="hp-cline__price-unit">{{ item.final_price | money }} {{ section.settings.each_label }}</span>
+                    {%- endif -%}
+                  </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+
+            <div class="hp-cart__under">
+              <button type="submit" name="update" class="hp-cart__update">
+                {{ 'sections.cart.update' | t }}
+              </button>
+              <a class="hp-cart__continue" href="{{ continue_link }}">{{ continue_label }}</a>
+            </div>
+
+            {%- if section.settings.show_note -%}
+              <div class="hp-cart__note">
+                <label class="hp-cart__note-label" for="HippCartNote">
+                  {{ section.settings.note_label }}
+                </label>
+                <textarea
+                  class="hp-cart__note-input"
+                  id="HippCartNote"
+                  name="note"
+                  rows="3"
+                  data-hipp-cart-note
+                >{{ cart.note }}</textarea>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <aside class="hp-cart__aside">
+            <div class="hp-csum">
+              <h2 class="hp-csum__title">{{ section.settings.summary_title }}</h2>
+
+              <div class="hp-csum__row">
+                <span>{{ 'sections.cart.subtotal' | t }}</span>
+                <span>{{ cart.items_subtotal_price | money }}</span>
+              </div>
+
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <div class="hp-csum__row hp-csum__row--save">
+                  <span>{{ discount.title }}</span>
+                  <span>&minus;{{ discount.total_allocated_amount | money }}</span>
+                </div>
+              {%- endfor -%}
+
+              {%- if section.settings.shipping_label != blank -%}
+                <div class="hp-csum__row">
+                  <span>{{ section.settings.shipping_label }}</span>
+                  <span class="hp-csum__free">{{ section.settings.shipping_value }}</span>
+                </div>
+              {%- endif -%}
+
+              <div class="hp-csum__row hp-csum__row--total">
+                <span>{{ section.settings.total_label }}</span>
+                <span>{{ cart.total_price | money_with_currency }}</span>
+              </div>
+
+              <p class="hp-csum__taxes">
+                {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
+                  {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                {%- elsif shop.taxes_included -%}
+                  {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+                {%- elsif shop.shipping_policy.body != blank -%}
+                  {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+                {%- else -%}
+                  {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+                {%- endif -%}
+              </p>
+
+              <button type="submit" name="checkout" class="hp-btn hp-btn--block hp-csum__checkout">
+                {%- if section.settings.checkout_label != blank -%}
+                  {{ section.settings.checkout_label }}
+                {%- else -%}
+                  {{ 'sections.cart.checkout' | t }}
+                {%- endif -%}
+              </button>
+
+              {%- if section.settings.summary_note != blank -%}
+                <p class="hp-csum__note">{{ section.settings.summary_note }}</p>
+              {%- endif -%}
+
+              {%- if section.blocks.size > 0 -%}
+                <ul class="hp-csum__trust" role="list">
+                  {%- for block in section.blocks -%}
+                    <li class="hp-csum__trust-item" {{ block.shopify_attributes }}>
+                      <span class="hp-csum__trust-dot" aria-hidden="true"></span>
+                      <span>
+                        <strong>{{ block.settings.title }}</strong>
+                        {%- if block.settings.text != blank -%}
+                          <em>{{ block.settings.text }}</em>
+                        {%- endif -%}
+                      </span>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          </aside>
+        </div>
+      </form>
+    {%- endif -%}
+  </div>
+
+  <p class="visually-hidden" aria-live="polite" data-hipp-cart-page-status></p>
+</div>
+
+{% schema %}
+{
+  "name": "Cart page",
+  "tag": "section",
+  "class": "hp-cart-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "default": "Your bag"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Almost there."
+    },
+    {
+      "type": "text",
+      "id": "each_label",
+      "label": "Unit price suffix",
+      "default": "each"
+    },
+    {
+      "type": "header",
+      "content": "Summary"
+    },
+    {
+      "type": "text",
+      "id": "summary_title",
+      "label": "Summary title",
+      "default": "Order summary"
+    },
+    {
+      "type": "text",
+      "id": "shipping_label",
+      "label": "Shipping row label",
+      "default": "2 day shipping"
+    },
+    {
+      "type": "text",
+      "id": "shipping_value",
+      "label": "Shipping row value",
+      "default": "Free"
+    },
+    {
+      "type": "text",
+      "id": "total_label",
+      "label": "Total label",
+      "default": "Total"
+    },
+    {
+      "type": "text",
+      "id": "checkout_label",
+      "label": "Checkout button",
+      "default": "Checkout, at your door in 2 days"
+    },
+    {
+      "type": "text",
+      "id": "summary_note",
+      "label": "Note under the button",
+      "default": "Order by noon and it arrives within 2 days."
+    },
+    {
+      "type": "header",
+      "content": "Continue shopping"
+    },
+    {
+      "type": "text",
+      "id": "continue_label",
+      "label": "Link label",
+      "info": "Falls back to the theme setting.",
+      "default": "Keep shopping"
+    },
+    {
+      "type": "url",
+      "id": "continue_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Order note"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_note",
+      "label": "Show order note",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "note_label",
+      "label": "Order note label",
+      "default": "Anything we should know?"
+    },
+    {
+      "type": "header",
+      "content": "Empty cart"
+    },
+    {
+      "type": "text",
+      "id": "empty_heading",
+      "label": "Empty heading",
+      "default": "Your bag is empty."
+    },
+    {
+      "type": "richtext",
+      "id": "empty_text",
+      "label": "Empty text",
+      "default": "<p>Pick a formula and a bundle size, and we will have it at your door in 2 days.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust",
+      "name": "Reassurance",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Free 2 day shipping"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "on every order, no minimum"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -20,6 +20,7 @@
 
   var SECTION_ID = 'cart-drawer';
   var DRAWER_SEL = '[data-hipp-cart-drawer]';
+  var PAGE_SEL = '[data-hipp-cart-page]';
   var OPEN_CLASS = 'is-open';
   var BODY_CLASS = 'hipp-drawer-open';
   var EMPTY_CLASS = 'is-empty';
@@ -47,6 +48,30 @@
 
   function drawer() {
     return document.querySelector(DRAWER_SEL);
+  }
+
+  /* ---- pagina /cart ------------------------------------------------------
+     La plantilla del carrito renderiza sections/main-cart-usa.liquid, que usa
+     LOS MISMOS data-attributes que el drawer. Sin esto, tocar el stepper en
+     /cart mutaba el carrito de verdad pero solo repintaba el drawer (que esta
+     cerrado): la pagina se quedaba mostrando el estado viejo.
+
+     El id no se puede hardcodear: en una plantilla JSON el id de la seccion es
+     la CLAVE del objeto, y el editor de temas puede cambiarla. Se lee del DOM.
+  ------------------------------------------------------------------------- */
+
+  function page() {
+    return document.querySelector(PAGE_SEL);
+  }
+
+  function pageId() {
+    var host = page();
+    return host ? host.getAttribute('data-section-id') : null;
+  }
+
+  function sectionsParam() {
+    var id = pageId();
+    return id ? SECTION_ID + ',' + id : SECTION_ID;
   }
 
   function sectionsUrl() {
@@ -78,8 +103,7 @@
      devolver el foco al control equivalente en vez de saltar siempre al cierre.
   ------------------------------------------------------------------------- */
 
-  function focusToken() {
-    var host = drawer();
+  function focusToken(host) {
     var active = document.activeElement;
     if (!host || !active || !host.contains(active)) return null;
 
@@ -95,29 +119,28 @@
     return { key: row ? row.dataset.key : null, role: role };
   }
 
+  function findTarget(host, token) {
+    if (!token) return null;
+    if (token.role === 'close') return host.querySelector('[data-hipp-cart-close]');
+    if (!token.key) return null;
+
+    var row = host.querySelector('[data-key="' + CSS.escape(token.key) + '"]');
+    if (!row) return null;
+
+    return row.querySelector(
+      token.role === 'up' ? '[data-hipp-qty-up]'
+        : token.role === 'down' ? '[data-hipp-qty-down]'
+          : token.role === 'input' ? '[data-hipp-qty-input]'
+            : '[data-hipp-remove]'
+    );
+  }
+
   function restoreFocus(token) {
     var host = drawer();
     if (!host) return;
 
-    var target = null;
-    if (token) {
-      if (token.role === 'close') {
-        target = host.querySelector('[data-hipp-cart-close]');
-      } else if (token.key) {
-        var row = host.querySelector('[data-key="' + CSS.escape(token.key) + '"]');
-        if (row) {
-          target = row.querySelector(
-            token.role === 'up' ? '[data-hipp-qty-up]'
-              : token.role === 'down' ? '[data-hipp-qty-down]'
-                : token.role === 'input' ? '[data-hipp-qty-input]'
-                  : '[data-hipp-remove]'
-          );
-        }
-      }
-    }
-
     // Si la linea desaparecio (cantidad 0) caemos al boton de cerrar.
-    if (!target) target = host.querySelector('[data-hipp-cart-close]');
+    var target = findTarget(host, token) || host.querySelector('[data-hipp-cart-close]');
 
     var panel = host.querySelector('.hipp-drawer__panel');
     if (panel && typeof window.trapFocus === 'function') {
@@ -130,7 +153,15 @@
   /* ---- render ------------------------------------------------------------ */
 
   function applySections(data) {
-    if (!data || !data.sections || !data.sections[SECTION_ID]) return false;
+    if (!data || !data.sections) return false;
+
+    var applied = applyDrawer(data);
+    applyPage(data);
+    return applied;
+  }
+
+  function applyDrawer(data) {
+    if (!data.sections[SECTION_ID]) return false;
 
     var host = drawer();
     if (!host) return false;
@@ -140,7 +171,7 @@
     if (!fresh) return false;
 
     var wasOpen = host.classList.contains(OPEN_CLASS);
-    var token = wasOpen ? focusToken() : null;
+    var token = wasOpen ? focusToken(host) : null;
 
     host.innerHTML = fresh.innerHTML;
     var count = parseInt(fresh.getAttribute('data-item-count') || '0', 10);
@@ -148,6 +179,41 @@
     updateBubbles(count);
 
     if (wasOpen) restoreFocus(token);
+    return true;
+  }
+
+  function applyPage(data) {
+    var id = pageId();
+    if (!id || !data.sections[id]) return false;
+
+    var host = page();
+    if (!host) return false;
+
+    var parsed = new DOMParser().parseFromString(data.sections[id], 'text/html');
+    var fresh = parsed.querySelector(PAGE_SEL);
+    if (!fresh) return false;
+
+    var token = focusToken(host);
+
+    // El servidor devuelve la nota GUARDADA. Si el usuario esta escribiendo y
+    // todavia no la mando, el re-render se la borraria a mitad de frase.
+    var note = host.querySelector('[data-hipp-cart-note]');
+    var draft = note ? note.value : null;
+
+    host.innerHTML = fresh.innerHTML;
+    host.setAttribute('data-item-count', fresh.getAttribute('data-item-count') || '0');
+
+    if (draft !== null) {
+      var freshNote = host.querySelector('[data-hipp-cart-note]');
+      if (freshNote) freshNote.value = draft;
+    }
+
+    // Sin trap de foco: esto es una pagina, no un dialogo. Si la linea que tenia
+    // el foco desaparecio, se deja donde el navegador lo mande (body) en vez de
+    // secuestrarlo a un control arbitrario.
+    var target = findTarget(host, token);
+    if (target) target.focus();
+
     return true;
   }
 
@@ -164,22 +230,26 @@
   }
 
   function announce(message) {
-    var status = document.querySelector('[data-hipp-cart-status]');
-    if (status) status.textContent = message || '';
+    document.querySelectorAll('[data-hipp-cart-status], [data-hipp-cart-page-status]')
+      .forEach(function (el) { el.textContent = message || ''; });
   }
 
   function showError(message) {
-    var body = document.querySelector('[data-hipp-cart-body]');
-    if (!body) return;
+    // En /cart el drawer esta cerrado: el error tiene que aparecer en la pagina,
+    // no dentro de un panel que nadie ve.
+    var host = page() && !isOpen()
+      ? page().querySelector('.hp-wrap')
+      : document.querySelector('[data-hipp-cart-body]');
+    if (!host) return;
 
-    var existing = body.querySelector('.hipp-drawer__error');
+    var existing = host.querySelector('.hipp-drawer__error');
     if (existing) existing.remove();
 
     var box = document.createElement('p');
     box.className = 'hipp-drawer__error';
     box.setAttribute('role', 'alert');
     box.textContent = message;
-    body.prepend(box);
+    host.prepend(box);
     announce(message);
   }
 
@@ -236,7 +306,7 @@
 
   function addFromForm(form) {
     var body = new FormData(form);
-    body.append('sections', SECTION_ID);
+    body.append('sections', sectionsParam());
     body.append('sections_url', sectionsUrl());
 
     var submit = form.querySelector('[type="submit"]');
@@ -277,7 +347,7 @@
         body: JSON.stringify({
           id: key,
           quantity: quantity,
-          sections: SECTION_ID,
+          sections: sectionsParam(),
           sections_url: sectionsUrl()
         })
       })
@@ -293,7 +363,7 @@
   }
 
   function refresh() {
-    return fetch('?sections=' + SECTION_ID, { headers: { Accept: 'application/json' } })
+    return fetch('?sections=' + encodeURIComponent(sectionsParam()), { headers: { Accept: 'application/json' } })
       .then(function (r) { return r.json(); })
       .then(function (sections) { applySections({ sections: sections }); })
       .catch(function () { /* refresco best-effort: no romper la pagina */ });
@@ -314,6 +384,9 @@
 
     var opener = event.target.closest('#cart-icon-bubble, [data-hipp-cart-open]');
     if (opener && host) {
+      // En /cart no se abre el drawer encima de la misma informacion: el icono
+      // es un <a href="/cart">, asi que se lo deja navegar (o recargar) solo.
+      if (page()) return;
       event.preventDefault();
       refresh().then(open);
       return;
