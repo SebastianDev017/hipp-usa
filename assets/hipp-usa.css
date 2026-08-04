@@ -2296,15 +2296,19 @@ html.js .hp-cart__update {
   margin-bottom: 8px;
 }
 
+/* Mismo motivo que en .hipp-qty__input (ver hipp-cart.css): el selector de
+   inputs de css-base.css suma (0,4,1) y se lleva padding, borde y font-size de
+   cualquier textarea. Aca no rompia nada visible, pero dejaba el campo con la
+   forma del tema viejo. */
 .hp-cart__note-input {
   width: 100%;
-  padding: 12px 14px;
-  border: var(--hairline);
+  padding: 12px 14px !important;
+  border: var(--hairline) !important;
   border-radius: var(--radius-sm);
   background: #fff;
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 15px !important;
   line-height: 1.5;
   resize: vertical;
 }

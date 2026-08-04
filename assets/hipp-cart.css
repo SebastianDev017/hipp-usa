@@ -311,15 +311,26 @@ body.hipp-drawer-open {
   background: rgba(249, 247, 239, 0.12);
 }
 
+/* css-base.css estiliza CUALQUIER input con el selector
+
+     .form-input, input:not(.button):not([type="checkbox"]):not([type="radio"]):not(.button), select, textarea
+
+   Los cuatro :not() suman especificidad: (0,4,1). Le gana a .hipp-qty__input
+   (0,1,0) y tambien a cualquier descendiente de dos clases. Le estaba metiendo
+   `padding: 10px 20px` a un campo de 40px de ancho, asi que el numero quedaba
+   empujado fuera de la caja y el stepper se veia VACIO entre el - y el +.
+
+   Es el caso exacto para el que existe !important: la hoja que gana es
+   READ-ONLY y su selector no se supera sin repetir la clase cinco veces. */
 .hipp-qty__input {
-  width: 40px;
+  width: 40px !important;
   height: 36px;
-  padding: 0;
-  border: 0;
+  padding: 0 !important;
+  border: 0 !important;
   background: transparent;
   color: var(--cream);
   font-family: var(--font-body-semibold);
-  font-size: 14px;
+  font-size: 14px !important;
   text-align: center;
   -moz-appearance: textfield;
 }
