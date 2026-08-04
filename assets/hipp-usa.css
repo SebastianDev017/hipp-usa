@@ -1352,14 +1352,17 @@
   gap: 8px;
 }
 
+/* Los !important son contra el selector de inputs de css-base.css: ver el
+   bloque "CONTROLES DE FORMULARIO" al final del archivo. Sin ellos este select
+   sale cuadrado, con padding 10px 20px y en el color del tema viejo. */
 .hp-toolbar__sort select {
   font-family: var(--font-body-medium);
-  font-size: 14px;
-  color: var(--ink);
+  font-size: 14px !important;
+  color: var(--ink) !important;
   background: var(--cream);
   border: 1.5px solid var(--hairline-color);
-  border-radius: var(--radius-pill);
-  padding: 9px 16px;
+  border-radius: var(--radius-pill) !important;
+  padding: 9px 16px !important;
   cursor: pointer;
 }
 
@@ -1796,15 +1799,17 @@
   margin-top: 4px;
 }
 
+/* Idem: sin los !important este selector de variante del PDP sale cuadrado y
+   con el padding del tema viejo. */
 .hp-select {
   width: 100%;
   font-family: var(--font-body-medium);
-  font-size: 15px;
-  color: var(--ink);
+  font-size: 15px !important;
+  color: var(--ink) !important;
   background: #fff;
   border: 1.5px solid var(--hairline-color);
-  border-radius: var(--radius-pill);
-  padding: 13px 18px;
+  border-radius: var(--radius-pill) !important;
+  padding: 13px 18px !important;
   cursor: pointer;
 }
 
@@ -2234,9 +2239,14 @@
   background: var(--cream);
 }
 
-.hp-cart .hipp-qty__btn,
-.hp-cart .hipp-qty__input {
+.hp-cart .hipp-qty__btn {
   color: var(--ink);
+}
+
+/* !important porque compite con el color que css-base le pone a todo input.
+   Ver el bloque "CONTROLES DE FORMULARIO" al final del archivo. */
+.hp-cart .hipp-qty__input {
+  color: var(--ink) !important;
 }
 
 .hp-cart .hipp-qty__btn:hover {
@@ -2296,17 +2306,13 @@ html.js .hp-cart__update {
   margin-bottom: 8px;
 }
 
-/* Mismo motivo que en .hipp-qty__input (ver hipp-cart.css): el selector de
-   inputs de css-base.css suma (0,4,1) y se lleva padding, borde y font-size de
-   cualquier textarea. Aca no rompia nada visible, pero dejaba el campo con la
-   forma del tema viejo. */
 .hp-cart__note-input {
   width: 100%;
   padding: 12px 14px !important;
   border: var(--hairline) !important;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm) !important;
   background: #fff;
-  color: var(--ink);
+  color: var(--ink) !important;
   font-family: var(--font-body);
   font-size: 15px !important;
   line-height: 1.5;
@@ -2747,9 +2753,9 @@ html.js .hp-cart__update {
   min-width: 0;
   padding: 12px 16px !important;
   border: var(--hairline) !important;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-pill) !important;
   background: #fff;
-  color: var(--ink);
+  color: var(--ink) !important;
   font-family: var(--font-body);
   font-size: 15px !important;
 }
@@ -3025,9 +3031,9 @@ html.js .hp-cart__update {
   width: 100%;
   padding: 12px 14px !important;
   border: var(--hairline) !important;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm) !important;
   background: #fff;
-  color: var(--ink);
+  color: var(--ink) !important;
   font-family: var(--font-body);
   font-size: 15px !important;
   line-height: 1.5;
@@ -3106,3 +3112,43 @@ html.js .hp-cart__update {
     font-size: 18px;
   }
 }
+
+/* ==========================================================================
+   24. CONTROLES DE FORMULARIO — leer antes de agregar un input nuevo
+   --------------------------------------------------------------------------
+   css-base.css (READ-ONLY) trae estas dos reglas:
+
+     .form-input,
+     input:not(.button):not([type=checkbox]):not([type=radio]):not(.button),
+     select,
+     textarea {
+       padding: var(--form-input-padding);
+       border-radius: 0;
+       box-shadow: none;
+       color: var(--form-input-color);
+       outline: none;
+     }
+
+     (misma lista) { font-family: var(--form-input-font);
+                     font-size: var(--form-input-font-size); }
+
+   Los cuatro :not() suman especificidad (0,4,1). Eso le gana a una clase suelta
+   (0,1,0) y tambien a un descendiente de dos clases (0,2,0). O sea que TODO
+   input, select y textarea del tema nuevo pierde, por defecto:
+
+       padding · border-radius · color · font-size
+
+   Y `--form-input-color` resuelve a --ink, que es el color de fondo del cart
+   drawer: ahi el texto quedaba invisible con contraste 1:1.
+
+   REGLA PRACTICA: cualquier control nuevo declara esas cuatro propiedades con
+   !important. No es pereza — la hoja que gana no se puede editar y su selector
+   no se supera sin repetir la clase cinco veces, que es peor de leer.
+
+   Los `[type=radio]` y `[type=checkbox]` estan EXCLUIDOS del selector, asi que
+   .hp-tile__input y compania no necesitan nada.
+
+   Controles que ya lo aplican:
+     .hipp-qty__input (hipp-cart.css) · .hp-cart__note-input · .hp-searchbar__input
+     .hp-field input / textarea · .hp-select · .hp-toolbar__sort select
+   ========================================================================== */
