@@ -118,6 +118,24 @@ Whale, Judge.me). Eso es limpieza deseable, no hay que revertirlo.
 - Un ancestro con `backdrop-filter` convierte a sus hijos `position: fixed` en
   posicionados respecto de él. Por eso la barra de progreso y el cart drawer
   viven fuera del header.
+- **css-base.css estiliza CUALQUIER `<input>` y `<textarea>`** con este selector:
+
+  ```css
+  .form-input,
+  input:not(.button):not([type="checkbox"]):not([type="radio"]):not(.button),
+  select,
+  textarea { padding: var(--form-input-padding); }
+  ```
+
+  Los cuatro `:not()` suman especificidad **(0,4,1)**: le gana a una clase suelta
+  y también a un descendiente de dos clases. Le metía `padding: 10px 20px` al
+  campo de 40px del stepper de cantidad, así que el número quedaba empujado
+  fuera de la caja y el control se veía **vacío** entre el − y el +. Afectaba al
+  drawer desde el primer día.
+
+  Cualquier input o textarea nuevo necesita `!important` en `padding`, `border`
+  y `font-size`, o repetir la clase cinco veces. Es el caso para el que existe
+  `!important`: la hoja que gana es read-only.
 
 ---
 
@@ -132,6 +150,17 @@ Whale, Judge.me). Eso es limpieza deseable, no hay que revertirlo.
   (`product.selling_plan_groups`), no contra el metafield `custom.suscripcion`
   ni contra una variante llamada "4 Suscripción" como en MX. Sirve igual con
   Shopify Subscriptions o con ReCharge.
+- La página `/cart` es `sections/main-cart-usa.liquid`. Funciona **sin
+  JavaScript**: las cantidades son `updates[]` **posicionales** (no por id de
+  variante: dos líneas de la misma variante con planes de suscripción distintos
+  se pisarían) y "Remove" es un `<a>` a `/cart/change`. Con JavaScript,
+  `hipp-cart.js` intercepta los mismos data-attributes que el drawer y pide las
+  **dos** secciones en el mismo request.
+
+  El id de sección **no se puede hardcodear**: en una plantilla JSON Shopify lo
+  emite como `template--<id>__<clave>` (acá `template--23099768406237__main-cart`),
+  no como la clave a secas. Se lee del DOM vía `data-section-id`.
+
 - `sections/main-product-usa.liquid` tiene el setting `subscription_ui` para
   cambiar entre el selector propio y el widget de la app
   (`<div class="subscriptions_app_embed_block"></div>`). Son **mutuamente
