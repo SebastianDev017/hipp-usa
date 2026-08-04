@@ -1,13 +1,40 @@
 {%- comment -%}
-  HiPP USA — cadencia de la suscripción (7 / 8 / 9 semanas).
+  HiPP USA — cadencia de la suscripción.
 
-  Solo comunica: la cadencia real la elige el cliente en el checkout de
-  suscripcion (ReCharge o Shopify Subscriptions, decision pendiente). Cuando eso
-  se defina, estas tarjetas pasan a ser el selling plan group del PDP.
+  DOS FUENTES, y por eso existe el setting `source`:
+
+  1. "Bloques" (por defecto) — los numeros los escribe quien edita el tema. Es lo
+     que pide el diseño aprobado, que dice 7 / 8 / 9 semanas.
+
+  2. "Planes de la tienda" — lee `product.selling_plan_groups` del producto
+     elegido y arma una tarjeta por plan real.
+
+  Existe porque HOY el sitio y la tienda NO dicen lo mismo: los planes cargados
+  son 3/4/5 semanas en Combiotik y 4/5/6 en Comfort y AR, mientras el copy
+  aprobado promete 7/8/9. Es una decision del cliente, no tecnica, asi que el
+  default no toca el diseño: cuando decida, es un toggle y no una reescritura.
+
+  El numero se extrae del valor del plan ("Deliver every 4 weeks") buscando el
+  primer token numerico, no por posicion: la frase la arma la app de suscripcion
+  y cambia entre apps e idiomas. La leyenda sigue saliendo de los bloques cuando
+  hay uno en esa posicion, para no perder el copy escrito a mano.
 {%- endcomment -%}
 
 {%- liquid
   assign options = section.blocks | where: 'type', 'cadence'
+
+  assign use_store = false
+  assign plans = nil
+  if section.settings.source == 'store'
+    assign src = section.settings.plan_product
+    if src != blank and src.selling_plan_groups.size > 0
+      assign group = src.selling_plan_groups.first
+      if group.selling_plans.size > 0
+        assign plans = group.selling_plans
+        assign use_store = true
+      endif
+    endif
+  endif
 -%}
 
 <section class="hp-section" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
@@ -22,7 +49,53 @@
       <div class="hp-lead hp-reveal">{{ section.settings.lead }}</div>
     {%- endif -%}
 
-    {%- if options.size > 0 -%}
+    {%- if use_store -%}
+      <div class="hp-cadence hp-reveal" data-hp-stagger>
+        {%- for plan in plans -%}
+          {%- liquid
+            assign raw = plan.options.first.value | default: plan.name
+            assign parts = raw | split: ' '
+            assign number = ''
+            assign unit = ''
+            for part in parts
+              assign as_number = part | times: 1
+              if as_number > 0 and number == ''
+                assign number = part
+                assign after = forloop.index
+                assign unit = parts[after]
+              endif
+            endfor
+
+            assign fallback = ''
+            assign adjustment = plan.price_adjustments.first
+            if adjustment.value_type == 'percentage'
+              assign fallback = adjustment.value | append: '% off'
+            endif
+
+            assign caption = fallback
+            assign authored = options[forloop.index0]
+            if authored.settings.caption != blank
+              assign caption = authored.settings.caption
+            endif
+          -%}
+
+          <div class="hp-cadence__card">
+            {%- if number != blank -%}
+              <div class="hp-cadence__wk">{{ number }}</div>
+              <p>{{ unit | downcase }}<br>{{ caption }}</p>
+            {%- else -%}
+              {%- comment -%}
+                Si la frase del plan no trae ningun numero, mostrar un card vacio
+                seria peor que mostrar el texto tal cual lo escribio la app.
+              {%- endcomment -%}
+              <p class="hp-cadence__raw">{{ raw }}</p>
+              <p>{{ caption }}</p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+    {%- elsif options.size > 0 -%}
       <div class="hp-cadence hp-reveal" data-hp-stagger>
         {%- for block in options -%}
           <div class="hp-cadence__card" {{ block.shopify_attributes }}>
@@ -53,6 +126,23 @@
   "tag": "div",
   "max_blocks": 4,
   "settings": [
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Fuente de las cadencias",
+      "info": "«Planes de la tienda» lee las frecuencias reales del producto elegido, en vez de los números escritos a mano.",
+      "options": [
+        { "value": "blocks", "label": "Bloques (diseño aprobado)" },
+        { "value": "store", "label": "Planes de la tienda" }
+      ],
+      "default": "blocks"
+    },
+    {
+      "type": "product",
+      "id": "plan_product",
+      "label": "Producto del que leer los planes",
+      "info": "Solo se usa con «Planes de la tienda»."
+    },
     {
       "type": "text",
       "id": "kicker",

@@ -28,21 +28,28 @@
   {%- render 'hipp-hill', fill: '#C2D0A4', above: '#F9F7EF' -%}
 {%- endif -%}
 
-<section class="hp-section hp-section--tight">
-  <div class="hp-wrap hp-wrap--narrow">
-    {%- if page.content != blank -%}
-      <div class="hp-prose">{{ page.content }}</div>
-    {%- endif -%}
+{%- comment -%}
+  Si la pagina no tiene cuerpo NI boton, no se emite la seccion: sus 48+84px de
+  padding dejaban 400px de vacio entre la colina y la seccion siguiente. Pasa de
+  verdad en /pages/contact, donde el contenido real es el formulario.
+{%- endcomment -%}
+{%- if page.content != blank or section.settings.cta_label != blank -%}
+  <section class="hp-section hp-section--tight">
+    <div class="hp-wrap hp-wrap--narrow">
+      {%- if page.content != blank -%}
+        <div class="hp-prose">{{ page.content }}</div>
+      {%- endif -%}
 
-    {%- if section.settings.cta_label != blank -%}
-      <div class="hp-pagecta">
-        <a class="hp-btn" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
-          {{ section.settings.cta_label }}
-        </a>
-      </div>
-    {%- endif -%}
-  </div>
-</section>
+      {%- if section.settings.cta_label != blank -%}
+        <div class="hp-pagecta">
+          <a class="hp-btn" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+            {{ section.settings.cta_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
 
 {% schema %}
 {
