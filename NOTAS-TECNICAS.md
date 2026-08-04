@@ -137,24 +137,48 @@ Whale, Judge.me). Eso es limpieza deseable, no hay que revertirlo.
 - Un ancestro con `backdrop-filter` convierte a sus hijos `position: fixed` en
   posicionados respecto de él. Por eso la barra de progreso y el cart drawer
   viven fuera del header.
-- **css-base.css estiliza CUALQUIER `<input>` y `<textarea>`** con este selector:
+- **css-base.css estiliza CUALQUIER `<input>`, `<select>` y `<textarea>`.** Es la
+  trampa más cara del tema base, así que va completa:
 
   ```css
   .form-input,
-  input:not(.button):not([type="checkbox"]):not([type="radio"]):not(.button),
+  input:not(.button):not([type=checkbox]):not([type=radio]):not(.button),
   select,
-  textarea { padding: var(--form-input-padding); }
+  textarea {
+    padding: var(--form-input-padding);
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--form-input-color);
+    outline: none;
+  }
+  /* y una segunda regla con la misma lista: */
+  { font-family: var(--form-input-font); font-size: var(--form-input-font-size); }
   ```
 
   Los cuatro `:not()` suman especificidad **(0,4,1)**: le gana a una clase suelta
-  y también a un descendiente de dos clases. Le metía `padding: 10px 20px` al
-  campo de 40px del stepper de cantidad, así que el número quedaba empujado
-  fuera de la caja y el control se veía **vacío** entre el − y el +. Afectaba al
-  drawer desde el primer día.
+  (0,1,0) y también a un descendiente de dos clases (0,2,0). O sea que **todo**
+  control de formulario del tema nuevo pierde por defecto `padding`,
+  `border-radius`, `color` y `font-size`.
 
-  Cualquier input o textarea nuevo necesita `!important` en `padding`, `border`
-  y `font-size`, o repetir la clase cinco veces. Es el caso para el que existe
-  `!important`: la hoja que gana es read-only.
+  Se cobró tres veces:
+
+  1. `padding: 10px 20px` en el campo de 40px del stepper de cantidad → el
+     número quedaba empujado fuera de la caja y el control se veía **vacío**.
+  2. Arreglado el padding, el número **seguía sin verse en el drawer**:
+     `--form-input-color` resuelve a `--ink`, que es exactamente el color de
+     fondo del drawer. Contraste 1:1. En `/cart` el mismo bug era invisible
+     porque ahí el fondo es claro.
+  3. El `border-radius: 0` es un **literal**, no una variable: el buscador, el
+     select de orden de la colección, el de variantes del PDP y los campos de
+     contacto salían **cuadrados** en vez de pill.
+
+  **Cualquier control nuevo declara esas cuatro propiedades con `!important`.**
+  No es pereza: la hoja que gana es read-only y su selector no se supera sin
+  repetir la clase cinco veces, que se lee peor. Está documentado en el bloque
+  24 de `hipp-usa.css`.
+
+  Los `[type=radio]` y `[type=checkbox]` están **excluidos** del selector, así
+  que `.hp-tile__input` y compañía no necesitan nada.
 
 ---
 
