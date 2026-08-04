@@ -47,6 +47,25 @@ descartado.
 dos daban OK. Si un setting no tiene valor por defecto, hay que **omitir la
 clave `default`**, no ponerla vacía.
 
+### 1.3 Falso positivo: la página 404 se sirve cacheada
+
+*Síntoma:* la 404 nueva no aparece por más que se recargue, mientras el resto de
+las plantillas del mismo push ya están en vivo.
+
+**No es un descarte.** Se verificó con `theme pull`: tanto `templates/404.json`
+(con `"type": "main-404-usa"`) como `sections/main-404-usa.liquid` estaban en el
+tema. Y con `?preview_theme_id=164136255709` la 404 nueva renderiza perfecto.
+
+Shopify cachea el render del 404 del lado del servidor y no lo invalida al
+publicar. `cf-cache-status` dice `DYNAMIC`, así que **no es la CDN**: pedir una
+URL inexistente distinta cada vez tampoco lo evita.
+
+Para verificar un cambio en la 404 sin esperar:
+
+```
+https://<tienda>/loquesea?preview_theme_id=<id del tema>
+```
+
 ### Cómo diagnosticarlo rápido
 
 Comparar lo que hay en el tema live contra el repo:
@@ -139,7 +158,20 @@ Whale, Judge.me). Eso es limpieza deseable, no hay que revertirlo.
 
 ---
 
-## 5. Modelo de datos de la tienda
+## 5. `templates/customers/*.liquid` es código muerto
+
+La tienda usa las **cuentas de cliente nuevas** de Shopify: el ícono de cuenta
+del header lleva a `shopify.com/authentication/<id>/login`, hospedado por
+Shopify. Las siete plantillas de `templates/customers/` (login, register,
+account, addresses, order, reset_password, activate_account) **no se renderizan
+nunca**.
+
+Rediseñarlas sería trabajo tirado. El branding de esa pantalla se cambia desde
+el admin (Configuración → Cuentas de clientes), no desde el tema.
+
+---
+
+## 6. Modelo de datos de la tienda
 
 - Opción de variante: **`Boxes`** con valores `4` / `8` / `16` (en hipp.mx es
   `Número de cajas`). El PDP es agnóstico al nombre: con una sola opción los
@@ -165,3 +197,18 @@ Whale, Judge.me). Eso es limpieza deseable, no hay que revertirlo.
   cambiar entre el selector propio y el widget de la app
   (`<div class="subscriptions_app_embed_block"></div>`). Son **mutuamente
   excluyentes**: los dos escriben el campo `selling_plan` del mismo form.
+
+- **Los planes cargados no coinciden entre productos ni con el copy.** Medido
+  contra `/products/<handle>.js`:
+
+  | Producto | Cadencias | Aplica a | Descuento |
+  |---|---|---|---|
+  | HiPP Combiotik | 3 / 4 / 5 semanas | las 3 variantes | 8% |
+  | HiPP Comfort | 4 / 5 / 6 semanas | las 3 variantes | 8% |
+  | HiPP AR | 4 / 5 / 6 semanas | las 3 variantes | 8% |
+
+  El copy aprobado dice **7 / 8 / 9 semanas** y que la suscripción es solo del
+  pack de 8. `subscription-cadence` tiene el setting `source` para leer las
+  cadencias reales del producto que se elija, en vez de los números escritos a
+  mano. Queda en "Bloques" por defecto: **es una decisión del cliente, no
+  técnica.**
