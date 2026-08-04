@@ -8,9 +8,13 @@
 
   Aparece recien cuando el hero sale de pantalla (hipp-usa.js) y en desktop no
   se muestra: ahi el CTA del header siempre esta a la vista.
+
+  NO se renderiza en el carrito. Ahi el CTA de la pagina es Checkout, y la barra
+  fija lo tapaba literalmente en movil: competia con el unico boton que importa
+  en esa pantalla.
 {%- endcomment -%}
 
-{%- if section.settings.label != blank -%}
+{%- if section.settings.label != blank and request.page_type != 'cart' -%}
   <div class="hp-sticky" data-hp-sticky>
     <div class="hp-sticky__msg">
       {%- if section.settings.title != blank -%}
