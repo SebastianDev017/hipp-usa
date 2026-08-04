@@ -2191,6 +2191,14 @@
   flex-wrap: wrap;
 }
 
+/* Idem que .hipp-line__qty en el drawer: las lineas de suscripcion no llevan
+   stepper, asi que la cantidad se imprime como texto cuando es mayor a 1. */
+.hp-cline__qty {
+  font-family: var(--font-body-semibold);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
 /* Padding vertical para llegar al minimo de area tactil sin agrandar el texto. */
 .hp-cline__remove {
   padding: 8px 2px;

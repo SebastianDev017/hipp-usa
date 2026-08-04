@@ -107,30 +107,54 @@
                 {%- endif -%}
 
                 <div class="hipp-line__controls">
-                  <div class="hipp-qty" data-hipp-qty>
-                    <button
-                      type="button"
-                      class="hipp-qty__btn"
-                      data-hipp-qty-down
-                      aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
-                    >&minus;</button>
-                    <input
-                      class="hipp-qty__input"
-                      type="number"
-                      inputmode="numeric"
-                      min="0"
-                      step="1"
-                      value="{{ item.quantity }}"
-                      data-hipp-qty-input
-                      aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
-                    >
-                    <button
-                      type="button"
-                      class="hipp-qty__btn"
-                      data-hipp-qty-up
-                      aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
-                    >+</button>
-                  </div>
+                  {%- comment -%}
+                    Las lineas de SUSCRIPCION no llevan stepper.
+
+                    En Shopify, cantidad 2 en una linea con selling plan NO son dos
+                    suscripciones: es UNA sola suscripcion que entrega 2 unidades por
+                    ciclo, y se cobra un unico cargo recurrente. O sea que no habia
+                    riesgo de cobrar de mas.
+
+                    Se quita igual porque aca el tamaño del pedido YA es la variante
+                    (4/8/16 cajas). Un multiplicador encima significa "16 cajas cada 4
+                    semanas" por dos caminos distintos, duplica la opcion de 16 y no le
+                    dice nada claro a quien compra. El tamaño se cambia en la pagina de
+                    producto, que es donde el diseño lo explica.
+
+                    Si una linea vieja quedo con cantidad > 1 se muestra el numero como
+                    texto: esconder el control es una cosa, esconderle el dato al
+                    cliente es otra.
+                  {%- endcomment -%}
+                  {%- if item.selling_plan_allocation -%}
+                    {%- if item.quantity > 1 -%}
+                      <span class="hipp-line__qty">&times;&nbsp;{{ item.quantity }}</span>
+                    {%- endif -%}
+                  {%- else -%}
+                    <div class="hipp-qty" data-hipp-qty>
+                      <button
+                        type="button"
+                        class="hipp-qty__btn"
+                        data-hipp-qty-down
+                        aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
+                      >&minus;</button>
+                      <input
+                        class="hipp-qty__input"
+                        type="number"
+                        inputmode="numeric"
+                        min="0"
+                        step="1"
+                        value="{{ item.quantity }}"
+                        data-hipp-qty-input
+                        aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
+                      >
+                      <button
+                        type="button"
+                        class="hipp-qty__btn"
+                        data-hipp-qty-up
+                        aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
+                      >+</button>
+                    </div>
+                  {%- endif -%}
 
                   <button
                     type="button"

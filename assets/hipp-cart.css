@@ -248,6 +248,14 @@ body.hipp-drawer-open {
   flex-wrap: wrap;
 }
 
+/* Cantidad como texto, solo en lineas de suscripcion con mas de una unidad:
+   ahi no hay stepper (ver el comentario en sections/cart-drawer.liquid). */
+.hipp-line__qty {
+  font-family: var(--font-body-semibold);
+  font-size: 13px;
+  color: rgba(249, 247, 239, 0.75);
+}
+
 /* Padding vertical para llegar al minimo de area tactil sin agrandar el texto. */
 .hipp-line__remove {
   padding: 8px 2px;

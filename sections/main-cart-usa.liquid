@@ -132,31 +132,47 @@
                     {%- endif -%}
 
                     <div class="hp-cline__controls">
-                      <div class="hipp-qty" data-hipp-qty>
-                        <button
-                          type="button"
-                          class="hipp-qty__btn"
-                          data-hipp-qty-down
-                          aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
-                        >&minus;</button>
-                        <input
-                          class="hipp-qty__input"
-                          type="number"
-                          inputmode="numeric"
-                          min="0"
-                          step="1"
-                          name="updates[]"
-                          value="{{ item.quantity }}"
-                          data-hipp-qty-input
-                          aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
-                        >
-                        <button
-                          type="button"
-                          class="hipp-qty__btn"
-                          data-hipp-qty-up
-                          aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
-                        >+</button>
-                      </div>
+                      {%- comment -%}
+                        Sin stepper en las lineas de suscripcion; el razonamiento
+                        completo esta en sections/cart-drawer.liquid.
+
+                        OJO: el input hidden NO es opcional. `updates[]` se manda por
+                        POSICION, asi que si una linea deja de emitir su campo, todas
+                        las de abajo se corren un lugar y sin JavaScript terminarias
+                        cambiando la cantidad del producto equivocado.
+                      {%- endcomment -%}
+                      {%- if item.selling_plan_allocation -%}
+                        <input type="hidden" name="updates[]" value="{{ item.quantity }}">
+                        {%- if item.quantity > 1 -%}
+                          <span class="hp-cline__qty">&times;&nbsp;{{ item.quantity }}</span>
+                        {%- endif -%}
+                      {%- else -%}
+                        <div class="hipp-qty" data-hipp-qty>
+                          <button
+                            type="button"
+                            class="hipp-qty__btn"
+                            data-hipp-qty-down
+                            aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
+                          >&minus;</button>
+                          <input
+                            class="hipp-qty__input"
+                            type="number"
+                            inputmode="numeric"
+                            min="0"
+                            step="1"
+                            name="updates[]"
+                            value="{{ item.quantity }}"
+                            data-hipp-qty-input
+                            aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
+                          >
+                          <button
+                            type="button"
+                            class="hipp-qty__btn"
+                            data-hipp-qty-up
+                            aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
+                          >+</button>
+                        </div>
+                      {%- endif -%}
 
                       <a
                         class="hp-cline__remove"
