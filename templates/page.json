@@ -1,1 +1,13 @@
-{"sections":{"main":{"type":"main-page","settings":{}},"1689579169c5599717":{"type":"apps","settings":{"include_margins":true}}},"order":["main","1689579169c5599717"]}
+{
+  "sections": {
+    "main": {
+      "type": "main-page-usa",
+      "settings": {
+        "show_hill": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,1 +1,15 @@
-{"sections":{"main":{"type":"main-article","settings":{}},"form":{"type":"main-article-form","settings":{}},"comments":{"type":"main-article-comments","settings":{}}},"order":["main","comments","form"]}
+{
+  "sections": {
+    "main": {
+      "type": "main-article-usa",
+      "settings": {
+        "show_image": true,
+        "show_author": true,
+        "cta_label": "Shop the formulas"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

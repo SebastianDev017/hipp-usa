@@ -1,1 +1,55 @@
-{"sections":{"main":{"type":"main-404","settings":{}}},"order":["main"]}
+{
+  "sections": {
+    "main": {
+      "type": "main-404-usa",
+      "blocks": {
+        "l-1": {
+          "type": "link",
+          "settings": {
+            "label": "All formulas",
+            "url": "shopify://collections/all"
+          }
+        },
+        "l-2": {
+          "type": "link",
+          "settings": {
+            "label": "Subscription",
+            "url": "/#subscription"
+          }
+        },
+        "l-3": {
+          "type": "link",
+          "settings": {
+            "label": "Shipping",
+            "url": "/#shipping"
+          }
+        },
+        "l-4": {
+          "type": "link",
+          "settings": {
+            "label": "FAQ",
+            "url": "/#faq"
+          }
+        }
+      },
+      "block_order": [
+        "l-1",
+        "l-2",
+        "l-3",
+        "l-4"
+      ],
+      "settings": {
+        "kicker": "Lost a page",
+        "heading": "This one is not on the shelf.",
+        "text": "The page you were looking for moved or never existed. The formulas did not go anywhere.",
+        "primary_label": "Shop the formulas",
+        "secondary_label": "Back home",
+        "show_hill": true,
+        "links_title": "Or jump straight to"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

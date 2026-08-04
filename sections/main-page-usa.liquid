@@ -1,0 +1,77 @@
+{%- comment -%}
+  HiPP USA — página estática (about, subscription, políticas, lo que cree el
+  cliente en el admin).
+
+  Reemplaza a sections/main-page.liquid, que era .page/.page-content del tema
+  mexicano.
+
+  `page.content` es HTML que escribe el comerciante en el editor del admin: no
+  se puede controlar el markup. Por eso el contenido va dentro de `.hp-prose`,
+  que estiliza por ELEMENTO (h2, p, ul, a, table, blockquote, img) en vez de por
+  clase. Es la unica forma de que una politica de reembolso pegada desde Word se
+  vea como el resto del sitio.
+
+  Las paginas de politicas de Shopify (/policies/*) NO pasan por esta plantilla:
+  usan su propio layout. Estas son las de /pages/*.
+{%- endcomment -%}
+
+<div class="hp-pagehead hp-pagehead--tight">
+  <div class="hp-wrap hp-wrap--narrow">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    <h1 class="hp-h1 hp-pagehead__title">{{ page.title }}</h1>
+  </div>
+</div>
+
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: '#C2D0A4', above: '#F9F7EF' -%}
+{%- endif -%}
+
+<section class="hp-section hp-section--tight">
+  <div class="hp-wrap hp-wrap--narrow">
+    {%- if page.content != blank -%}
+      <div class="hp-prose">{{ page.content }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="hp-pagecta">
+        <a class="hp-btn" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+          {{ section.settings.cta_label }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page",
+  "tag": "section",
+  "class": "hp-page-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hill",
+      "label": "Hill divider",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button under the content",
+      "info": "Empty hides the button."
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    }
+  ]
+}
+{% endschema %}

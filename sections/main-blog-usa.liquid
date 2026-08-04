@@ -1,0 +1,187 @@
+{%- comment -%}
+  HiPP USA — listado del blog.
+
+  Reemplaza a sections/main-blog.liquid, que cargaba css-main-blog.css y
+  js-main-blog.js (paginacion infinita con Ajaxinate, que vive dentro del chunk
+  de webpack), renderizaba snippets/article-card.liquid con textos MX y tenia el
+  "Leer más" hardcodeado en español.
+
+  Aca la paginacion es de enlaces reales: indexable, funciona sin JavaScript y no
+  depende de ninguna libreria.
+{%- endcomment -%}
+
+{%- liquid
+  assign per_page = section.settings.articles_per_page
+  assign ratio = section.settings.image_ratio
+-%}
+
+<div class="hp-pagehead hp-pagehead--tight">
+  <div class="hp-wrap hp-wrap--narrow">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+    <h1 class="hp-h1 hp-pagehead__title">{{ blog.title }}</h1>
+    {%- if section.settings.lead != blank -%}
+      <div class="hp-pagehead__text">{{ section.settings.lead }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: '#C2D0A4', above: '#F9F7EF' -%}
+{%- endif -%}
+
+<section class="hp-section hp-section--tight" data-section-id="{{ section.id }}">
+  <div class="hp-wrap">
+    {%- if blog.articles_count > 0 -%}
+      {%- paginate blog.articles by per_page -%}
+        <div class="hp-artgrid">
+          {%- for article in blog.articles -%}
+            <article class="hp-art">
+              <a class="hp-art__media" href="{{ article.url }}" tabindex="-1" aria-hidden="true" style="--hp-art-ratio: {{ ratio }}">
+                {%- if article.image -%}
+                  <img
+                    src="{{ article.image | image_url: width: 600 }}"
+                    srcset="{{ article.image | image_url: width: 400 }} 400w, {{ article.image | image_url: width: 800 }} 800w"
+                    sizes="(min-width: 900px) 33vw, 100vw"
+                    alt=""
+                    width="800"
+                    height="600"
+                    loading="lazy"
+                  >
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'hp-art__placeholder' }}
+                {%- endif -%}
+              </a>
+
+              <div class="hp-art__body">
+                {%- if section.settings.show_date -%}
+                  <p class="hp-art__meta">
+                    <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                      {{- article.published_at | date: format: 'date' -}}
+                    </time>
+                    {%- if article.tags.size > 0 -%}
+                      <span class="hp-art__tag">{{ article.tags.first }}</span>
+                    {%- endif -%}
+                  </p>
+                {%- endif -%}
+
+                <h2 class="hp-art__title">
+                  <a href="{{ article.url }}">{{ article.title }}</a>
+                </h2>
+
+                {%- if section.settings.show_excerpt and article.excerpt_or_content != blank -%}
+                  <p class="hp-art__excerpt">
+                    {{- article.excerpt_or_content | strip_html | truncatewords: 24 -}}
+                  </p>
+                {%- endif -%}
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="hp-pagination" aria-label="{{ 'general.pagination.label' | t | escape }}">
+            {%- if paginate.previous -%}
+              <a class="hp-pagination__link" href="{{ paginate.previous.url }}" rel="prev">
+                {{- 'general.pagination.previous' | t -}}
+              </a>
+            {%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a class="hp-pagination__link" href="{{ part.url }}">{{ part.title }}</a>
+              {%- else -%}
+                <span class="hp-pagination__link is-current" aria-current="page">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a class="hp-pagination__link" href="{{ paginate.next.url }}" rel="next">
+                {{- 'general.pagination.next' | t -}}
+              </a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+
+    {%- else -%}
+      <div class="hp-empty">
+        <p class="hp-lead">{{ section.settings.empty_text }}</p>
+        <a class="hp-btn hp-btn--clay" href="{{ routes.all_products_collection_url }}">
+          {{- section.settings.empty_cta -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog",
+  "tag": "section",
+  "class": "hp-blog-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "default": "From the journal"
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Lead",
+      "default": "<p>Feeding, sleep and the small questions nobody warns you about. Written with pediatric input, not guesswork.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hill",
+      "label": "Hill divider",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "1 / 1", "label": "Square" },
+        { "value": "4 / 3", "label": "Landscape" },
+        { "value": "3 / 4", "label": "Portrait" }
+      ],
+      "default": "4 / 3"
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "label": "Articles per page",
+      "min": 3,
+      "max": 24,
+      "step": 3,
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Text when there are no articles",
+      "default": "Nothing published here yet. The formulas are ready though."
+    },
+    {
+      "type": "text",
+      "id": "empty_cta",
+      "label": "Button when there are no articles",
+      "default": "See all formulas"
+    }
+  ]
+}
+{% endschema %}

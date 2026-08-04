@@ -1,1 +1,27 @@
-{"sections":{"main":{"type":"main-page","settings":{}},"form":{"type":"contact-form","settings":{}}},"order":["main","form"]}
+{
+  "sections": {
+    "main": {
+      "type": "main-page-usa",
+      "settings": {
+        "kicker": "Contact",
+        "show_hill": true
+      }
+    },
+    "form": {
+      "type": "contact-form-usa",
+      "settings": {
+        "kicker": "Write to us",
+        "heading": "We are parents too.",
+        "lead": "<p>Questions about a formula, an order or a subscription. A person reads every message and answers within one business day.</p>",
+        "show_phone": false,
+        "button_label": "Send",
+        "note": "We answer within one business day, Monday to Friday.",
+        "anchor_id": "contact"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "form"
+  ]
+}

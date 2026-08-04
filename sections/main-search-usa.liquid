@@ -1,0 +1,188 @@
+{%- comment -%}
+  HiPP USA — resultados de búsqueda.
+
+  Reemplaza a sections/main-search.liquid, que era la seccion de Dawn arrastrada
+  al tema: cargaba component-card.css, component-price.css, component-badge.css
+  y component-search.css (cuatro hojas del sistema de Dawn que este tema ya no
+  usa) mas un bloque <style> inline con rem de 16px, cuando aca 1rem = 10px.
+
+  Los productos salen por product-card-usa, el mismo snippet que la coleccion,
+  asi que una tarjeta se ve igual en todo el sitio. Articulos y paginas caen en
+  una lista de texto: mezclarlos en la grilla de productos daria tarjetas sin
+  precio ni imagen.
+
+  El formulario es GET nativo. Sin JavaScript funciona igual.
+{%- endcomment -%}
+
+{%- liquid
+  assign per_page = section.settings.results_per_page
+  assign terms = search.terms
+-%}
+
+<div class="hp-pagehead hp-pagehead--tight">
+  <div class="hp-wrap hp-wrap--narrow">
+    {%- if section.settings.kicker != blank -%}
+      <p class="hp-kicker">{{ section.settings.kicker }}</p>
+    {%- endif -%}
+
+    <h1 class="hp-h1 hp-pagehead__title">
+      {%- if search.performed and search.results_count > 0 -%}
+        {{ 'templates.search.results_with_count' | t: terms: terms, count: search.results_count }}
+      {%- else -%}
+        {{ 'templates.search.title' | t }}
+      {%- endif -%}
+    </h1>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" class="hp-searchbar">
+      <label class="hp-visually-hidden" for="hp-search-input">{{ 'general.search.search' | t }}</label>
+      <input
+        class="hp-searchbar__input"
+        type="search"
+        name="q"
+        id="hp-search-input"
+        value="{{ terms | escape }}"
+        placeholder="{{ section.settings.placeholder | escape }}"
+        autocomplete="off"
+      >
+      <button type="submit" class="hp-btn hp-searchbar__btn">{{ 'general.search.search' | t }}</button>
+    </form>
+  </div>
+</div>
+
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: '#C2D0A4', above: '#F9F7EF' -%}
+{%- endif -%}
+
+<section class="hp-section hp-section--tight" data-section-id="{{ section.id }}">
+  <div class="hp-wrap">
+    {%- if search.performed == false -%}
+      <div class="hp-empty">
+        <p class="hp-lead">{{ section.settings.idle_text }}</p>
+        <a class="hp-btn hp-btn--clay" href="{{ routes.all_products_collection_url }}">
+          {{- section.settings.idle_cta -}}
+        </a>
+      </div>
+
+    {%- elsif search.results_count == 0 -%}
+      <div class="hp-empty">
+        <p class="hp-lead">{{ 'templates.search.no_results' | t: terms: terms }}</p>
+        <a class="hp-btn hp-btn--clay" href="{{ routes.all_products_collection_url }}">
+          {{- section.settings.idle_cta -}}
+        </a>
+      </div>
+
+    {%- else -%}
+      {%- paginate search.results by per_page -%}
+        {%- liquid
+          assign products = search.results | where: 'object_type', 'product'
+          assign articles = search.results | where: 'object_type', 'article'
+          assign pages = search.results | where: 'object_type', 'page'
+        -%}
+
+        {%- if products.size > 0 -%}
+          <div class="hp-grid">
+            {%- for product in products -%}
+              {%- render 'product-card-usa', product: product -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- assign reading = articles | concat: pages -%}
+        {%- if reading.size > 0 -%}
+          <div class="hp-searchlist">
+            <h2 class="hp-searchlist__title">{{ section.settings.reading_title }}</h2>
+            <ul role="list">
+              {%- for item in reading -%}
+                <li>
+                  <a href="{{ item.url }}">{{ item.title }}</a>
+                  {%- if item.object_type == 'article' and item.excerpt_or_content != blank -%}
+                    <p>{{ item.excerpt_or_content | strip_html | truncatewords: 26 }}</p>
+                  {%- elsif item.object_type == 'page' and item.content != blank -%}
+                    <p>{{ item.content | strip_html | truncatewords: 26 }}</p>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="hp-pagination" aria-label="{{ 'general.pagination.label' | t | escape }}">
+            {%- if paginate.previous -%}
+              <a class="hp-pagination__link" href="{{ paginate.previous.url }}" rel="prev">
+                {{- 'general.pagination.previous' | t -}}
+              </a>
+            {%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a class="hp-pagination__link" href="{{ part.url }}">{{ part.title }}</a>
+              {%- else -%}
+                <span class="hp-pagination__link is-current" aria-current="page">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a class="hp-pagination__link" href="{{ paginate.next.url }}" rel="next">
+                {{- 'general.pagination.next' | t -}}
+              </a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search",
+  "tag": "section",
+  "class": "hp-search-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "default": "Search"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Field placeholder",
+      "default": "Try Combiotik, Comfort or AR"
+    },
+    {
+      "type": "text",
+      "id": "idle_text",
+      "label": "Text before searching",
+      "default": "Type a formula name, a stage or a concern and we will find it."
+    },
+    {
+      "type": "text",
+      "id": "idle_cta",
+      "label": "Button under the message",
+      "default": "See all formulas"
+    },
+    {
+      "type": "text",
+      "id": "reading_title",
+      "label": "Articles and pages heading",
+      "default": "Reading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hill",
+      "label": "Hill divider",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "label": "Results per page",
+      "min": 6,
+      "max": 48,
+      "step": 6,
+      "default": 24
+    }
+  ]
+}
+{% endschema %}

@@ -1,1 +1,21 @@
-{"sections":{"main":{"type":"main-blog","settings":{}}},"order":["main"]}
+{
+  "sections": {
+    "main": {
+      "type": "main-blog-usa",
+      "settings": {
+        "kicker": "From the journal",
+        "lead": "<p>Feeding, sleep and the small questions nobody warns you about. Written with pediatric input, not guesswork.</p>",
+        "show_hill": true,
+        "show_date": true,
+        "show_excerpt": true,
+        "image_ratio": "4 / 3",
+        "articles_per_page": 12,
+        "empty_text": "Nothing published here yet. The formulas are ready though.",
+        "empty_cta": "See all formulas"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

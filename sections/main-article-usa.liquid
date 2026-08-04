@@ -1,0 +1,180 @@
+{%- comment -%}
+  HiPP USA — artículo del blog.
+
+  Reemplaza a tres secciones del tema mexicano de una sola vez: main-article,
+  main-article-comments y main-article-form. Las tres venian con comentarios en
+  español, markup .page/.page-content y la logica de "featured posts" leyendo los
+  ultimos 5 articulos.
+
+  El cuerpo del articulo es HTML que escribe el comerciante en el admin, asi que
+  va dentro de `.hp-prose`, que estiliza por ELEMENTO y no por clase. Mismo
+  contenedor que las paginas estaticas.
+
+  Los comentarios se renderizan solo si el blog los tiene habilitados
+  (`blog.comments_enabled?`), que es lo que decide el admin. El `{% form %}`
+  nativo hace POST y Shopify redirige con ?comment_posted=true; sin JavaScript
+  funciona igual.
+{%- endcomment -%}
+
+<article class="hp-article" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="hp-articlehead">
+    <div class="hp-wrap hp-wrap--narrow">
+      <a class="hp-articlehead__back" href="{{ blog.url }}">
+        {{- 'blogs.article.back_to_blog' | t -}}
+      </a>
+
+      <p class="hp-articlehead__meta">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}" itemprop="datePublished">
+          {{- article.published_at | date: format: 'date' -}}
+        </time>
+        {%- if section.settings.show_author and article.author != blank -%}
+          <span itemprop="author">{{ article.author }}</span>
+        {%- endif -%}
+        {%- if article.tags.size > 0 -%}
+          <span class="hp-articlehead__tag">{{ article.tags.first }}</span>
+        {%- endif -%}
+      </p>
+
+      <h1 class="hp-h1 hp-articlehead__title" itemprop="headline">{{ article.title }}</h1>
+    </div>
+  </div>
+
+  {%- if article.image and section.settings.show_image -%}
+    <div class="hp-article__cover">
+      <div class="hp-wrap">
+        <img
+          src="{{ article.image | image_url: width: 1400 }}"
+          srcset="{{ article.image | image_url: width: 700 }} 700w, {{ article.image | image_url: width: 1400 }} 1400w"
+          sizes="(min-width: 1100px) 1056px, 100vw"
+          alt="{{ article.image.alt | escape }}"
+          width="1400"
+          height="788"
+          itemprop="image"
+        >
+      </div>
+    </div>
+  {%- endif -%}
+
+  <section class="hp-section hp-section--tight">
+    <div class="hp-wrap hp-wrap--narrow">
+      <div class="hp-prose" itemprop="articleBody">{{ article.content }}</div>
+
+      {%- if section.settings.cta_label != blank -%}
+        <div class="hp-pagecta">
+          <a class="hp-btn" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+            {{ section.settings.cta_label }}
+          </a>
+        </div>
+      {%- endif -%}
+
+      {%- if blog.comments_enabled? -%}
+        <div class="hp-comments" id="comments">
+          {%- if article.comments_count > 0 -%}
+            <h2 class="hp-comments__title">
+              {{ 'blogs.article.comments' | t: count: article.comments_count }}
+            </h2>
+            <ul class="hp-comments__list" role="list">
+              {%- for comment in article.comments -%}
+                <li class="hp-comment">
+                  <p class="hp-comment__meta">
+                    <strong>{{ comment.author }}</strong>
+                    <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">
+                      {{- comment.created_at | date: format: 'date' -}}
+                    </time>
+                  </p>
+                  <div class="hp-comment__body">{{ comment.content }}</div>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          {%- form 'new_comment', article -%}
+            <h2 class="hp-comments__title">{{ 'blogs.article.comment_form_title' | t }}</h2>
+
+            {%- if form.errors -%}
+              <div class="hp-formnote hp-formnote--error" role="alert">
+                {{ form.errors | default_errors }}
+              </div>
+            {%- elsif form.posted_successfully? -%}
+              <div class="hp-formnote" role="status">
+                {%- if blog.moderated? -%}
+                  {{ 'blogs.article.success_moderated' | t }}
+                {%- else -%}
+                  {{ 'blogs.article.success' | t }}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            <div class="hp-field">
+              <label for="CommentAuthor">{{ 'blogs.article.name' | t }}</label>
+              <input
+                type="text"
+                id="CommentAuthor"
+                name="comment[author]"
+                value="{{ form.author }}"
+                autocomplete="name"
+                required
+              >
+            </div>
+
+            <div class="hp-field">
+              <label for="CommentEmail">{{ 'blogs.article.email' | t }}</label>
+              <input
+                type="email"
+                id="CommentEmail"
+                name="comment[email]"
+                value="{{ form.email }}"
+                autocomplete="email"
+                required
+              >
+            </div>
+
+            <div class="hp-field">
+              <label for="CommentBody">{{ 'blogs.article.message' | t }}</label>
+              <textarea id="CommentBody" name="comment[body]" rows="5" required>{{ form.body }}</textarea>
+            </div>
+
+            {%- if blog.moderated? -%}
+              <p class="hp-field__note">{{ 'blogs.article.moderated' | t }}</p>
+            {%- endif -%}
+
+            <button type="submit" class="hp-btn">{{ 'blogs.article.post' | t }}</button>
+          {%- endform -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</article>
+
+{% schema %}
+{
+  "name": "Article",
+  "tag": "section",
+  "class": "hp-article-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Show cover image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button under the article",
+      "default": "Shop the formulas"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    }
+  ]
+}
+{% endschema %}
