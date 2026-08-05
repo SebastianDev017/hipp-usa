@@ -3214,3 +3214,63 @@ html.js .hp-cart__update {
 .hp-tile__input:checked + .hp-tile .hp-tile__each {
   color: var(--clay-deep);
 }
+
+/* ==========================================================================
+   26. Caja suelta en el PDP
+   --------------------------------------------------------------------------
+   Deliberadamente NO es una tarjeta. Con el mismo peso visual que el pack de 8
+   pondria a competir de igual a igual la opcion que menos le sirve al cliente,
+   y ademas parte la grilla de 3 en una de 4.
+
+   Es una linea de texto: la puerta de entrada de quien todavia esta probando.
+   El control real es un radio, asi que funciona sin JavaScript y el estado
+   seleccionado sale de :checked, no de una clase puesta por JS.
+   ========================================================================== */
+
+.hp-trial {
+  margin-top: 12px;
+}
+
+.hp-trial__link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  /* El padding vertical lleva el area tactil al minimo de 24px sin agrandar
+     el texto ni romper el ritmo del bloque. */
+  padding: 7px 2px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-bottom: 1.5px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.hp-trial__link:hover {
+  color: var(--ink);
+  border-bottom-color: var(--hairline-color);
+}
+
+.hp-trial__price {
+  font-family: var(--font-body-semibold);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* Seleccionada. Se marca con el mismo verde que las tarjetas para que se lea
+   como parte del mismo grupo de eleccion y no como un enlace suelto. */
+.hp-tile__input:checked + .hp-trial__link {
+  color: var(--clay-deep);
+  border-bottom-color: var(--clay);
+}
+
+.hp-tile__input:checked + .hp-trial__link .hp-trial__price {
+  color: var(--clay-deep);
+}
+
+.hp-tile__input:focus-visible + .hp-trial__link {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+  border-radius: 2px;
+}

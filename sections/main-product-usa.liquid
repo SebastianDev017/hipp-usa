@@ -147,13 +147,41 @@
                   La grilla se arma con la cantidad REAL de variantes, no con un 3
                   fijo: el catalogo tiene que poder ir de una caja suelta a un bundle
                   de 16 sin tocar el tema.
+
+                  LA CAJA SUELTA NO ES UNA TARJETA MAS. La promesa de HiPP US son los
+                  bundles: "una caja dura una semana, el pack de 8 dura dos meses".
+                  Meter un "1" del mismo tamaño visual que el 8 pone a competir de
+                  igual a igual la opcion que menos le sirve al cliente y a la marca,
+                  y encima parte la grilla de 3 en una de 4.
+
+                  Por eso sale como una linea discreta debajo: es la puerta de
+                  entrada de quien todavia esta probando, no una alternativa al
+                  bundle. Se elige con un radio de verdad, asi que funciona sin JS.
                 {%- endcomment -%}
-                {%- assign tile_count = product.variants.size -%}
-                {%- if tile_count > 4 -%}
-                  {%- assign tile_count = 4 -%}
-                {%- endif -%}
+                {%- liquid
+                  assign trial = nil
+                  if section.settings.single_display == 'link'
+                    for v in product.variants
+                      assign v_boxes = v.title | times: 1
+                      if v_boxes == 1
+                        assign trial = v
+                      endif
+                    endfor
+                  endif
+
+                  assign tile_count = product.variants.size
+                  if trial != nil
+                    assign tile_count = tile_count | minus: 1
+                  endif
+                  if tile_count > 4
+                    assign tile_count = 4
+                  endif
+                -%}
                 <div class="hp-tiles hp-bundles hp-bundles--{{ tile_count }}">
                   {%- for variant in product.variants -%}
+                    {%- if trial != nil and variant.id == trial.id -%}
+                      {%- continue -%}
+                    {%- endif -%}
                     <input
                       class="hp-tile__input"
                       type="radio"
@@ -204,6 +232,24 @@
                     </label>
                   {%- endfor -%}
                 </div>
+
+                {%- if trial != nil and trial.available -%}
+                  <div class="hp-trial">
+                    <input
+                      class="hp-tile__input"
+                      type="radio"
+                      name="id"
+                      id="{{ section.id }}-variant-{{ trial.id }}"
+                      value="{{ trial.id }}"
+                      data-hp-variant="{{ trial.id }}"
+                      {% if trial == current %}checked{% endif %}
+                    >
+                    <label class="hp-trial__link" for="{{ section.id }}-variant-{{ trial.id }}">
+                      <span>{{ section.settings.single_label }}</span>
+                      <span class="hp-trial__price">{{ trial.price | money }}</span>
+                    </label>
+                  </div>
+                {%- endif -%}
 
                 {%- if section.settings.unit_price_note != blank -%}
                   <p class="hp-step__note">{{ section.settings.unit_price_note }}</p>
@@ -469,6 +515,23 @@
       "label": "Sufijo del precio por caja",
       "info": "Se muestra en cada tamaño de más de una caja.",
       "default": "/ box"
+    },
+    {
+      "type": "select",
+      "id": "single_display",
+      "label": "Caja suelta",
+      "info": "Solo aplica si existe una variante de 1 caja.",
+      "options": [
+        { "value": "link", "label": "Línea discreta debajo de los packs" },
+        { "value": "tile", "label": "Una tarjeta más en la grilla" }
+      ],
+      "default": "link"
+    },
+    {
+      "type": "text",
+      "id": "single_label",
+      "label": "Texto de la caja suelta",
+      "default": "Just getting started? Try a single box"
     },
     {
       "type": "text",

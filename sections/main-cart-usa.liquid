@@ -94,11 +94,26 @@
                     <a class="hp-cline__title" href="{{ item.url }}">{{ item.product.title }}</a>
 
                     {%- unless item.variant.title contains 'Default' -%}
-                      <p class="hp-cline__meta">
-                        {%- for option in item.options_with_values -%}
-                          {{ option.name }}: {{ option.value }}{% unless forloop.last %} · {% endunless %}
-                        {%- endfor -%}
-                      </p>
+                      {%- comment -%}
+                        Mismo criterio que el drawer: con una sola opcion numerica se
+                        muestra el TOTAL de cajas de la linea, que responde al stepper.
+                        Con mas de una opcion se cae al listado nombre: valor, que es
+                        lo unico que sirve para un producto con varias opciones.
+                      {%- endcomment -%}
+                      {%- assign box_count = item.variant.title | times: 1 -%}
+                      {%- if box_count > 0 and item.product.options.size == 1 -%}
+                        {%- assign line_boxes = box_count | times: item.quantity -%}
+                        <p class="hp-cline__meta">
+                          {{- line_boxes }}
+                          {% if line_boxes == 1 %}{{ section.settings.boxes_label_one }}{% else %}{{ section.settings.boxes_label }}{% endif -%}
+                        </p>
+                      {%- else -%}
+                        <p class="hp-cline__meta">
+                          {%- for option in item.options_with_values -%}
+                            {{ option.name }}: {{ option.value }}{% unless forloop.last %} · {% endunless %}
+                          {%- endfor -%}
+                        </p>
+                      {%- endif -%}
                     {%- endunless -%}
 
                     {%- if item.selling_plan_allocation -%}
@@ -320,6 +335,18 @@
       "id": "each_label",
       "label": "Unit price suffix",
       "default": "each"
+    },
+    {
+      "type": "text",
+      "id": "boxes_label",
+      "label": "Boxes label",
+      "default": "boxes"
+    },
+    {
+      "type": "text",
+      "id": "boxes_label_one",
+      "label": "Boxes label, singular",
+      "default": "box"
     },
     {
       "type": "header",

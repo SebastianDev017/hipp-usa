@@ -75,7 +75,26 @@
                 <a class="hipp-line__title" href="{{ item.url }}">{{ item.product.title }}</a>
 
                 {%- unless item.variant.title contains 'Default' -%}
-                  <p class="hipp-line__meta">{{ item.variant.title }}</p>
+                  {%- comment -%}
+                    El titulo de la variante es un numero pelado ("4"), y debajo del
+                    nombre del producto se lee como si fuera la cantidad. Peor: con
+                    el stepper sin numero, el cliente presiona + y ese 4 no se mueve.
+
+                    Se muestra el TOTAL de cajas de la linea (cajas del pack por
+                    cantidad), que es lo que de verdad se esta comprando y ademas si
+                    responde al stepper. Si el titulo no es numerico se cae al titulo
+                    tal cual, que es lo unico sensato para un producto futuro.
+                  {%- endcomment -%}
+                  {%- assign box_count = item.variant.title | times: 1 -%}
+                  {%- if box_count > 0 and item.product.options.size == 1 -%}
+                    {%- assign line_boxes = box_count | times: item.quantity -%}
+                    <p class="hipp-line__meta">
+                      {{- line_boxes }}
+                      {% if line_boxes == 1 %}{{ section.settings.boxes_label_one }}{% else %}{{ section.settings.boxes_label }}{% endif -%}
+                    </p>
+                  {%- else -%}
+                    <p class="hipp-line__meta">{{ item.variant.title }}</p>
+                  {%- endif -%}
                 {%- endunless -%}
 
                 {%- if item.selling_plan_allocation -%}
@@ -255,6 +274,18 @@
       "id": "each_label",
       "label": "Unit price suffix",
       "default": "each"
+    },
+    {
+      "type": "text",
+      "id": "boxes_label",
+      "label": "Boxes label",
+      "default": "boxes"
+    },
+    {
+      "type": "text",
+      "id": "boxes_label_one",
+      "label": "Boxes label, singular",
+      "default": "box"
     },
     {
       "type": "text",
