@@ -14,15 +14,24 @@
       "blocks": {
         "trust-1": {
           "type": "trust",
-          "settings": { "title": "2 day shipping", "text": "free on every order" }
+          "settings": {
+            "title": "2 day shipping",
+            "text": "free on every order"
+          }
         },
         "trust-2": {
           "type": "trust",
-          "settings": { "title": "Direct from HiPP", "text": "EU organic, Germany" }
+          "settings": {
+            "title": "Direct from HiPP",
+            "text": "EU organic, Germany"
+          }
         },
         "trust-3": {
           "type": "trust",
-          "settings": { "title": "Always fresh", "text": "6+ months shelf life" }
+          "settings": {
+            "title": "Always fresh",
+            "text": "6+ months shelf life"
+          }
         },
         "accordion-prepare": {
           "type": "accordion",
@@ -39,7 +48,13 @@
           }
         }
       },
-      "block_order": ["trust-1", "trust-2", "trust-3", "accordion-prepare", "accordion-shipping"],
+      "block_order": [
+        "trust-1",
+        "trust-2",
+        "trust-3",
+        "accordion-prepare",
+        "accordion-shipping"
+      ],
       "settings": {
         "fallback_subtitle": "Sourced direct from HiPP in Germany",
         "shipping_note": "Free 2 day shipping across the USA, on every order.",
@@ -90,7 +105,11 @@
           }
         }
       },
-      "block_order": ["step-1", "step-2", "step-3"],
+      "block_order": [
+        "step-1",
+        "step-2",
+        "step-3"
+      ],
       "settings": {
         "kicker": "The 2 day promise",
         "heading": "Order today. Feed in two days.",
@@ -103,19 +122,45 @@
     "subscription": {
       "type": "subscription-cadence",
       "blocks": {
-        "cadence-7": { "type": "cadence", "settings": { "number": "7", "unit": "weeks", "caption": "Growing appetite" } },
-        "cadence-8": { "type": "cadence", "settings": { "number": "8", "unit": "weeks", "caption": "The classic rhythm" } },
-        "cadence-9": { "type": "cadence", "settings": { "number": "9", "unit": "weeks", "caption": "Combination feeding" } }
+        "cadence-7": {
+          "type": "cadence",
+          "settings": {
+            "number": "7",
+            "unit": "weeks",
+            "caption": "Growing appetite"
+          }
+        },
+        "cadence-8": {
+          "type": "cadence",
+          "settings": {
+            "number": "8",
+            "unit": "weeks",
+            "caption": "The classic rhythm"
+          }
+        },
+        "cadence-9": {
+          "type": "cadence",
+          "settings": {
+            "number": "9",
+            "unit": "weeks",
+            "caption": "Combination feeding"
+          }
+        }
       },
-      "block_order": ["cadence-7", "cadence-8", "cadence-9"],
+      "block_order": [
+        "cadence-7",
+        "cadence-8",
+        "cadence-9"
+      ],
       "settings": {
         "kicker": "Subscription",
         "heading": "Your rhythm, not ours.",
-        "lead": "<p>Every baby feeds differently, so the 8 pack subscription lets you pick the cadence that matches yours. An 8 pack lasts about two months; change your rhythm whenever your baby changes.</p>",
+        "lead": "<p>Every baby feeds differently, so the subscription lets you pick the rhythm that matches yours. Change it whenever your baby changes.</p>",
         "note": "Skip a delivery, switch cadence or cancel in one tap. No calls, no guilt.",
         "anchor_id": "subscription",
         "button_label": "",
-        "button_link": ""
+        "button_link": "",
+        "source": "store"
       }
     },
     "faq": {
@@ -143,7 +188,11 @@
           }
         }
       },
-      "block_order": ["q-1", "q-2", "q-3"],
+      "block_order": [
+        "q-1",
+        "q-2",
+        "q-3"
+      ],
       "settings": {
         "kicker": "Questions, answered",
         "heading": "Before you order.",
@@ -151,5 +200,10 @@
       }
     }
   },
-  "order": ["main", "shipping", "subscription", "faq"]
+  "order": [
+    "main",
+    "shipping",
+    "subscription",
+    "faq"
+  ]
 }

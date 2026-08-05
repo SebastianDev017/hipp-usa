@@ -99,7 +99,7 @@
           "settings": {
             "number": "No. 3",
             "title": "Set it and rest",
-            "text": "Subscribe on the 8 pack and choose your rhythm: every 7, 8 or 9 weeks. Pause, adjust or cancel anytime. One less thing living in your head."
+            "text": "Subscribe on the 8 pack and choose your rhythm: every 3 to 6 weeks, depending on the formula. Pause, adjust or cancel anytime. One less thing living in your head."
           }
         }
       },
@@ -235,7 +235,7 @@
           "settings": {
             "count": "8",
             "unit": "boxes",
-            "text": "About two months of feeding. The only bundle available as a subscription, delivered every 7, 8 or 9 weeks on your schedule.",
+            "text": "About two months of feeding. Available as a subscription, delivered on the rhythm you choose.",
             "badge": "Subscribe and save",
             "note": "Subscription available on this bundle",
             "featured": true
@@ -345,11 +345,13 @@
       "settings": {
         "kicker": "Subscription",
         "heading": "Your rhythm, not ours.",
-        "lead": "<p>Every baby feeds differently, so the 8 pack subscription lets you pick the cadence that matches yours. An 8 pack lasts about two months; change your rhythm whenever your baby changes.</p>",
+        "lead": "<p>Every baby feeds differently, so the subscription lets you pick the cadence that matches yours. Each formula has its own rhythms; change yours whenever your baby changes.</p>",
         "note": "Skip a delivery, switch cadence or cancel in one tap. No calls, no guilt.",
         "anchor_id": "subscription",
         "button_label": "Start a subscription",
-        "button_link": "shopify://collections/all"
+        "button_link": "shopify://collections/all",
+        "source": "store",
+        "plan_product": "hipp-combiotik-organic-infant-formula"
       }
     },
     "faq": {
@@ -373,14 +375,14 @@
           "type": "question",
           "settings": {
             "question": "How does the subscription work?",
-            "answer": "<p>Subscriptions are available on the 8 pack. Choose a delivery every 7, 8 or 9 weeks, and each shipment arrives within two days, free. You can skip, change cadence, switch formula or cancel anytime from your account.</p>"
+            "answer": "<p>Subscriptions are available on every bundle size. Choose a delivery every 3 to 6 weeks, depending on the formula, and each shipment arrives within two days, free. You can skip, change cadence, switch formula or cancel anytime from your account.</p>"
           }
         },
         "q-4": {
           "type": "question",
           "settings": {
             "question": "How long does a bundle last?",
-            "answer": "<p>It depends on your baby's age and appetite. As a rough guide, a box lasts most formula fed babies about a week, so an 8 pack covers roughly two months. The 7, 8 or 9 week cadence options let you match deliveries to your actual usage.</p>"
+            "answer": "<p>It depends on your baby's age and appetite. As a rough guide, a box lasts most formula fed babies about a week, so an 8 pack covers roughly two months. The cadence options let you match deliveries to your actual usage.</p>"
           }
         },
         "q-5": {

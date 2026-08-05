@@ -26,7 +26,16 @@
   assign use_store = false
   assign plans = nil
   if section.settings.source == 'store'
+    comment
+      Sin producto elegido cae al producto de la pagina. Eso es lo que hace que
+      en el PDP cada formula muestre SUS cadencias reales: Combiotik esta
+      cargado con 3/4/5 semanas y Comfort y AR con 4/5/6. Ningun numero fijo
+      puede ser cierto para los tres a la vez.
+    endcomment
     assign src = section.settings.plan_product
+    if src == blank
+      assign src = product
+    endif
     if src != blank and src.selling_plan_groups.size > 0
       assign group = src.selling_plan_groups.first
       if group.selling_plans.size > 0
