@@ -7,7 +7,11 @@ EXTERNAL URLS / APPS
 <link rel="preconnect" href="//cdn.shopify.com" crossorigin>
 <!-- <link rel="preconnect" href="//static.klaviyo.com" crossorigin> -->
 <!-- <link rel="preconnect" href="//fast.a.klaviyo.com" crossorigin> -->
-<link rel="preconnect" href="//cdn.judge.me" crossorigin>
+{%- comment -%}
+  El preconnect a Judge.me se quitó: la app no está instalada en esta tienda, así
+  que abría un handshake DNS+TLS inútil en cada carga. Si se instala, la app
+  inyecta lo suyo.
+{%- endcomment -%}
 <!-- <link rel="preconnect" href="https://services.mybcapps.com" crossorigin> -->
 
 {% comment %}
@@ -16,12 +20,16 @@ FUENTES
 ---------------------------------------------------------------------
 {% endcomment %}
 {%- comment -%}
-  Solo el subset latin: es el que cubre el storefront en ingles. latin-ext se descarga
-  bajo demanda por unicode-range. Estas URLs salen del mismo asset_url que los @font-face
-  de snippets/hipp-fonts.liquid, asi que coinciden exacto y no hay doble descarga.
+  Solo las dos que aparecen sobre el pliegue: el texto de la pagina y los
+  encabezados. Semibold y Bold cargan cuando hacen falta.
+
+  Estas URLs salen del MISMO asset_url que los @font-face de
+  snippets/hipp-fonts.liquid, asi que coinciden exacto y no hay doble descarga.
+  Ojo: css-base.css declara las mismas fuentes con otra query string; si se
+  precargaran esas, el navegador bajaria cada archivo dos veces.
 {%- endcomment -%}
-<link rel="preload" href="{{- 'inter-latin.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{- 'fraunces-latin.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{- 'BananaGrotesk-Medium.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{- 'AdvertBold.woff2' | asset_url -}}" as="font" type="font/woff2" crossorigin>
 
 {% comment %}
 ---------------------------------------------------------------------

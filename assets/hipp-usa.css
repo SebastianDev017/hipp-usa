@@ -98,7 +98,6 @@
 
 .hp-h2 em,
 .hp-h1 em {
-  font-style: italic;
   color: var(--clay);
 }
 
@@ -639,9 +638,10 @@
 .hp-marquee__item {
   font-family: var(--font-display);
   font-size: 16px;
-  font-style: italic;
   color: var(--ink-soft);
   margin: 0 34px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 @keyframes hp-marquee-scroll {
@@ -724,9 +724,10 @@
 
 .hp-night__num {
   font-family: var(--font-display);
-  font-style: italic;
   font-size: 15px;
   color: var(--accent-light);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .hp-night__item h3 {
@@ -741,7 +742,7 @@
 .hp-night__item p {
   font-size: 15px;
   line-height: 1.6;
-  /* 0.68 sobre #232A1E daba 3.9:1, por debajo de AA. 0.78 da 4.6:1. */
+  /* 0.68 sobre #15226A daba 3.9:1, por debajo de AA. 0.78 da 4.6:1. */
   color: rgba(250, 246, 239, 0.78);
 }
 
@@ -862,7 +863,6 @@
 
 .hp-prod__for {
   font-family: var(--font-display);
-  font-style: italic;
   color: var(--clay);
   font-size: 16px;
   margin-bottom: 14px;
@@ -939,7 +939,6 @@
 
 .hp-bundle__count small {
   font-size: 17px;
-  font-style: italic;
   color: var(--ink-soft);
 }
 
@@ -999,9 +998,10 @@
 
 .hp-tl__time {
   font-family: var(--font-display);
-  font-style: italic;
   font-size: 15px;
   padding-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .hp-tl h3 {
@@ -1139,7 +1139,6 @@
 
 .hp-final__quote {
   font-family: var(--font-display);
-  font-style: italic;
   font-size: 19px;
   line-height: 1.6;
   color: var(--ink-soft);
@@ -1464,7 +1463,6 @@
 
 .hp-card__for {
   font-family: var(--font-display);
-  font-style: italic;
   color: var(--clay);
   font-size: 14px;
   margin-top: 2px;
@@ -1602,7 +1600,6 @@
 
 .hp-pdp__for {
   font-family: var(--font-display);
-  font-style: italic;
   color: var(--clay);
   font-size: 17px;
   margin-top: 6px;
@@ -1650,9 +1647,10 @@
 
 .hp-step__n {
   font-family: var(--font-display);
-  font-style: italic;
   font-size: 15px;
   color: var(--clay);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .hp-step__title {

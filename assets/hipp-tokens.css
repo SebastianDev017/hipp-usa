@@ -17,15 +17,59 @@
 
 :root {
   /* ---- Paleta HiPP USA (fuente de verdad) ---- */
-  --cream: #f9f7ef;
-  --cream-2: #f1eee1;
-  --sand: #e3dfc9;
-  --ink: #232a1e;
-  --ink-soft: #57604b;
-  --clay: #4f7042;
-  --clay-deep: #3e5834;
-  --moss: #6e7a5a;
-  --accent-light: #cfe0b8;
+  /* ======================================================================
+     PALETA HiPP — muestreada del empaque real, no elegida a ojo
+
+     Los hex salen de contar pixeles saturados sobre la foto de producto en
+     1080x1080: magenta #e30d7c, naranja #ec670c, azul #1a9dda, navy #15226a,
+     verde #86ad21. Son los colores del logo de HiPP.
+
+     Reemplazan al esquema crema + clay/terracota, que es uno de los patrones
+     mas repetidos del diseño generado por IA ahora mismo y era exactamente lo
+     que se notaba.
+
+     LOS NOMBRES NO CAMBIAN, cambian los valores. ~3.200 lineas de hipp-usa.css
+     y 28 secciones usan var(--clay), var(--cream) y compania: remapear es una
+     linea por token, reescribir los call sites son cientos de ediciones sin
+     ninguna ganancia.
+
+     CONTRASTE VERIFICADO (WCAG AA) contra los tres fondos claros del sitio
+     (#ffffff, #f1f3ef, #fff2e8):
+       --clay como texto ....... 5.07 / 4.54 / 4.62
+       blanco sobre --clay ..... 5.07  (boton)
+       --ink como texto ........ 14.30 / 12.80 / —
+       --ink-soft como texto ... 7.34 / 6.57 / 6.68
+     El magenta exacto del empaque (#e30d7c) NO llega a 4.5 sobre fondo tintado
+     (4.08), por eso el token de texto es un paso mas oscuro y el del empaque
+     queda para rellenos grandes, donde el minimo es 3.
+     ====================================================================== */
+
+  --cream: #ffffff;     /* base limpia; era el crema #f9f7ef */
+  --cream-2: #f1f3ef;   /* gris frio, no crema: el crema era parte del problema */
+  --sand: #ffd9be;      /* durazno: la segunda paleta calida */
+  --ink: #15226a;       /* navy HiPP; era el verde oliva #232a1e */
+  --ink-soft: #4a5578;
+  --clay: #d50c75;      /* MAGENTA HiPP, seguro como texto en los 3 fondos */
+  --clay-deep: #8d084d; /* hover */
+  --moss: #5c7717;      /* verde organico, seguro como texto */
+  --accent-light: #ffd9be; /* sobre navy da 10.84:1 */
+
+  /* ---- Colores de marca para RELLENOS y grafica (no texto sobre claro) ---- */
+  --hipp-magenta: #e30d7c;
+  --hipp-orange: #ec670c;
+  --hipp-blue: #1a9dda;
+  --hipp-navy: #15226a;
+  --hipp-green: #86ad21;
+
+  /* ---- Y sus variantes seguras como TEXTO sobre los tres fondos claros ---- */
+  --hipp-orange-ink: #b64f09;
+  --hipp-blue-ink: #1476a4;
+  --hipp-green-ink: #5c7717;
+
+  /* ---- Segunda paleta, calida ---- */
+  --warm: #fff2e8;
+  --warm-mid: #ffd9be;
+  --warm-ink: #a8410b;
 
   /* ---- Forma. El tema base no tenia tokens de forma: 163 border-radius
          hardcodeados y solo 7 con var(). ---- */
@@ -39,9 +83,13 @@
   --shadow-lift: 0 18px 40px -18px rgba(43, 33, 26, 0.25);
 
   /* ---- Tipografia semantica. El codigo NUEVO usa estos, no los legacy. ---- */
-  --font-display: "HiPP Display", Georgia, "Times New Roman", serif;
-  --font-display-semibold: "HiPP Display Semibold", Georgia, serif;
-  --font-display-bold: "HiPP Display Bold", Georgia, serif;
+  /* Advert Bold para encabezados y Banana Grotesk para texto: las fuentes
+     reales de HiPP, ya presentes en el tema. El serif editorial que había antes
+     (Fraunces) era la otra mitad del look genérico. Los fallbacks pasan a ser
+     sans: con un serif de respaldo, el salto al cargar era brutal. */
+  --font-display: "HiPP Display", "Helvetica Neue", Arial, sans-serif;
+  --font-display-semibold: "HiPP Display Semibold", "Helvetica Neue", Arial, sans-serif;
+  --font-display-bold: "HiPP Display Bold", "Helvetica Neue", Arial, sans-serif;
   --font-body: "HiPP Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-body-medium: "HiPP Sans Medium", -apple-system, sans-serif;
   --font-body-semibold: "HiPP Sans Semibold", -apple-system, sans-serif;

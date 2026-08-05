@@ -55,7 +55,7 @@
         "lead": "<p>Every order, every size, every time: free 2 day shipping across the USA. Every box is sourced directly from HiPP in Germany and arrives with at least 6 months of shelf life.</p>",
         "anchor_id": "shipping",
         "show_hill": true,
-        "hill_above": "#F9F7EF"
+        "hill_above": "#FFFFFF"
       }
     },
     "faq": {
