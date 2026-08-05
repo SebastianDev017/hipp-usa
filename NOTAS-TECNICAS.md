@@ -235,6 +235,30 @@ el admin (Configuración → Cuentas de clientes), no desde el tema.
   (`product.selling_plan_groups`), no contra el metafield `custom.suscripcion`
   ni contra una variante llamada "4 Suscripción" como en MX. Sirve igual con
   Shopify Subscriptions o con ReCharge.
+- **Las líneas de suscripción no llevan stepper.** En Shopify, cantidad 2 en una
+  línea con selling plan **no son dos suscripciones**: es UNA suscripción que
+  entrega 2 unidades por ciclo, con un único cargo recurrente. No había riesgo
+  de cobrar de más. Se quitó porque el tamaño del pedido **ya es la variante**
+  (1/4/8/16 cajas): un multiplicador encima significa "16 cajas cada 4 semanas"
+  por dos caminos distintos.
+
+- **El stepper que sí existe no muestra número, solo − y +.** El input sigue en
+  el DOM como `hidden` porque el JS lee su `value` y porque en `/cart` conserva
+  `name="updates[]"`. No queda visible-pero-enfocable: eso rompe el *focus
+  visible* de WCAG 2.4.7. La cantidad se comunica por el `aria-label` de los
+  botones y por el precio unitario bajo el total de la línea cuando hay más de
+  una unidad.
+
+- **Si una línea deja de emitir su `updates[]`, se rompe todo lo de abajo.** El
+  array va por POSICIÓN, así que la línea de suscripción emite un `hidden` aunque
+  no tenga stepper. Sin eso, sin JavaScript, cambiarías la cantidad del producto
+  equivocado.
+
+- El PDP arma la grilla de tamaños con `product.variants.size`, no con un 3 fijo,
+  y **cada tarjeta calcula su propio precio por caja**. La frase suelta "$29 per
+  box on every bundle" solo es cierta mientras todos los tamaños valgan lo mismo
+  por caja; el cálculo por tarjeta no puede mentir.
+
 - La página `/cart` es `sections/main-cart-usa.liquid`. Funciona **sin
   JavaScript**: las cantidades son `updates[]` **posicionales** (no por id de
   variante: dos líneas de la misma variante con planes de suscripción distintos
