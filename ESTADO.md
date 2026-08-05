@@ -1,6 +1,6 @@
 # HiPP USA — estado del proyecto
 
-Medido, no recordado. Fecha del corte: **4 de agosto de 2026**, commit `6da11b1`.
+Medido, no recordado. Fecha del corte: **4 de agosto de 2026**, commit `36cd0c3`.
 Deadline: **15 de agosto de 2026**.
 
 Las trampas técnicas del tema base están en [NOTAS-TECNICAS.md](NOTAS-TECNICAS.md).
@@ -56,20 +56,23 @@ Ninguno es del tema. Los tres se resuelven en el admin de Shopify.
 
 Planteadas, sin resolver. El tema ya soporta cualquiera de las dos salidas.
 
-1. **Cadencias.** Los planes cargados no coinciden entre productos ni con el copy:
+1. ~~**Cadencias.**~~ **RESUELTO.** El sitio ya muestra las cadencias reales:
 
-   | Producto | Cadencias cargadas |
-   |---|---|
-   | HiPP Combiotik | 3 / 4 / 5 semanas |
-   | HiPP Comfort | 4 / 5 / 6 semanas |
-   | HiPP AR | 4 / 5 / 6 semanas |
+   | Producto | Cadencias | Qué muestra su PDP |
+   |---|---|---|
+   | HiPP Combiotik | 3 / 4 / 5 semanas | 3 / 4 / 5 |
+   | HiPP Comfort | 4 / 5 / 6 semanas | 4 / 5 / 6 |
+   | HiPP AR | 4 / 5 / 6 semanas | 4 / 5 / 6 |
 
-   El copy aprobado dice **7 / 8 / 9**. La sección `subscription-cadence` tiene el
-   setting **Fuente de las cadencias**: "Bloques" (lo escrito a mano, por defecto)
-   o "Planes de la tienda" (lee las reales del producto que se elija).
+   En el PDP la sección lee el producto de la página, así que **no puede volver a
+   desincronizarse**. La home apunta a Combiotik y su copy dice "every 3 to 6
+   weeks, depending on the formula", que es el rango real del catálogo.
 
-2. **Suscripción por variante.** Los planes aplican a los tres tamaños; el diseño
-   dice *"the only bundle available as a subscription"* sobre el pack de 8.
+2. **Suscripción por variante.** Los planes aplican a los tres tamaños. El copy
+   decía *"the only bundle available as a subscription"* sobre el pack de 8, lo
+   que contradecía a la propia FAQ; se alineó con lo que la tienda hace de
+   verdad. **Si se decide restringir la suscripción al pack de 8, son dos
+   strings en `templates/index.json` más el cambio en los planes.**
 
 3. **Precio de la caja suelta.** El CSV
    `Downloads\hipp-usa-caja-suelta-import.csv` la deja en **$29.00**, igual que
@@ -109,7 +112,7 @@ sigue abriendo una conexión inútil en cada carga. Una línea.
 
 Dice *"$29 per box on every bundle"*. Ahora cada tarjeta calcula su propio precio
 por caja, así que la frase es redundante — y si la caja suelta pasa a costar más,
-además es falsa. Conviene decidirla junto con el punto 3.3.
+además es falsa. Conviene decidirla junto con el punto 3.3 (precio de la caja suelta).
 
 ### 4.4 Comentario obsoleto en `theme-js.liquid`
 
@@ -124,9 +127,16 @@ incógnito antes de entregar.
 
 ## 5. Para eliminar
 
-**5.704 KB de assets, y 2.211 KB no los referencia ningún `.liquid`.**
+### 5.0 Ya hecho: 52 assets, 113 KB
 
-Todo esto es legado del tema mexicano. Nada de lo nuevo lo toca.
+Borrados tras re-verificar uno por uno contra **todos** los archivos del tema:
+42 imágenes del tema viejo, 6 hojas CSS, 3 JS y un LICENSE. Cero recursos
+fallidos y cero errores de consola después. Quedan **171 assets**.
+
+> **Corrección a una estimación previa.** Antes dije 2.211 KB liberables. Estaba
+> mal: solo había escaneado archivos `.liquid`. Las fuentes de la marca mexicana
+> (~2 MB) están referenciadas por `@font-face` **dentro de `css-base.css`**,
+> donde Liquid no corre. Ver 5.2.
 
 ### 5.1 Plantillas y secciones huérfanas
 
@@ -140,29 +150,35 @@ Todo esto es legado del tema mexicano. Nada de lo nuevo lo toca.
 una plantilla queda apuntando a un `type` inexistente y Shopify **descarta el
 archivo entero** (ver NOTAS-TECNICAS §1).
 
-### 5.2 Fuentes de la marca mexicana — 2.069 KB
+### 5.2 Fuentes de la marca mexicana — NO borrar todavía
 
-- **Banana Grotesk**: 35 archivos, **2.012 KB**. Incluye siete `.svg` de ~139 KB
-  cada uno, un formato que ningún navegador actual necesita.
+- **Banana Grotesk**: 35 archivos, 2.012 KB (siete `.svg` de ~139 KB cada uno,
+  un formato que ningún navegador actual necesita).
 - **Advert**: 4 archivos, 57 KB.
 
-El tema nuevo usa Fraunces + Inter, self-hosted. Ninguna de estas dos se
-referencia en ningún lado.
+`css-base.css` las declara con `@font-face`, y **el navegador descarga tres de
+verdad**: `BananaGrotesk-Medium.woff2`, `BananaGrotesk-Bold.woff2` y
+`AdvertBold.woff2`, **48 KB en cada carga de página**. Borrarlas hoy da 404.
 
-### 5.3 Imágenes sueltas — 99 KB
+Lo raro: **nada en el DOM final las resuelve.** Se buscó exhaustivamente —
+reglas CSS (incluidas las de dentro de `@media`), pseudo-elementos y estilos
+computados de todos los elementos: cero coincidencias. La descarga la inicia el
+CSS durante el render inicial, así que el sospechoso es markup legado que existe
+mientras la página se pinta y después desaparece.
 
-56 archivos (`arrow-1-blue.png`, iconos del tema viejo…) sin una sola referencia.
+Conviene atacarlo **junto con `js-commons.js` (4.1)**, que es cuando se toca el
+JS y el DOM legado. Premio combinado: ~215 KB por página.
 
-### 5.4 `templates/customers/*.liquid` — 7 archivos
+### 5.3 `templates/customers/*.liquid` — 7 archivos
 
 **Código muerto.** La tienda usa las cuentas de cliente nuevas de Shopify: el
 ícono del header lleva a una pantalla hospedada por ellos. Esas plantillas no se
 renderizan nunca. El branding de esa pantalla se cambia en el admin.
 
-### 5.5 Lo que NO hay que borrar
+### 5.4 Lo que NO hay que borrar
 
 - **`assets/css-base.css`** — 146 KB, read-only, sigue sosteniendo estilos base.
-- **`assets/js-commons.js`** — dejar de cargarlo sí, borrarlo no (5.4.1).
+- **`assets/js-commons.js`** — dejar de cargarlo sí, borrarlo no (4.1).
 - Las tres `hipp-formula-*.png` — son el fallback de `formula-cards`.
 
 ---
