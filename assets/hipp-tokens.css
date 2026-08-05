@@ -79,7 +79,7 @@
   --radius-pill: 100px;
   --hairline-color: rgba(43, 33, 26, 0.14);
   --hairline: 1.5px solid var(--hairline-color);
-  --shadow-card: 0 10px 30px -14px rgba(79, 112, 66, 0.4);
+  --shadow-card: 0 10px 30px -14px rgba(213, 12, 117, 0.4);
   --shadow-lift: 0 18px 40px -18px rgba(43, 33, 26, 0.25);
 
   /* ---- Tipografia semantica. El codigo NUEVO usa estos, no los legacy. ---- */
@@ -152,10 +152,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Fraunces trae eje opsz (9..144): que el navegador lo use segun el tamano. */
+/* Advert Bold es una display estatica, sin eje optico: `font-optical-sizing` ya
+   no aplica y se fue. El tracking negativo se mantiene y sube un punto: una
+   display bold necesita mas cierre que el serif que habia antes. */
 h1, h2, h3, .page-title, .secondary-font, .secondary-font-bold {
-  font-optical-sizing: auto;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 /* El pill es la senal de marca mas visible del diseno aprobado. Hoy el tema lo
