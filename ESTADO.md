@@ -135,28 +135,45 @@ incógnito antes de entregar.
 
 ## 5. Para eliminar
 
-### 5.0 Ya hecho: 52 assets, 113 KB
+### 5.0 HECHO: el tema mexicano ya no está — 288 archivos, 1,6 MB
 
-Borrados tras re-verificar uno por uno contra **todos** los archivos del tema:
-42 imágenes del tema viejo, 6 hojas CSS, 3 JS y un LICENSE. Cero recursos
-fallidos y cero errores de consola después. Quedan **171 assets**.
+Dos pasadas. Primero 52 assets sueltos (113 KB). Después un **barrido en
+cascada**: plantillas huérfanas → las secciones que solo existían para ellas →
+los snippets que solo usaban esas secciones → los assets que quedaron sin
+referencia. Cuatro rondas hasta que no apareció nada nuevo.
 
-> **Corrección a una estimación previa.** Antes dije 2.211 KB liberables. Estaba
-> mal: solo había escaneado archivos `.liquid`. Las fuentes de la marca mexicana
-> (~2 MB) están referenciadas por `@font-face` **dentro de `css-base.css`**,
-> donde Liquid no corre. Ver 5.2.
+| | antes | después |
+|---|---|---|
+| plantillas | 32 | **14** |
+| secciones | 120 | **28** |
+| snippets | 60 | **19** |
+| assets | 223 | **86** |
+| theme-check | 199 ofensas | **33** |
 
-### 5.1 Plantillas y secciones huérfanas
+**Verificado antes de borrar, no asumido:** los 14 handles de páginas mexicanas
+devuelven 404 en la tienda y los 3 productos usan `product.json`. Ninguna página
+publicada dependía de nada de esto.
 
-- **18 plantillas** de páginas MX (`page.ciencia.json`, `page.about-us.json`,
-  `page.bueno-desde-el-origen.json`, `product.regalo.json`, …). Ninguna página
-  publicada las usa.
-- **33 secciones** que ningún template ni el layout referencian.
-- Otras **~60 secciones** que solo existen para esas 18 plantillas.
+**Verificado después:** las 9 rutas responden, sin errores de Liquid, sin
+recursos fallidos y sin errores de consola; add-to-cart y drawer siguen bien
+(`8 boxes`, $232.00, cantidad 2 en el servidor).
 
-**Orden importante:** primero las plantillas, después las secciones. Al revés,
-una plantilla queda apuntando a un `type` inexistente y Shopify **descarta el
-archivo entero** (ver NOTAS-TECNICAS §1).
+El orden importa y es el de NOTAS-TECNICAS §1: **primero las plantillas**. Al
+revés, una plantilla queda apuntando a un `type` inexistente y Shopify descarta
+el archivo entero en silencio.
+
+> **Dos correcciones a estimaciones previas mías.** (1) Dije 2.211 KB liberables
+> escaneando solo `.liquid`: falso. (2) El primer barrido en cascada daba por
+> huérfanas las fuentes de la marca mexicana — tampoco: `css-base.css` las
+> referencia con `@font-face`, donde Liquid no corre, y borrarlas dejaba 404 en
+> cada carga. El simulacro lo mostró a tiempo. Ver 5.2.
+
+### 5.1 Referencia rota heredada
+
+`sections/main-list-collections.liquid` pide `assets/component-card.css`, que
+**nunca estuvo en el repo** — viene así del tema base. Es la única sección que
+todavía es markup mexicano, y solo se ve en `/collections` (el índice de
+colecciones, que hoy no está enlazado desde ningún lado).
 
 ### 5.2 Fuentes de la marca mexicana — NO borrar todavía
 
