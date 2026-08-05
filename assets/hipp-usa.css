@@ -96,8 +96,13 @@
   color: var(--ink);
 }
 
+/* `normal` EXPLICITO, no basta con borrar la declaracion: <em> trae
+   font-style:italic del user-agent stylesheet, asi que al quitarla volvia la
+   oblicua. Y ninguna de las dos fuentes tiene italica real, o sea que el
+   navegador la sintetiza inclinando los glifos. El enfasis lo lleva el color. */
 .hp-h2 em,
 .hp-h1 em {
+  font-style: normal;
   color: var(--clay);
 }
 
@@ -3275,4 +3280,101 @@ html.js .hp-cart__update {
   outline: 2px solid var(--clay);
   outline-offset: 3px;
   border-radius: 2px;
+}
+
+/* ==========================================================================
+   27. Capa de marca — ritmo de bandas y color por fórmula
+   --------------------------------------------------------------------------
+   Con la paleta nueva el sitio quedaba correcto pero plano: una sola banda
+   blanca de arriba a abajo. Estas reglas dan alternancia y usan los colores
+   HiPP como campos de color, no como toques timidos.
+
+   Todo sale de tokens y respeta los minimos de contraste ya verificados: los
+   fondos calidos son claros (#fff2e8) y el texto sigue en --ink / --ink-soft,
+   que sobre ese fondo dan 14.3:1 y 6.68:1.
+   ========================================================================== */
+
+.hp-products,
+.hp-faq {
+  background: var(--warm);
+}
+
+/* La colina que entra a una banda calida tiene que salir del mismo tono, o se
+   ve un escalon de color entre la colina y la seccion. */
+.hp-products + .hp-hill svg,
+.hp-hill + .hp-products {
+  --hp-hill-into: var(--warm);
+}
+
+/* ---- Color de marca por formula ----
+   Cada formula toma uno de los colores reales del empaque. Es lo que hace que
+   tres tarjetas iguales se lean como tres productos distintos sin agregar ni
+   un elemento nuevo. nth-child y no una clase por producto: el orden lo decide
+   el comerciante desde el editor y no hay que tocar el tema para reordenar. */
+.hp-prod {
+  --hp-formula: var(--hipp-green);
+  --hp-formula-ink: var(--hipp-green-ink);
+  border-top: 3px solid var(--hp-formula);
+}
+
+.hp-prod:nth-child(2) {
+  --hp-formula: var(--hipp-blue);
+  --hp-formula-ink: var(--hipp-blue-ink);
+}
+
+.hp-prod:nth-child(3) {
+  --hp-formula: var(--hipp-orange);
+  --hp-formula-ink: var(--hipp-orange-ink);
+}
+
+/* El nombre de la etapa hereda el color de la formula. La variante -ink existe
+   justamente para esto: el verde y el naranja del empaque no llegan a 4.5:1
+   como texto, sus versiones oscuras si. */
+.hp-prod__for {
+  color: var(--hp-formula-ink);
+}
+
+.hp-prod__tag--clay {
+  background: color-mix(in srgb, var(--hp-formula) 14%, transparent);
+  color: var(--hp-formula-ink);
+}
+
+/* ---- Marquesina ----
+   Ya pasó a Advert Bold en versalita. El separador en magenta la vuelve un
+   elemento de marca en vez de una linea de texto que se desliza. */
+.hp-marquee {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.hp-marquee__item {
+  color: var(--cream);
+}
+
+.hp-marquee__item::after {
+  content: "•";
+  margin-left: 68px;
+  color: var(--hipp-magenta);
+}
+
+/* ---- Seccion oscura ----
+   Sobre el navy, el durazno de --accent-light da 10.84:1 y el magenta del
+   empaque 3.14:1, suficiente para grafica pero NO para texto. */
+.hp-night {
+  background: var(--ink);
+}
+
+.hp-night__num {
+  color: var(--accent-light);
+}
+
+/* ---- Botones ----
+   El magenta es el color de accion en todo el sitio. El naranja NO sirve de
+   boton: ni blanco (3.22:1) ni navy (4.43:1) encima llegan a AA. */
+.hp-btn--clay {
+  background: var(--clay);
+}
+
+.hp-btn--clay:hover {
+  background: var(--clay-deep);
 }
