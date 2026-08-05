@@ -235,6 +235,20 @@ el admin (Configuración → Cuentas de clientes), no desde el tema.
   (`product.selling_plan_groups`), no contra el metafield `custom.suscripcion`
   ni contra una variante llamada "4 Suscripción" como en MX. Sirve igual con
   Shopify Subscriptions o con ReCharge.
+- **La línea del carrito muestra el TOTAL de cajas, no el título de la variante.**
+  El título es un número pelado (`4`) y, debajo del nombre del producto, se lee
+  como si fuera la cantidad. Con el stepper sin número el efecto era peor: el
+  cliente presiona `+` y ese 4 no se mueve nunca. Ahora dice `8 boxes` para dos
+  unidades del pack de 4. Si el título no es numérico o el producto tiene más de
+  una opción, se cae al render anterior.
+
+- **La tienda tira 429 con mucha facilidad** ante peticiones seguidas, y cuando
+  lo hace **`/cart/add.js` devuelve 200 pero SIN la clave `sections`** — o sea
+  que el drawer se queda con el estado viejo y parece un bug del tema. No lo es.
+  Antes de diagnosticar nada en el carrito, comprobar que la sesión no esté
+  limitada: `GET /?sections=cart-drawer` tiene que devolver el HTML del drawer.
+  Se libera sola en 2 a 5 minutos.
+
 - **Las líneas de suscripción no llevan stepper.** En Shopify, cantidad 2 en una
   línea con selling plan **no son dos suscripciones**: es UNA suscripción que
   entrega 2 unidades por ciclo, con un único cargo recurrente. No había riesgo

@@ -78,7 +78,15 @@ Planteadas, sin resolver. El tema ya soporta cualquiera de las dos salidas.
    `Downloads\hipp-usa-caja-suelta-import.csv` la deja en **$29.00**, igual que
    dentro de los packs, para no romper la promesa de "$29 per box". Si se quiere
    que el bundle tenga ventaja real, es cambiar una columna. **Todavía no está
-   importado.**
+   importado, y hasta que lo esté la caja suelta no aparece en el PDP.**
+
+   El tema ya la soporta: si existe una variante de 1 caja, sale como una línea
+   discreta debajo de los packs (`Just getting started? Try a single box`), no
+   como una cuarta tarjeta. Es deliberado: darle el mismo peso visual que al pack
+   de 8 pone a competir de igual a igual la opción que menos le sirve al cliente
+   y a la marca, y parte la grilla de 3 en una de 4. Hay un setting por si se
+   prefiere como tarjeta. **Sin la variante, no se renderiza nada** — riesgo cero
+   mientras tanto, pero tampoco se puede verificar en vivo todavía.
 
 4. **Cuentas de redes sociales de USA.** Las heredadas eran de hipp.mx y quedaron
    vacías; el footer las oculta mientras estén así.
