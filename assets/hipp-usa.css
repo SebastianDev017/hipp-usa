@@ -2251,6 +2251,10 @@
   color: var(--ink);
 }
 
+.hp-cart .hipp-qty__btn ~ .hipp-qty__btn {
+  border-left-color: var(--hairline-color);
+}
+
 /* !important porque compite con el color que css-base le pone a todo input.
    Ver el bloque "CONTROLES DE FORMULARIO" al final del archivo. */
 .hp-cart .hipp-qty__input {
@@ -3160,3 +3164,53 @@ html.js .hp-cart__update {
      .hipp-qty__input (hipp-cart.css) · .hp-cart__note-input · .hp-searchbar__input
      .hp-field input / textarea · .hp-select · .hp-toolbar__sort select
    ========================================================================== */
+
+/* ==========================================================================
+   25. Tamaños de pedido en el PDP
+   --------------------------------------------------------------------------
+   La grilla se elige por la cantidad REAL de variantes. `.hp-tiles--3` seguia
+   existiendo con un 3 fijo y no servia para un catalogo que va de una caja
+   suelta a un bundle de 16.
+
+   OJO: no se puede reusar `.hp-tiles--2`, que en el paso 2 significa otra cosa
+   (dos tarjetas anchas apiladas). Por eso el modificador es `hp-bundles--N`.
+   ========================================================================== */
+
+.hp-bundles {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.hp-bundles--1 {
+  grid-template-columns: 1fr;
+}
+
+.hp-bundles--2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Cuatro tamaños no entran en una fila de 390px sin dejar el precio en dos
+   lineas: van 2x2 en movil y 1x4 desde tablet. */
+.hp-bundles--4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 560px) {
+  .hp-bundles--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Precio por caja dentro de cada tarjeta. Es el dato que hace comparable un
+   tamaño contra otro, asi que no se apaga en movil. */
+.hp-tile__each {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+
+.hp-tile__input:checked + .hp-tile .hp-tile__each {
+  color: var(--clay-deep);
+}

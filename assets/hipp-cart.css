@@ -292,6 +292,15 @@ body.hipp-drawer-open {
   color: var(--cream);
 }
 
+/* Con el stepper sin numero, este es el unico lugar donde el cliente ve cuantas
+   unidades lleva. Por eso no es decorativo. */
+.hipp-line__price-unit {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: rgba(249, 247, 239, 0.6);
+}
+
 /* ---- stepper de cantidad ---- */
 
 .hipp-qty {
@@ -300,6 +309,13 @@ body.hipp-drawer-open {
   border: 1px solid rgba(249, 247, 239, 0.25);
   border-radius: var(--radius-pill);
   overflow: hidden;
+}
+
+/* Sin numero en medio, los dos botones quedan pegados y se leen como un solo
+   control. El divisor los separa. Es `~` y no `+` porque el input hidden sigue
+   estando entre los dos en el DOM. */
+.hipp-qty__btn ~ .hipp-qty__btn {
+  border-left: 1px solid rgba(249, 247, 239, 0.25);
 }
 
 .hipp-qty__btn {

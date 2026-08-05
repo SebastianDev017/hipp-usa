@@ -184,14 +184,21 @@ Whale, Judge.me). Eso es limpieza deseable, no hay que revertirlo.
 
 ## 5. La tienda todavía no puede vender en Estados Unidos
 
-Medido en el checkout real (2026-08-03): el selector de país tiene **una sola
-opción, México**, los estados son los mexicanos, la moneda es **MXN** y el
-locale de la URL es `en-mx`. Un cliente en Estados Unidos **no puede terminar
-una compra**.
+Medido en el checkout real:
+
+| | 2026-08-03 | 2026-08-04 |
+|---|---|---|
+| Moneda | MXN | **USD** ✅ |
+| Países que ofrece | solo México | **solo México** ❌ |
+| Locale de la URL | `en-mx` | `en-mx` |
+
+La moneda ya está corregida. **Falta la zona de envío**: el selector de país
+sigue teniendo una sola opción y los estados son los mexicanos, así que un
+cliente en Estados Unidos todavía no puede escribir su dirección.
 
 No es del tema: el checkout lo sirve Shopify. Se arregla en el admin
-(Configuración → Envíos y entregas, y Mercados). Es el bloqueante más grande que
-queda para lanzar.
+(Configuración → **Envíos y entregas** → agregar zona con Estados Unidos, y
+Mercados). Es el bloqueante que queda para lanzar.
 
 Nota sobre el error *"There was a problem with our checkout"*: se reprodujo una
 vez y no se pudo volver a reproducir en cinco escenarios distintos
@@ -243,6 +250,26 @@ el admin (Configuración → Cuentas de clientes), no desde el tema.
   cambiar entre el selector propio y el widget de la app
   (`<div class="subscriptions_app_embed_block"></div>`). Son **mutuamente
   excluyentes**: los dos escriben el campo `selling_plan` del mismo form.
+
+- **Las líneas de suscripción no llevan stepper de cantidad.** Decisión de
+  producto, tomada con este dato: en Shopify, cantidad 2 en una línea con
+  selling plan **no** son dos suscripciones, es **una** suscripción que entrega
+  2 unidades por ciclo y se cobra una sola vez por período. O sea que no había
+  riesgo de cobrar de más.
+
+  Se quita igual porque acá el tamaño del pedido **ya es la variante** (4/8/16
+  cajas): un multiplicador encima significa "16 cajas cada 4 semanas" por dos
+  caminos distintos y no le dice nada claro a quien compra.
+
+  En `main-cart-usa.liquid` la línea sigue emitiendo un `<input type="hidden"
+  name="updates[]">`. **No es opcional**: ese array va por posición, así que si
+  una línea deja de emitir su campo, todas las de abajo se corren y sin
+  JavaScript terminarías cambiando la cantidad del producto equivocado.
+
+  Si alguien agrega dos veces la misma suscripción, Shopify las fusiona en
+  cantidad 2. Ahí el número se imprime como texto (`× 2`) y la única acción es
+  "Remove": esconder el control es una cosa, esconderle el dato al cliente es
+  otra.
 
 - **Los planes cargados no coinciden entre productos ni con el copy.** Medido
   contra `/products/<handle>.js`:

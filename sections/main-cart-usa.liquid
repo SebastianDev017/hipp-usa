@@ -147,29 +147,30 @@
                           <span class="hp-cline__qty">&times;&nbsp;{{ item.quantity }}</span>
                         {%- endif -%}
                       {%- else -%}
+                        {%- comment -%}
+                          Solo - y +, sin campo visible (mismo criterio que el drawer).
+                          El input pasa a hidden pero CONSERVA name="updates[]": ese
+                          array va por posicion y sin el campo la pagina dejaria de
+                          funcionar sin JavaScript.
+                        {%- endcomment -%}
                         <div class="hipp-qty" data-hipp-qty>
                           <button
                             type="button"
                             class="hipp-qty__btn"
                             data-hipp-qty-down
-                            aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
+                            aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }} ({{ item.quantity }})"
                           >&minus;</button>
                           <input
-                            class="hipp-qty__input"
-                            type="number"
-                            inputmode="numeric"
-                            min="0"
-                            step="1"
+                            type="hidden"
                             name="updates[]"
                             value="{{ item.quantity }}"
                             data-hipp-qty-input
-                            aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
                           >
                           <button
                             type="button"
                             class="hipp-qty__btn"
                             data-hipp-qty-up
-                            aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
+                            aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }} ({{ item.quantity }})"
                           >+</button>
                         </div>
                       {%- endif -%}

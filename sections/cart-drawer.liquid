@@ -130,28 +130,33 @@
                       <span class="hipp-line__qty">&times;&nbsp;{{ item.quantity }}</span>
                     {%- endif -%}
                   {%- else -%}
+                    {%- comment -%}
+                      Solo - y +, sin campo visible. El input sigue existiendo como
+                      hidden porque el JS lee su value para calcular el siguiente
+                      numero, pero ya no es foco de teclado: un campo invisible y
+                      enfocable rompe el "focus visible" de WCAG 2.4.7.
+
+                      La cantidad no desaparece del todo: va en el aria-label de cada
+                      boton (lo unico que le queda a un lector de pantalla) y, cuando
+                      es mayor a 1, como precio unitario debajo del total de la linea.
+                    {%- endcomment -%}
                     <div class="hipp-qty" data-hipp-qty>
                       <button
                         type="button"
                         class="hipp-qty__btn"
                         data-hipp-qty-down
-                        aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }}"
+                        aria-label="{{ 'products.product.quantity.decrease' | t: product: item.product.title }} ({{ item.quantity }})"
                       >&minus;</button>
                       <input
-                        class="hipp-qty__input"
-                        type="number"
-                        inputmode="numeric"
-                        min="0"
-                        step="1"
+                        type="hidden"
                         value="{{ item.quantity }}"
                         data-hipp-qty-input
-                        aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title }}"
                       >
                       <button
                         type="button"
                         class="hipp-qty__btn"
                         data-hipp-qty-up
-                        aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }}"
+                        aria-label="{{ 'products.product.quantity.increase' | t: product: item.product.title }} ({{ item.quantity }})"
                       >+</button>
                     </div>
                   {%- endif -%}
@@ -170,6 +175,13 @@
                   <s class="hipp-line__price-was">{{ item.original_line_price | money }}</s>
                 {%- endif -%}
                 <span class="hipp-line__price-now">{{ item.final_line_price | money }}</span>
+                {%- comment -%}
+                  Con el stepper sin numero, esto es lo unico que le dice al cliente
+                  cuantas unidades lleva. Solo aparece cuando hay mas de una.
+                {%- endcomment -%}
+                {%- if item.quantity > 1 -%}
+                  <span class="hipp-line__price-unit">{{ item.final_price | money }} {{ section.settings.each_label }}</span>
+                {%- endif -%}
               </div>
             </li>
           {%- endfor -%}
@@ -237,6 +249,12 @@
       "id": "shipping_value",
       "label": "Shipping value",
       "default": "Free"
+    },
+    {
+      "type": "text",
+      "id": "each_label",
+      "label": "Unit price suffix",
+      "default": "each"
     },
     {
       "type": "text",

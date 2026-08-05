@@ -143,7 +143,16 @@
                   <span class="hp-step__title">{{ section.settings.step_1_title | default: option.name }}</span>
                 </legend>
 
-                <div class="hp-tiles hp-tiles--3">
+                {%- comment -%}
+                  La grilla se arma con la cantidad REAL de variantes, no con un 3
+                  fijo: el catalogo tiene que poder ir de una caja suelta a un bundle
+                  de 16 sin tocar el tema.
+                {%- endcomment -%}
+                {%- assign tile_count = product.variants.size -%}
+                {%- if tile_count > 4 -%}
+                  {%- assign tile_count = 4 -%}
+                {%- endif -%}
+                <div class="hp-tiles hp-bundles hp-bundles--{{ tile_count }}">
                   {%- for variant in product.variants -%}
                     <input
                       class="hp-tile__input"
@@ -159,8 +168,19 @@
                       {%- if variant.metafields.custom.badge.value != blank -%}
                         <span class="hp-tile__badge">{{ variant.metafields.custom.badge.value }}</span>
                       {%- endif -%}
+                      {%- comment -%}
+                        La unidad se singulariza contra el numero de cajas de la
+                        variante: "1 boxes" se lee como un error de programador.
+                      {%- endcomment -%}
+                      {%- assign boxes = variant.title | times: 1 -%}
                       <span class="hp-tile__count">{{ variant.title }}</span>
-                      <span class="hp-tile__unit">{{ section.settings.unit_label }}</span>
+                      <span class="hp-tile__unit">
+                        {%- if boxes == 1 and section.settings.unit_label_one != blank -%}
+                          {{ section.settings.unit_label_one }}
+                        {%- else -%}
+                          {{ section.settings.unit_label }}
+                        {%- endif -%}
+                      </span>
                       <span class="hp-tile__price">
                         {%- if variant.available -%}
                           {{ variant.price | money }}
@@ -168,6 +188,19 @@
                           {{ 'products.product.sold_out' | t }}
                         {%- endif -%}
                       </span>
+                      {%- comment -%}
+                        Precio por caja calculado por tarjeta. Antes esto vivia en una
+                        sola frase suelta ("$29 per box on every bundle"), que solo es
+                        cierta mientras TODOS los tamaños valgan lo mismo por caja. En
+                        cuanto exista una caja suelta a otro precio, esa frase miente y
+                        esto no.
+                      {%- endcomment -%}
+                      {%- if boxes > 1 and variant.available -%}
+                        {%- assign per_box = variant.price | divided_by: boxes -%}
+                        <span class="hp-tile__each">
+                          {{- per_box | money_without_trailing_zeros }} {{ section.settings.per_unit_label -}}
+                        </span>
+                      {%- endif -%}
                     </label>
                   {%- endfor -%}
                 </div>
@@ -422,6 +455,20 @@
       "id": "unit_label",
       "label": "Unidad",
       "default": "boxes"
+    },
+    {
+      "type": "text",
+      "id": "unit_label_one",
+      "label": "Unidad en singular",
+      "info": "Se usa cuando la variante es de una sola caja.",
+      "default": "box"
+    },
+    {
+      "type": "text",
+      "id": "per_unit_label",
+      "label": "Sufijo del precio por caja",
+      "info": "Se muestra en cada tamaño de más de una caja.",
+      "default": "/ box"
     },
     {
       "type": "text",
