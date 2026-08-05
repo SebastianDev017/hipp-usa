@@ -1,10 +1,64 @@
 # HiPP USA — estado del proyecto
 
-Medido, no recordado. Fecha del corte: **4 de agosto de 2026**, commit `36cd0c3`.
+Medido, no recordado. Fecha del corte: **5 de agosto de 2026**, commit `8567e85`.
 Deadline: **15 de agosto de 2026**.
 
 Las trampas técnicas del tema base están en [NOTAS-TECNICAS.md](NOTAS-TECNICAS.md).
 Este archivo es el backlog.
+
+---
+
+## 0. Rebrand tipográfico y de color (5-ago-2026)
+
+Diagnóstico de Andrés: el combo **crema + serif + clay/terracota** es uno de los
+patrones más repetidos del diseño generado por IA ahora mismo. Era eso lo que se
+notaba. Se cambió sin tocar un solo paso del flujo de compra.
+
+**Tipografía** — Banana Grotesk (texto) + Advert Bold (encabezados), las fuentes
+reales de HiPP, que ya venían en el tema. Se redeclaran en `hipp-fonts.liquid`
+con **solo woff2** y por `asset_url`; las `@font-face` de `css-base.css` traen
+otra query string y precargar esas hacía bajar cada archivo dos veces.
+
+- **66 KB** contra los 112 KB de Inter + Fraunces.
+- **2.173 KB borrados**: los 7 `.svg` de ~139 KB, más `.eot`, `.ttf`, `.woff`, más
+  Fraunces e Inter que quedaron sin uso. Se conservan los 9 `.woff2` porque
+  `css-base.css` los declara y no se puede editar.
+- Se quitaron **11 itálicas sintéticas**: ninguna de las dos fuentes tiene
+  itálica real. Ojo: hace falta `font-style: normal` **explícito**, porque `<em>`
+  la trae del user-agent stylesheet.
+
+**Color** — los hex salen de contar píxeles saturados sobre la foto de producto
+en 1080×1080, no de elegirlos a ojo:
+
+| | |
+|---|---|
+| magenta | `#e30d7c` |
+| naranja | `#ec670c` |
+| azul | `#1a9dda` |
+| navy | `#15226a` |
+| verde | `#86ad21` |
+
+El acento pasa de clay a **magenta**, el texto de oliva a **navy**, y entra una
+segunda paleta **cálida** en durazno (`#fff2e8` / `#ffd9be`).
+
+Los nombres de token no cambiaron, solo los valores: 3.200 líneas de CSS y 28
+secciones usan `var(--clay)` y `var(--cream)`.
+
+**Contraste verificado en vivo, con los reveals disparados** (medir sin
+scrollear mide contenido en `opacity: 0`): **0 fallos** en home, producto,
+colección y carrito. El magenta exacto del empaque no llega a 4.5:1 sobre fondo
+tintado, así que el token de texto es un paso más oscuro (`#d50c75`) y el del
+empaque queda para rellenos, donde el mínimo es 3.
+
+**Home**: bandas alternadas (blanco → durazno → navy → magenta), y cada fórmula
+toma uno de los colores reales por `nth-child`, no por clase, para que el orden
+lo pueda cambiar el comerciante desde el editor.
+
+**Pendiente del revamp**: collection, product y cart ya tienen tipografía y
+paleta nuevas, pero **no** el tratamiento de secciones de la home (hero,
+marquesina, banda oscura, colinas). Nunca tuvieron mockup de referencia.
+
+**Fotos**: siguen las de HiPP México como placeholder.
 
 ---
 
@@ -28,8 +82,8 @@ Más el **cart drawer** (add-to-cart AJAX, que el tema base no tenía) y el CTA 
 **22 secciones nuevas** (`-usa` y compañía), capa `hipp-tokens.css` + `hipp-usa.css` +
 `hipp-cart.css`, y `hipp-usa.js` / `hipp-cart.js` / `hipp-product.js` en vanilla.
 
-Estado de calidad: **theme-check 199 ofensas, 0 errores, 0 en archivos nuevos**
-(las 199 son todas del legado MX). `validate_theme` de Shopify en verde.
+Estado de calidad: **theme-check 32 ofensas, 0 errores, 0 en archivos nuevos**
+(las 32 son todas heredadas). `validate_theme` de Shopify en verde.
 Cero errores de consola. Cero overflow horizontal a 390px.
 
 ---
@@ -111,7 +165,7 @@ entries de webpack lo referencian por `deferredModules`.
 
 Requiere probar las rutas una por una antes de dar por bueno.
 
-### 4.2 Quitar el `preconnect` a `cdn.judge.me`
+### 4.2 ~~Quitar el `preconnect` a `cdn.judge.me`~~ HECHO
 
 La app no está instalada. Ya se condicionó el `<script>`, pero el `preconnect`
 sigue abriendo una conexión inútil en cada carga. Una línea.
