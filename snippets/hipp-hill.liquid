@@ -10,18 +10,18 @@
     double (bool)   dibuja una segunda colina por detras, mas clara.
 
   Uso:
-    {% render 'hipp-hill', fill: '#D50C75', above: '#FFFFFF' %}
+    {% render 'hipp-hill', fill: '#125B4E', above: '#FAF8F3' %}
 {%- endcomment -%}
 
 {%- liquid
-  assign hill_fill = fill | default: '#D50C75'
+  assign hill_fill = fill | default: '#125B4E'
   assign hill_above = above | default: 'transparent'
 -%}
 
 <div class="hp-hill" aria-hidden="true" style="background:{{ hill_above }}">
   {%- if double -%}
     <svg viewBox="0 0 1440 70" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" focusable="false">
-      <path d="M0,52 C240,22 480,58 720,40 C960,22 1200,54 1440,34 L1440,70 L0,70 Z" fill="#DDE3C6"/>
+      <path d="M0,52 C240,22 480,58 720,40 C960,22 1200,54 1440,34 L1440,70 L0,70 Z" fill="#D3E1BC"/>
       <path d="M0,62 C280,42 560,66 840,54 C1100,44 1300,62 1440,52 L1440,70 L0,70 Z" fill="{{ hill_fill }}"/>
     </svg>
   {%- else -%}

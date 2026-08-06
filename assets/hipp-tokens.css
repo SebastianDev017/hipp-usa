@@ -18,58 +18,67 @@
 :root {
   /* ---- Paleta HiPP USA (fuente de verdad) ---- */
   /* ======================================================================
-     PALETA HiPP — muestreada del empaque real, no elegida a ojo
+     PALETA HiPP — verde, muestreada de hipp.mx en vivo
 
-     Los hex salen de contar pixeles saturados sobre la foto de producto en
-     1080x1080: magenta #e30d7c, naranja #ec670c, azul #1a9dda, navy #15226a,
-     verde #86ad21. Son los colores del logo de HiPP.
+     Los hex NO estan elegidos a ojo: salen de recorrer el DOM de hipp.mx
+     acumulando area por color de fondo y caracteres por color de texto. El
+     color de texto dominante del sitio (2.186 caracteres, primer lugar por
+     lejos) es #125b4e, y los tres fondos que cubren mas superficie son
+     #ebf3e3, #e2ecd4 y #edf3d7. HiPP es una marca verde.
 
-     Reemplazan al esquema crema + clay/terracota, que es uno de los patrones
-     mas repetidos del diseño generado por IA ahora mismo y era exactamente lo
-     que se notaba.
+     Esto CORRIGE la pasada anterior, que leyo los colores del EMPAQUE
+     (magenta/naranja/azul) como si fueran los de la marca. No lo son: son la
+     codificacion por etapa de la lata. La identidad es el verde del nav y del
+     footer.
 
      LOS NOMBRES NO CAMBIAN, cambian los valores. ~3.200 lineas de hipp-usa.css
      y 28 secciones usan var(--clay), var(--cream) y compania: remapear es una
      linea por token, reescribir los call sites son cientos de ediciones sin
-     ninguna ganancia.
+     ninguna ganancia. Por eso --clay sigue llamandose --clay aunque hoy sea
+     verde: es el rol "acento", no el color.
 
      CONTRASTE VERIFICADO (WCAG AA) contra los tres fondos claros del sitio
-     (#ffffff, #f1f3ef, #fff2e8):
-       --clay como texto ....... 5.07 / 4.54 / 4.62
-       blanco sobre --clay ..... 5.07  (boton)
-       --ink como texto ........ 14.30 / 12.80 / —
-       --ink-soft como texto ... 7.34 / 6.57 / 6.68
-     El magenta exacto del empaque (#e30d7c) NO llega a 4.5 sobre fondo tintado
-     (4.08), por eso el token de texto es un paso mas oscuro y el del empaque
-     queda para rellenos grandes, donde el minimo es 3.
+     (--cream #faf8f3, --warm #ebf3e3, --sand #e2ecd4):
+       --ink como texto ........ 10.89 / 10.04 / 9.48
+       --clay como texto ....... 7.52 /  7.01 / 4.74
+       --ink-soft como texto ... 5.54 /  5.17 / 4.82
+       blanco sobre --clay ..... 7.98            (boton principal)
+       --gold-ink como texto ... 5.95 /  5.55 / 5.18
+     El verde hoja (--hipp-leaf) y el dorado (--gold) NO llegan a 4.5 como
+     texto: quedan para rellenos y grafica, donde el minimo es 3. Para texto
+     existen sus pares --hipp-leaf-ink y --gold-ink.
      ====================================================================== */
 
-  --cream: #ffffff;     /* base limpia; era el crema #f9f7ef */
-  --cream-2: #f1f3ef;   /* gris frio, no crema: el crema era parte del problema */
-  --sand: #ffd9be;      /* durazno: la segunda paleta calida */
-  --ink: #15226a;       /* navy HiPP; era el verde oliva #232a1e */
-  --ink-soft: #4a5578;
-  --clay: #d50c75;      /* MAGENTA HiPP, seguro como texto en los 3 fondos */
-  --clay-deep: #8d084d; /* hover */
-  --moss: #5c7717;      /* verde organico, seguro como texto */
-  --accent-light: #ffd9be; /* sobre navy da 10.84:1 */
+  --cream: #faf8f3;     /* crema neutra: el fondo base */
+  --cream-2: #f2f6ec;   /* salvia apenas insinuada */
+  --sand: #e2ecd4;      /* salvia media; era el durazno #ffd9be */
+  --ink: #10403a;       /* verde casi negro: texto, titulos, campos oscuros */
+  --ink-soft: #4a6b62;
+  --clay: #125b4e;      /* VERDE PROFUNDO HiPP = el acento del sitio */
+  --clay-deep: #0d443a; /* hover */
+  --moss: #446f29;
+  --accent-light: #cfe3b8; /* salvia clara para usar SOBRE los fondos oscuros */
 
-  /* ---- Colores de marca para RELLENOS y grafica (no texto sobre claro) ---- */
-  --hipp-magenta: #e30d7c;
-  --hipp-orange: #ec670c;
-  --hipp-blue: #1a9dda;
+  /* ---- Colores de marca ---- */
+  --hipp-green: #125b4e;    /* el verde del nav y el footer de hipp.mx */
+  --hipp-leaf: #73af4c;     /* verde hoja: relleno y grafica, no texto */
+  --hipp-leaf-ink: #446f29; /* su version segura como texto */
+  --hipp-sage: #e2ecd4;
+  --hipp-sage-pale: #ebf3e3;
+
+  /* El navy vive en UN solo lugar, la promesa de las 3am. Es lo que le da
+     contraste real al verde: si aparece en dos sitios deja de ser un quiebre
+     y pasa a ser un segundo color de marca, que es justo lo que no es. */
   --hipp-navy: #15226a;
-  --hipp-green: #86ad21;
 
-  /* ---- Y sus variantes seguras como TEXTO sobre los tres fondos claros ---- */
-  --hipp-orange-ink: #b64f09;
-  --hipp-blue-ink: #1476a4;
-  --hipp-green-ink: #5c7717;
+  /* ---- Unico acento calido, muy puntual ---- */
+  --gold: #b8862a;      /* dorado apagado, 3.24:1 sobre claro: solo grafica */
+  --gold-ink: #7d5a0e;  /* su version de texto */
 
-  /* ---- Segunda paleta, calida ---- */
-  --warm: #fff2e8;
-  --warm-mid: #ffd9be;
-  --warm-ink: #a8410b;
+  /* ---- Bandas de seccion (el nombre quedo de cuando eran duraznos) ---- */
+  --warm: #ebf3e3;
+  --warm-mid: #e2ecd4;
+  --warm-ink: #7d5a0e;
 
   /* ---- Forma. El tema base no tenia tokens de forma: 163 border-radius
          hardcodeados y solo 7 con var(). ---- */
@@ -77,10 +86,10 @@
   --radius-media: 14px;
   --radius-sm: 12px;
   --radius-pill: 100px;
-  --hairline-color: rgba(43, 33, 26, 0.14);
+  --hairline-color: rgba(16, 64, 58, 0.16);
   --hairline: 1.5px solid var(--hairline-color);
-  --shadow-card: 0 10px 30px -14px rgba(213, 12, 117, 0.4);
-  --shadow-lift: 0 18px 40px -18px rgba(43, 33, 26, 0.25);
+  --shadow-card: 0 10px 30px -14px rgba(16, 64, 58, 0.28);
+  --shadow-lift: 0 18px 40px -18px rgba(16, 64, 58, 0.22);
 
   /* ---- Tipografia semantica. El codigo NUEVO usa estos, no los legacy. ---- */
   /* Advert Bold para encabezados y Banana Grotesk para texto: las fuentes
@@ -132,7 +141,7 @@
   /* Estados. --price-color, --sale-regular-price-color, --page-title-color,
      --page-text-color y --form-label-color derivan de --primary-color, asi que
      ya siguen a --ink solos. */
-  --sale-price-color: #a85238;          /* era #df2138, rojo puro fuera de paleta */
+  --sale-price-color: var(--gold-ink);  /* era #df2138, rojo puro fuera de paleta */
   --sold-out-color: var(--moss);        /* era #bebebe */
 
   /* ---- Roles tipograficos. En el diseno aprobado h1/h2/h3 son todos serif;

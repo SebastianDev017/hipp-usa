@@ -314,7 +314,7 @@
 
 .hp-nav {
   background: rgba(255, 255, 255, 0.92);
-  border-bottom: 1px solid rgba(43, 33, 26, 0.08);
+  border-bottom: 1px solid rgba(16, 64, 58, 0.08);
 }
 
 @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
@@ -355,12 +355,12 @@
   white-space: nowrap;
 }
 
-/* El punto es el unico acento de color del wordmark, asi que tiene que leerse
-   sobre los dos fondos que usa el header: blanco y navy. El magenta de texto da
-   2.82:1 sobre navy y no llega al 3:1 de elemento grafico (WCAG 1.4.11); el del
-   empaque, que es mas claro, da 3.14. */
+/* El punto es el unico acento de color del wordmark y uno de los dos unicos
+   lugares donde aparece el dorado en todo el sitio. Tiene que leerse sobre los
+   dos fondos que usa el header, el claro y el oscuro: da 3.24:1 y 3.57:1, los
+   dos por encima del 3:1 que pide WCAG 1.4.11 para un elemento grafico. */
 .hp-wordmark__dot {
-  color: var(--hipp-magenta);
+  color: var(--gold);
 }
 
 .hp-wordmark__img {
@@ -446,7 +446,7 @@
 .hp-mobilenav__scrim {
   position: absolute;
   inset: 0;
-  background: rgba(21, 34, 106, 0.42);
+  background: rgba(16, 64, 58, 0.42);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -490,7 +490,7 @@
   line-height: 1.2;
   color: var(--ink);
   padding: 14px 0;
-  border-bottom: 1px solid rgba(43, 33, 26, 0.1);
+  border-bottom: 1px solid rgba(16, 64, 58, 0.1);
 }
 
 .hp-mobilenav__cta {
@@ -505,9 +505,12 @@
   position: relative;
   overflow: hidden;
   padding: 64px 0 0;
+  /* Cielo de campo: crema arriba, salvia abajo, y un sol bajo en dorado al 14%.
+     El degrade termina exactamente en --warm para que la colina del arte del
+     hero arranque del mismo tono y no se vea el corte. */
   background:
-    radial-gradient(420px 300px at 78% 12%, rgba(242, 211, 150, 0.55), transparent 70%),
-    linear-gradient(180deg, #fdfaf0 0%, #f7f1de 78%, #f1edda 100%);
+    radial-gradient(460px 320px at 78% 10%, rgba(184, 134, 42, 0.14), transparent 70%),
+    linear-gradient(180deg, var(--cream) 0%, #f4f8ee 60%, var(--warm) 100%);
 }
 
 .hp-hero__kicker {
@@ -627,8 +630,8 @@
    ========================================================================== */
 
 .hp-marquee {
-  border-top: 1px solid rgba(43, 33, 26, 0.1);
-  border-bottom: 1px solid rgba(43, 33, 26, 0.1);
+  border-top: 1px solid rgba(16, 64, 58, 0.1);
+  border-bottom: 1px solid rgba(16, 64, 58, 0.1);
   overflow: hidden;
   background: var(--cream-2);
   padding: 14px 0;
@@ -803,7 +806,7 @@
   background: var(--cream);
   border-radius: var(--radius-card);
   padding: 34px 28px 30px;
-  border: 1px solid rgba(43, 33, 26, 0.07);
+  border: 1px solid rgba(16, 64, 58, 0.07);
   display: flex;
   flex-direction: column;
   color: var(--ink);
@@ -830,7 +833,7 @@
 }
 
 .hp-prod__tag--clay {
-  background: rgba(213, 12, 117, 0.14);
+  background: color-mix(in srgb, var(--clay) 14%, transparent);
   color: var(--clay-deep);
 }
 
@@ -854,7 +857,7 @@
   width: 72%;
   height: 86%;
   object-fit: contain;
-  filter: drop-shadow(0 14px 18px rgba(21, 34, 106, 0.18));
+  filter: drop-shadow(0 14px 18px rgba(16, 64, 58, 0.18));
   transition: transform 0.5s var(--hp-ease);
 }
 
@@ -921,7 +924,7 @@
 
 .hp-bundle--featured {
   border-color: var(--clay);
-  background: linear-gradient(180deg, rgba(213, 12, 117, 0.05), transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--clay) 7%, transparent), transparent);
 }
 
 .hp-bundle__badge {
@@ -1274,7 +1277,7 @@
   z-index: 40;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
   background: rgba(255, 255, 255, 0.95);
-  border-top: 1px solid rgba(43, 33, 26, 0.1);
+  border-top: 1px solid rgba(16, 64, 58, 0.1);
   display: flex;
   gap: 12px;
   align-items: center;
@@ -1318,8 +1321,13 @@
    16. Colección / catálogo
    ========================================================================== */
 
+/* La cabecera de las paginas internas es una banda salvia que baja al contenido
+   por una colina, igual que las bandas de la home. Es lo que hace que colección,
+   producto, blog y busqueda pertenezcan al mismo sitio que la portada y no
+   parezcan plantillas sueltas. */
 .hp-pagehead {
   padding: 44px 0 8px;
+  background: var(--warm);
 }
 
 .hp-pagehead__title {
@@ -1432,7 +1440,7 @@
   height: 92%;
   max-width: 90%;
   object-fit: contain;
-  filter: drop-shadow(0 10px 14px rgba(21, 34, 106, 0.16));
+  filter: drop-shadow(0 10px 14px rgba(16, 64, 58, 0.16));
   transition: transform 0.5s var(--hp-ease), opacity 0.35s ease;
 }
 
@@ -1458,7 +1466,7 @@
 .hp-card__img--placeholder {
   width: 70%;
   height: auto;
-  fill: rgba(21, 34, 106, 0.16);
+  fill: rgba(16, 64, 58, 0.16);
   filter: none;
 }
 
@@ -1560,11 +1568,11 @@
   width: 82%;
   height: 82%;
   object-fit: contain;
-  filter: drop-shadow(0 18px 24px rgba(21, 34, 106, 0.18));
+  filter: drop-shadow(0 18px 24px rgba(16, 64, 58, 0.18));
 }
 
 .hp-pdp__img--placeholder {
-  fill: rgba(21, 34, 106, 0.16);
+  fill: rgba(16, 64, 58, 0.16);
   filter: none;
 }
 
@@ -1732,7 +1740,7 @@
 .hp-tile__input:checked + .hp-tile {
   border-color: var(--clay);
   box-shadow: var(--shadow-card);
-  background: linear-gradient(180deg, rgba(213, 12, 117, 0.05), #fff);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--clay) 7%, transparent), var(--cream));
 }
 
 .hp-tile__input:focus-visible + .hp-tile {
@@ -2346,7 +2354,7 @@ html.js .hp-cart__update {
 /* ---- resumen ---- */
 
 .hp-csum {
-  background: #fff;
+  background: var(--warm);
   border: var(--hairline);
   border-radius: var(--radius-card);
   padding: 24px 22px;
@@ -3081,7 +3089,7 @@ html.js .hp-cart__update {
   padding: 14px 16px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--accent-light);
-  background: rgba(255, 217, 190, 0.35);
+  background: rgba(226, 236, 212, 0.5);
   color: var(--clay-deep);
   font-size: 14.5px;
   line-height: 1.55;
@@ -3285,13 +3293,13 @@ html.js .hp-cart__update {
 /* ==========================================================================
    27. Capa de marca — ritmo de bandas y color por fórmula
    --------------------------------------------------------------------------
-   Con la paleta nueva el sitio quedaba correcto pero plano: una sola banda
-   blanca de arriba a abajo. Estas reglas dan alternancia y usan los colores
-   HiPP como campos de color, no como toques timidos.
+   Con la paleta sola el sitio quedaba correcto pero plano: una sola banda
+   clara de arriba a abajo. Estas reglas dan alternancia crema → salvia →
+   verde profundo, y usan el verde como campo de color, no como toque timido.
 
-   Todo sale de tokens y respeta los minimos de contraste ya verificados: los
-   fondos calidos son claros (#fff2e8) y el texto sigue en --ink / --ink-soft,
-   que sobre ese fondo dan 14.3:1 y 6.68:1.
+   Todo sale de tokens y respeta los minimos ya verificados: los fondos de
+   banda son claros (--warm #ebf3e3) y el texto sigue en --ink / --ink-soft,
+   que sobre ese fondo dan 10.04:1 y 5.17:1.
    ========================================================================== */
 
 .hp-products,
@@ -3299,7 +3307,7 @@ html.js .hp-cart__update {
   background: var(--warm);
 }
 
-/* La colina que entra a una banda calida tiene que salir del mismo tono, o se
+/* La colina que entra a una banda salvia tiene que salir del mismo tono, o se
    ve un escalon de color entre la colina y la seccion. */
 .hp-products + .hp-hill svg,
 .hp-hill + .hp-products {
@@ -3307,44 +3315,50 @@ html.js .hp-cart__update {
 }
 
 /* ---- Color de marca por formula ----
-   Cada formula toma uno de los colores reales del empaque. Es lo que hace que
-   tres tarjetas iguales se lean como tres productos distintos sin agregar ni
-   un elemento nuevo. nth-child y no una clase por producto: el orden lo decide
-   el comerciante desde el editor y no hay que tocar el tema para reordenar. */
+   Tres tonos de la MISMA familia, no tres colores distintos: verde profundo,
+   verde hoja y dorado. Es lo que hace que tres tarjetas iguales se lean como
+   tres productos distintos sin agregar ni un elemento nuevo, y sin traer al
+   sitio colores que no son de la marca.
+
+   nth-child y no una clase por producto: el orden lo decide el comerciante
+   desde el editor y no hay que tocar el tema para reordenar. */
 .hp-prod {
   --hp-formula: var(--hipp-green);
-  --hp-formula-ink: var(--hipp-green-ink);
+  --hp-formula-ink: var(--hipp-green);
   border-top: 3px solid var(--hp-formula);
 }
 
 .hp-prod:nth-child(2) {
-  --hp-formula: var(--hipp-blue);
-  --hp-formula-ink: var(--hipp-blue-ink);
+  --hp-formula: var(--hipp-leaf);
+  --hp-formula-ink: var(--hipp-leaf-ink);
 }
 
 .hp-prod:nth-child(3) {
-  --hp-formula: var(--hipp-orange);
-  --hp-formula-ink: var(--hipp-orange-ink);
+  --hp-formula: var(--gold);
+  --hp-formula-ink: var(--gold-ink);
 }
 
 /* El nombre de la etapa hereda el color de la formula. La variante -ink existe
-   justamente para esto: el verde y el naranja del empaque no llegan a 4.5:1
-   como texto, sus versiones oscuras si. */
+   justamente para esto: el verde hoja y el dorado no llegan a 4.5:1 como
+   texto, sus versiones oscuras si. */
 .hp-prod__for {
   color: var(--hp-formula-ink);
 }
 
 .hp-prod__tag--clay {
-  background: color-mix(in srgb, var(--hp-formula) 14%, transparent);
+  background: color-mix(in srgb, var(--hp-formula) 16%, transparent);
   color: var(--hp-formula-ink);
 }
 
 /* ---- Marquesina ----
-   Ya pasó a Advert Bold en versalita. El separador en magenta la vuelve un
-   elemento de marca en vez de una linea de texto que se desliza. */
+   Banda verde profundo con el texto en Advert Bold versalita. El separador en
+   dorado es el unico acento calido del sitio y aparece solo aca y en el sello
+   de la marca: puesto dos veces mas dejaria de ser un acento. */
 .hp-marquee {
-  background: var(--ink);
+  background: var(--clay);
   color: var(--cream);
+  border-top: 0;
+  border-bottom: 0;
 }
 
 .hp-marquee__item {
@@ -3354,14 +3368,15 @@ html.js .hp-cart__update {
 .hp-marquee__item::after {
   content: "•";
   margin-left: 68px;
-  color: var(--hipp-magenta);
+  color: var(--accent-light);
 }
 
 /* ---- Seccion oscura ----
-   Sobre el navy, el durazno de --accent-light da 10.84:1 y el magenta del
-   empaque 3.14:1, suficiente para grafica pero NO para texto. */
+   El UNICO navy del sitio. Contra el verde de las bandas de al lado da un
+   quiebre real; repetido en otra seccion se volveria un segundo color de
+   marca. Sobre el, --accent-light da 10.44:1. */
 .hp-night {
-  background: var(--ink);
+  background: var(--hipp-navy);
 }
 
 .hp-night__num {
@@ -3369,8 +3384,9 @@ html.js .hp-cart__update {
 }
 
 /* ---- Botones ----
-   El magenta es el color de accion en todo el sitio. El naranja NO sirve de
-   boton: ni blanco (3.22:1) ni navy (4.43:1) encima llegan a AA. */
+   El verde profundo es el color de accion en todo el sitio: blanco encima da
+   7.98:1. El verde hoja NO sirve de boton, ni con blanco (2.64:1) ni con el
+   verde profundo (2.87:1) encima. */
 .hp-btn--clay {
   background: var(--clay);
 }

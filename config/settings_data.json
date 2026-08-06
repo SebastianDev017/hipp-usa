@@ -38,9 +38,9 @@
           "msg-1"
         ],
         "settings": {
-          "background_color": "#15226A",
+          "background_color": "#125B4E",
           "text_color": "#FFFFFF",
-          "highlight_color": "#FFD9BE",
+          "highlight_color": "#E2ECD4",
           "speed": 6
         }
       },

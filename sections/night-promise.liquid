@@ -10,7 +10,11 @@
   assign items = section.blocks | where: 'type', 'promise'
 -%}
 
-<section class="hp-night hp-section" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: '#15226A', above: section.settings.hill_above -%}
+{%- endif -%}
+
+<section class="hp-night hp-section{% if section.settings.show_hill %} hp-section--tight{% endif %}" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
   {%- if section.settings.show_stars -%}
     <span class="hp-night__stars" aria-hidden="true"></span>
     <span class="hp-night__moon" aria-hidden="true"></span>
@@ -47,6 +51,15 @@
   </div>
 </section>
 
+{%- comment -%}
+  La colina de salida va DESPUES de </section> y con `above` en navy: dibujada
+  adentro, el padding inferior de la seccion volveria a pintar navy por debajo
+  de la curva y el corte quedaria a mitad de camino.
+{%- endcomment -%}
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: section.settings.hill_below, above: '#15226A' -%}
+{%- endif -%}
+
 {% schema %}
 {
   "name": "Promesa 3am",
@@ -70,6 +83,28 @@
       "id": "lead",
       "label": "Texto",
       "default": "<p>Everything about this store exists so that the hardest moments of caring for your baby feel a little lighter.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Divisor"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hill",
+      "label": "Colinas arriba y abajo",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "hill_above",
+      "label": "Fondo de la sección anterior",
+      "default": "#125B4E"
+    },
+    {
+      "type": "color",
+      "id": "hill_below",
+      "label": "Fondo de la sección siguiente",
+      "default": "#FAF8F3"
     },
     {
       "type": "checkbox",

@@ -11,7 +11,7 @@
 -%}
 
 {%- if section.settings.show_hill -%}
-  {%- render 'hipp-hill', fill: '#D50C75', above: section.settings.hill_above -%}
+  {%- render 'hipp-hill', fill: '#125B4E', above: section.settings.hill_above -%}
 {%- endif -%}
 
 <section class="hp-ship hp-section{% if section.settings.show_hill %} hp-section--tight{% endif %}" {% if section.settings.anchor_id != blank %}id="{{ section.settings.anchor_id | handle }}"{% endif %}>
@@ -45,6 +45,15 @@
     {%- endif -%}
   </div>
 </section>
+
+{%- comment -%}
+  Colina de salida: va DESPUES de </section> y con `above` en el verde de la
+  seccion. Dibujada adentro, el padding inferior volveria a pintar verde por
+  debajo de la curva.
+{%- endcomment -%}
+{%- if section.settings.show_hill -%}
+  {%- render 'hipp-hill', fill: section.settings.hill_below, above: '#125B4E' -%}
+{%- endif -%}
 
 {% schema %}
 {
@@ -83,14 +92,20 @@
     {
       "type": "checkbox",
       "id": "show_hill",
-      "label": "Colina arriba",
+      "label": "Colinas arriba y abajo",
       "default": true
     },
     {
       "type": "color",
       "id": "hill_above",
       "label": "Fondo de la sección anterior",
-      "default": "#FFFFFF"
+      "default": "#FAF8F3"
+    },
+    {
+      "type": "color",
+      "id": "hill_below",
+      "label": "Fondo de la sección siguiente",
+      "default": "#FAF8F3"
     }
   ],
   "blocks": [
