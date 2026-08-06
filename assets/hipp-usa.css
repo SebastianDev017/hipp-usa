@@ -3189,9 +3189,15 @@ html.js .hp-cart__update {
 
    OJO: no se puede reusar `.hp-tiles--2`, que en el paso 2 significa otra cosa
    (dos tarjetas anchas apiladas). Por eso el modificador es `hp-bundles--N`.
+
+   OJO 2: estas reglas van SIEMPRE con un modificador `--N`. La version sin
+   modificar se comia la seccion de bundles de la home, que usa la misma clase
+   y se apila en movil: al declararse mas abajo en el archivo le ganaba a la
+   media query y dejaba las tres tarjetas en 107px, con la tercera cortada
+   fuera de la pantalla en 390px.
    ========================================================================== */
 
-.hp-bundles {
+.hp-bundles--3 {
   grid-template-columns: repeat(3, 1fr);
 }
 
