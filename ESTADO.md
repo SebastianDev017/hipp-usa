@@ -1,6 +1,6 @@
 # HiPP USA — estado del proyecto
 
-Medido, no recordado. Fecha del corte: **5 de agosto de 2026**, commit `8567e85`.
+Medido, no recordado. Fecha del corte: **6 de agosto de 2026**, commit `4d4d0f0`.
 Deadline: **15 de agosto de 2026**.
 
 Las trampas técnicas del tema base están en [NOTAS-TECNICAS.md](NOTAS-TECNICAS.md).
@@ -8,16 +8,18 @@ Este archivo es el backlog.
 
 ---
 
-## 0. Rebrand tipográfico y de color (5-ago-2026)
+## 0. Rebrand tipográfico y de color (6-ago-2026)
 
 Diagnóstico de Andrés: el combo **crema + serif + clay/terracota** es uno de los
 patrones más repetidos del diseño generado por IA ahora mismo. Era eso lo que se
 notaba. Se cambió sin tocar un solo paso del flujo de compra.
 
-**Tipografía** — Banana Grotesk (texto) + Advert Bold (encabezados), las fuentes
-reales de HiPP, que ya venían en el tema. Se redeclaran en `hipp-fonts.liquid`
-con **solo woff2** y por `asset_url`; las `@font-face` de `css-base.css` traen
-otra query string y precargar esas hacía bajar cada archivo dos veces.
+### Tipografía
+
+Banana Grotesk (texto) + Advert Bold (encabezados), las fuentes reales de HiPP,
+que ya venían en el tema. Se redeclaran en `hipp-fonts.liquid` con **solo woff2**
+y por `asset_url`; las `@font-face` de `css-base.css` traen otra query string y
+precargar esas hacía bajar cada archivo dos veces.
 
 - **66 KB** contra los 112 KB de Inter + Fraunces.
 - **2.173 KB borrados**: los 7 `.svg` de ~139 KB, más `.eot`, `.ttf`, `.woff`, más
@@ -27,38 +29,79 @@ otra query string y precargar esas hacía bajar cada archivo dos veces.
   itálica real. Ojo: hace falta `font-style: normal` **explícito**, porque `<em>`
   la trae del user-agent stylesheet.
 
-**Color** — los hex salen de contar píxeles saturados sobre la foto de producto
-en 1080×1080, no de elegirlos a ojo:
+### Color — HiPP es una marca VERDE
 
-| | |
-|---|---|
-| magenta | `#e30d7c` |
-| naranja | `#ec670c` |
-| azul | `#1a9dda` |
-| navy | `#15226a` |
-| verde | `#86ad21` |
+Primera pasada equivocada, corregida el 6-ago: leí los colores del **empaque**
+(magenta / naranja / azul) como si fueran los de la marca. No lo son, son la
+codificación por etapa de la lata. La identidad es el verde del nav y del footer.
 
-El acento pasa de clay a **magenta**, el texto de oliva a **navy**, y entra una
-segunda paleta **cálida** en durazno (`#fff2e8` / `#ffd9be`).
+Los hex de la versión buena salen de recorrer el DOM de **hipp.mx en vivo**
+acumulando área por color de fondo y caracteres por color de texto. El color de
+texto dominante del sitio es `#125b4e` por lejos (2.186 caracteres), y los fondos
+que más superficie cubren son `#ebf3e3` y `#e2ecd4`.
+
+| Rol | Token | Antes | Ahora |
+|---|---|---|---|
+| Acento (CTA, kickers, badges) | `--clay` | magenta `#d50c75` | **verde profundo `#125b4e`** |
+| Texto y campos oscuros | `--ink` | navy `#15226a` | verde casi negro `#10403a` |
+| Base neutra | `--cream` | blanco `#ffffff` | crema `#faf8f3` |
+| Bandas de sección | `--warm` / `--sand` | durazno `#fff2e8` / `#ffd9be` | salvia `#ebf3e3` / `#e2ecd4` |
+| Quiebre | `--hipp-navy` | en todo el texto | **solo** en la promesa de las 3am |
+| Único acento cálido | `--gold` | — | dorado apagado `#b8862a`, en 2 lugares |
 
 Los nombres de token no cambiaron, solo los valores: 3.200 líneas de CSS y 28
-secciones usan `var(--clay)` y `var(--cream)`.
+secciones usan `var(--clay)` y `var(--cream)`. Por eso `--clay` sigue llamándose
+así aunque hoy sea verde: es el **rol** "acento", no el color.
 
-**Contraste verificado en vivo, con los reveals disparados** (medir sin
-scrollear mide contenido en `opacity: 0`): **0 fallos** en home, producto,
-colección y carrito. El magenta exacto del empaque no llega a 4.5:1 sobre fondo
-tintado, así que el token de texto es un paso más oscuro (`#d50c75`) y el del
-empaque queda para rellenos, donde el mínimo es 3.
+Fuera el magenta del CTA del nav, los kickers, la marquesina, los tags de bundle
+y el bloque entero de la promesa de 2 días. Los tres colores por fórmula pasan a
+tres tonos de la misma familia — verde profundo, verde hoja, dorado — en vez de
+tres colores ajenos a la marca.
 
-**Home**: bandas alternadas (blanco → durazno → navy → magenta), y cada fórmula
-toma uno de los colores reales por `nth-child`, no por clase, para que el orden
-lo pueda cambiar el comerciante desde el editor.
+**Contraste verificado en vivo, con los reveals disparados** (medir sin scrollear
+mide contenido en `opacity: 0` y da falsos OK): **0 fallos** en home, producto,
+colección y carrito, en desktop y en 390px. También **0 elementos rosados/magenta**
+en las cuatro rutas.
 
-**Pendiente del revamp**: collection, product y cart ya tienen tipografía y
-paleta nuevas, pero **no** el tratamiento de secciones de la home (hero,
-marquesina, banda oscura, colinas). Nunca tuvieron mockup de referencia.
+| Sobre `--cream` / `--warm` / `--sand` | | | |
+|---|---|---|---|
+| `--ink` | 10.89 | 10.04 | 9.48 |
+| `--clay` | 7.52 | 7.01 | 4.74 |
+| `--ink-soft` | 5.54 | 5.17 | 4.82 |
+| `--gold-ink` | 5.95 | 5.55 | 5.18 |
+| blanco sobre `--clay` | 7.98 | | |
 
-**Fotos**: siguen las de HiPP México como placeholder.
+El verde hoja y el dorado **no** llegan a 4.5:1 como texto: quedan para rellenos y
+gráfica, donde el mínimo es 3. Para texto existen `--hipp-leaf-ink` y `--gold-ink`.
+
+### Colinas como hilo visual
+
+Dejaron de ser un adorno del hero. Ahora marcan cada cambio de banda:
+
+- entrada y salida de la sección navy;
+- entrada y salida de la banda de envío;
+- entrada a fórmulas y a FAQ;
+- la cabecera de **todas** las páginas internas es una banda salvia que baja al
+  contenido por una colina (colección, página, blog, búsqueda, 404);
+- el carrito suma la banda de envío con sus dos colinas.
+
+La colina de salida va **después** de `</section>` y con `above` en el color de la
+sección: dibujada adentro, el padding inferior vuelve a pintar el fondo por debajo
+de la curva y el corte queda a mitad de camino.
+
+La ilustración del hero pasó de durazno a campo: cuatro capas de verde con el sol
+en dorado apagado.
+
+### Un bug de móvil que apareció al verificar
+
+La regla sin modificador de la sección 25 (`.hp-bundles`) apuntaba a la misma
+clase que usa `bundle-tiers` en la home. Al estar declarada más abajo en el
+archivo le ganaba a la media query que apila en móvil: las tres tarjetas quedaban
+en 107px y **la tercera se cortaba fuera de la pantalla** en 390px. Ahora la regla
+pide el modificador `--3`, que el PDP ya emite siempre.
+
+**Fotos**: siguen las de HiPP México como placeholder, hasta que Andrés mande las
+suyas o confirme que usemos esas.
 
 ---
 
