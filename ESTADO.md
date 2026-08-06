@@ -1,6 +1,6 @@
 # HiPP USA — estado del proyecto
 
-Medido, no recordado. Fecha del corte: **6 de agosto de 2026**, commit `4d4d0f0`.
+Medido, no recordado. Fecha del corte: **6 de agosto de 2026**, commits `483abed` → `3f57948`.
 Deadline: **15 de agosto de 2026**.
 
 Las trampas técnicas del tema base están en [NOTAS-TECNICAS.md](NOTAS-TECNICAS.md).
